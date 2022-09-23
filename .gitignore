@@ -12,3 +12,7 @@ web-build/
 
 # macOS
 .DS_Store
+
+#config folder
+config/
+config/firebase-keys.js
