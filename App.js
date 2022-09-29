@@ -65,6 +65,10 @@ export default function App() {
               name="Register"
               component={RegisterScreen}
           />
+           <Stack.Screen
+              name="Login"
+              component={LoginScreen}
+          />
           <Stack.Screen
               name="Expenses"
               component={ExpensesScreen}
