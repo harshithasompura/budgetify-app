@@ -3,12 +3,12 @@ import { useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-
+import { Button} from 'react-native';
 // Vector Icons
 import Icon from 'react-native-vector-icons/FontAwesome';
 //Firebase Imports
 import { auth } from './FirebaseApp';
-
+import { signOut } from "firebase/auth";
 // get the functions from the Firebase Auth library
 import {  onAuthStateChanged } from "firebase/auth";
 
@@ -46,27 +46,60 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator 
-      screenOptions={{
-        headerShown: false
-      }}
       initialRouteName="Splash">
           <Stack.Screen
               name="Home"
               component={HomeScreen}
+              options={({ navigation }) => ({
+                headerStyle: {
+                  backgroundColor: '#001C00',
+                },
+                headerTitleStyle: {
+                  fontWeight: "bold"
+                },
+                headerBackVisible: false,
+                headerLeft: ()=> null,
+                headerRight: () => (
+                  <Button
+                    onPress={async() => {
+                      try {
+                        await signOut(auth)
+                        console.log("User signed out")
+                      }
+                      catch (err) {
+                        Alert.alert(`Signout failed, error occurred: ${err.message}`)
+                      }
+                      navigation.navigate("Login");
+                    }
+                    }
+                    title="Sign out"
+                    color="#C5F277"
+                  />
+                )
+              })}
           />
           { 
           //User is not logged in - display Splash/Initial Screen
           !userLoggedIn &&
           <Stack.Screen name="Splash"
+              options={{
+                headerShown: false, // change this to `false`
+              }}
               component={SplashScreen}
           /> 
           }
           <Stack.Screen
+              options={{
+                headerShown: false, // change this to `false`
+              }}
               name="Register"
               component={RegisterScreen}
           />
            <Stack.Screen
               name="Login"
+              options={{
+                headerShown: false, // change this to `false`
+              }}
               component={LoginScreen}
           />
           <Stack.Screen

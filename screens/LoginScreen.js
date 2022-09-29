@@ -67,7 +67,7 @@ const LoginScreen = ({navigation}) => {
                     value={email}
                     onChangeText={setEmail}
                 /> 
-                <Text style={[styles.formLabel, ,{fontFamily:"IBMPlexMono_600SemiBold"} ]}>Password: </Text>
+                <Text style={[styles.formLabel,{fontFamily:"IBMPlexMono_600SemiBold"} ]}>Password: </Text>
                 <TextInput 
                     style={styles.inputStyle}
                     autoCapitalize="none"
@@ -84,7 +84,7 @@ const LoginScreen = ({navigation}) => {
                 </View>
             : null }
             <Pressable style={styles.loginButton} onPress={loginPressed}>
-                <Text style={styles.buttonText}>Login</Text>
+                <Text style={[styles.buttonText, {fontFamily:"IBMPlexMono_700Bold"}]}>Login</Text>
             </Pressable>
             <Pressable style={styles.signUpButton} onPress={signupPressed}>
                 <Text style={[styles.signUpText, {fontFamily:"IBMPlexMono_700Bold"}]}>Don't have an account? Register.</Text>
