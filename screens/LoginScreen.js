@@ -1,33 +1,29 @@
 import { useState,useEffect } from 'react';
 import { StyleSheet, Text, SafeAreaView,  TextInput, View, Pressable} from 'react-native';
+// Importing fonts
+import { useFonts,
+    IBMPlexMono_400Regular,
+    IBMPlexMono_500Medium,
+    IBMPlexMono_600SemiBold,
+    IBMPlexMono_700Bold,
+  } from '@expo-google-fonts/ibm-plex-mono'
 // Firebase imports
 import {auth} from "../FirebaseApp";
 // get the functions from the Firebase Auth library
-import { createUserWithEmailAndPassword , signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 
-const LoginScreen = ({navigation, route}) => {
+const LoginScreen = ({navigation}) => {
 
     // ------- State Variables ---------------
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errors, setErrors] = useState("");
-    const [movieSelectedByUser, setMovieSelectedByUser] = useState({});
    
     // ------------------------ Route Params -----------------------------
 
     // ------------------------ Lifecycle Hooks ---------------------------
     useEffect( () => {
-
         console.log("Login Screen Loaded")
-        if(route.params) {
-            console.log("Login Screen is supplied with the [selectedMovie] param in the route")
-           
-            // 1. Set the movieSelectedByUser with the [selectedMovie] param value from the route
-            setMovieSelectedByUser(route.params.selectedMovie)
-        } else{
-            console.log("Login Screen is NOT supplied with the [selectedMovie] param in the route")
-        }
-
     }, []);
    
 
@@ -37,19 +33,8 @@ const LoginScreen = ({navigation, route}) => {
         try {     
             const userCredential = await signInWithEmailAndPassword(auth, email, password)
             console.log(`User is logged in. Username is: ${userCredential.user.email}`)
-            console.log(Object.keys(movieSelectedByUser).length)
-
-            // Conditional Navigation After Authenticating the User
-            if(Object.keys(movieSelectedByUser).length === 0){
-                
-                console.log("Navigating to the MyPurchasesScreen")
-                navigation.navigate("MyPurchases");
-            } else if (Object.keys(movieSelectedByUser).length > 0) {
-
-                console.log("Navigating to the MovieDetailScreen")
-                navigation.navigate("MovieDetail", { selectedMovie: movieSelectedByUser })
-            }
-            
+            // Navigate to Register
+            navigation.navigate("Home");
           } catch (err) {
             console.log(`Error when logging user ${err.message}`)
             setErrors(err.message) // displays errors to the UI
@@ -58,37 +43,23 @@ const LoginScreen = ({navigation, route}) => {
 
     const signupPressed = async() =>  {
         console.log(`Signup Button Pressed!`)
-        try {
-            // - send the values to Firebase Authentication
-            // and wait for Firebase Auth to create a user with those credential
-            const userCredential = await createUserWithEmailAndPassword(auth, email, password)
-            console.log("Account creation success")
-            console.log(userCredential)
-            console.log(Object.keys(movieSelectedByUser).length)
-
-            // Conditional Navigation After Authenticating the User
-            if(Object.keys(movieSelectedByUser).length === 0){
-                
-                console.log("Navigating to the MyPurchasesScreen")
-                navigation.navigate("MyPurchases");
-            } else if (Object.keys(movieSelectedByUser).length > 0) {
-
-                console.log("Navigating to the MovieDetailScreen")
-                navigation.navigate("MovieDetail", { selectedMovie: movieSelectedByUser })
-            }
-            
-        } catch (err) {
-            console.log(`Error when creating user ${err.message}`)
-            setErrors(err.message) // displays errors to the UI
-        }
+        // Navigate to Register
+        navigation.navigate("Register");
     }
 
+    let [fontsLoaded] = useFonts({ IBMPlexMono_400Regular, IBMPlexMono_500Medium, IBMPlexMono_600SemiBold, IBMPlexMono_700Bold,})
+    if (!fontsLoaded) {
+        return <Text>Fonts are loading...</Text>
+    } else {
+    
+    // ------------------------ View Template -----------------------
+
     return (
-        <SafeAreaView style={styles.container}>
-            <Text style={styles.screenHeading}>Login or Create an Account</Text>
+        <SafeAreaView style={[styles.container]}>
+            <Text style={[styles.screenHeading, {fontFamily:"IBMPlexMono_700Bold"}]}>Log in</Text>
             {/* Login Form */}
-            <View style={styles.formContainer}>
-                <Text style={styles.formLabel}>Email: </Text>
+            <View style={[styles.formContainer]}>
+                <Text style={[styles.formLabel, ,{fontFamily:"IBMPlexMono_600SemiBold"} ]}>Email: </Text>
                 <TextInput 
                     style={styles.inputStyle}
                     autoCapitalize="none"
@@ -96,7 +67,7 @@ const LoginScreen = ({navigation, route}) => {
                     value={email}
                     onChangeText={setEmail}
                 /> 
-                <Text style={styles.formLabel}>Password: </Text>
+                <Text style={[styles.formLabel, ,{fontFamily:"IBMPlexMono_600SemiBold"} ]}>Password: </Text>
                 <TextInput 
                     style={styles.inputStyle}
                     autoCapitalize="none"
@@ -116,10 +87,11 @@ const LoginScreen = ({navigation, route}) => {
                 <Text style={styles.buttonText}>Login</Text>
             </Pressable>
             <Pressable style={styles.signUpButton} onPress={signupPressed}>
-                <Text style={styles.signUpText}>Create New Account</Text>
+                <Text style={[styles.signUpText, {fontFamily:"IBMPlexMono_700Bold"}]}>Don't have an account? Register.</Text>
             </Pressable>
         </SafeAreaView>
       )
+    }
 }
 
 
@@ -130,7 +102,7 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
     },
     screenHeading : {
-        fontSize: 20,
+        fontSize: 30,
         fontWeight: "400",
     },
     formContainer : {
@@ -151,7 +123,7 @@ const styles = StyleSheet.create({
         borderWidth:1
     }, 
     loginButton : {
-        backgroundColor: "#3330e3",
+        backgroundColor: "#001C00",
         alignSelf:"stretch",
         padding:16,
         marginHorizontal:20,
@@ -160,21 +132,18 @@ const styles = StyleSheet.create({
         borderRadius:10,
     },
     buttonText : {
-        color:"white",
+        color:"#C5F277",
         fontSize: 18,
         fontWeight: "bold"
     },  
     signUpButton : {
         alignSelf:"stretch",
-        marginHorizontal:20,
+        marginHorizontal:10,
         alignItems:"center",
-        borderColor: "#3330e3",
-        borderWidth: 1,
         padding: 16,
-        borderRadius:10,
     },  
     signUpText : {
-        color:"#3330e3",
+        color:"#001C00",
         fontSize: 18,
         fontWeight: "bold"
     },
