@@ -1,29 +1,75 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import { useFonts,
-  IBMPlexMono_400Regular,
-  IBMPlexMono_500Medium,
-  IBMPlexMono_600SemiBold,
-  IBMPlexMono_700Bold,
-} from '@expo-google-fonts/ibm-plex-mono'
+import { useState, useEffect } from 'react';
+// Navigation imports
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+
+// Vector Icons
+import Icon from 'react-native-vector-icons/FontAwesome';
+//Firebase Imports
+import { auth } from './FirebaseApp';
+
+// get the functions from the Firebase Auth library
+import {  onAuthStateChanged } from "firebase/auth";
+
+//Screen Imports
+import HomeScreen from './screens/HomeScreen';
+import LoginScreen from './screens/LoginScreen';
+import SplashScreen from './screens/SplashScreen';
+import RegisterScreen from './screens/RegisterScreen';
+import ExpensesScreen from './screens/ExpensesScreen';
+
+const Stack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator();
+
 export default function App() {
-  let [fontsLoaded] = useFonts({ IBMPlexMono_400Regular, IBMPlexMono_500Medium, IBMPlexMono_600SemiBold, IBMPlexMono_700Bold,})
-  if (!fontsLoaded) {
-    return <Text>Fonts are loading...</Text>
-  }
+  
+  // ------------------------ State Variables -----------------------
+  // state variable to track if there is a logged in user
+  const [userLoggedIn, setUserLoggedIn] = useState(false)
+  
+  // ------------------------ Lifecycle Hooks ---------------------------
+  useEffect(()=>{
+    // code to check if there is a logged in user
+    onAuthStateChanged(auth, user => {
+      if (user) {
+        console.log('Authenticated now!');
+        setUserLoggedIn(true); //log the user 
+      } else {
+        setUserLoggedIn(false); //log out
+      }
+    });
+  }, [])
+
+
+  // ------------------------ View Template -----------------------
   return (
-    <View style={styles.container}>
-      <Text style={{fontFamily:"IBMPlexMono_400Regular", fontSize:20}}>Hello, World!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator 
+      screenOptions={{
+        headerShown: false
+      }}
+      initialRouteName="Splash">
+          <Stack.Screen
+              name="Home"
+              component={HomeScreen}
+          />
+          { 
+          //User is not logged in - display Splash/Initial Screen
+          !userLoggedIn &&
+          <Stack.Screen name="Splash"
+              component={SplashScreen}
+          /> 
+          }
+          <Stack.Screen
+              name="Register"
+              component={RegisterScreen}
+          />
+          <Stack.Screen
+              name="Expenses"
+              component={ExpensesScreen}
+          />    
+       </Stack.Navigator>
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
