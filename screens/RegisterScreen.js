@@ -1,125 +1,168 @@
-import React from "react";
-import { useState } from "react";
-import { StyleSheet, Text, SafeAreaView,  TextInput, View, Pressable, TouchableOpacity, Alert} from 'react-native';
-const RegisterScreen = () => {
-  
-  //NEED TO CONNECT FIREBASE DB AND ADD FIREBASE AUTH
-  
-//    const createAccountPressed = async () => {
-//         console.log("Create account button pressed")
-//         console.log(`Provided name : ${nameFromUI}`)
-//         console.log(`Provided email address: ${emailAddressFromUI}`)
-//         console.log(`Provided password: ${passwordFromUI}`)
-//         try {
-//             const userCredential = await createUserWithEmailAndPassword(auth,nameFromUI, emailAddressFromUI, passwordFromUI)
-//             console.log("Account creation success")
-//             console.log(userCredential)
-//             //addUserToDB()
-
-//             console.log("Add button pressed")
+import { useState,useEffect } from 'react';
+import { StyleSheet, Text, SafeAreaView,  TextInput, View, Pressable} from 'react-native';
+// Importing fonts
+import { useFonts,
+    IBMPlexMono_400Regular,
+    IBMPlexMono_500Medium,
+    IBMPlexMono_600SemiBold,
+    IBMPlexMono_700Bold,
+  } from '@expo-google-fonts/ibm-plex-mono'
+// Firebase imports
+import {auth} from "../FirebaseApp";
+// get the functions from the Firebase Auth library
+import { createUserWithEmailAndPassword } from "firebase/auth";
+​
+const RegisterScreen = ({navigation}) => {
+​
+    // ------- State Variables ---------------
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [errors, setErrors] = useState("");
+   
+    // ------------------------ Route Params -----------------------------
+​
+    // ------------------------ Lifecycle Hooks ---------------------------
+    useEffect( () => {
+        console.log("Register Screen Loaded")
+    }, []);
+   
+​
+    // ---------  Event listeners ------------
+    const signupPressed = async() => {
+        console.log(`Register Button Pressed!`)
+        try {
+          // - send the values to Firebase Authentication
+          // and wait for Firebase Auth to create a user with those credential
+          const userCredential = await createUserWithEmailAndPassword(auth, email, password)
+          console.log("Account creation success")
+          console.log(userCredential)
+​
+          // - Navigate to home
+          navigation.navigate("Tab");
+          
+      } catch (err) {
+          console.log(`Error when creating user ${err.message}`)
+          setErrors(err.message) // displays errors to the UI
+      }
+    }
+​
+    const loginPressed = async() =>  {
+        console.log(`Login Button Pressed!`)
+        // Navigate to Login
+        navigation.navigate("Login");
+    }
+​
+    let [fontsLoaded] = useFonts({ IBMPlexMono_400Regular, IBMPlexMono_500Medium, IBMPlexMono_600SemiBold, IBMPlexMono_700Bold,})
+    if (!fontsLoaded) {
+        return <Text>Fonts are loading...</Text>
+    } else {
     
-//             Alert.alert("Account created!")
-//             setnameFromUI("")
-//             setEmailAddresFromUI("")
-//             setPasswordFromUI("")
-//         } catch (err) {
-//             Alert.alert(`Error when creating user: ${err.code}, Message: ${err.message}`)
-//             console.log("Error when creating user")
-//             console.log(`Error code: ${err.code}`)
-//             console.log(`Error message: ${err.message}`)
-//         }
-//       }
-  return (
-    <SafeAreaView style={styles.container}>
-        <Text style={styles.headingtext}> Create Your Account </Text>
-            <Text style={styles.inputtext}>Name:</Text>
-
-            <TextInput 
-            placeholder="Enter Name"
-            textContentType="emailAddress"
-            autoCapitalize="none"
-            returnKeyType="next"
-            value={nameFromUI}
-            onChangeText={setnameFromUI} 
-            style={styles.inputbox}/>
-
-            <Text style={styles.inputtext}>Email:</Text>
-
-            <TextInput 
-            placeholder="Enter Email"
-            textContentType="emailAddress"
-            autoCapitalize="none"
-            returnKeyType="next"
-            value={emailAddressFromUI}
-            onChangeText={setEmailAddresFromUI} 
-            style={styles.inputbox}/>
-
-            <Text style={styles.inputtext}>Password:</Text>
-
-            <TextInput 
-            placeholder="Enter Password"
-            textContentType="password"
-            autoCapitalize="none"
-            returnKeyType="done"
-            secureTextEntry={true} 
-            value={passwordFromUI}
-            onChangeText={setPasswordFromUI} 
-            style={styles.inputbox}/>
-              
-            <TouchableOpacity>
-                <Text style={styles.newacctouchable} onPress={createAccountPressed}>Create New Account</Text>
-            </TouchableOpacity>
-
-    </SafeAreaView>
-  )
+    // ------------------------ View Template -----------------------
+​
+    return (
+        <SafeAreaView style={[styles.container]}>
+            <Text style={[styles.screenHeading, {fontFamily:"IBMPlexMono_700Bold"}]}>Sign Up</Text>
+            {/* Login Form */}
+            <View style={[styles.formContainer]}>
+                <Text style={[styles.formLabel, ,{fontFamily:"IBMPlexMono_600SemiBold"} ]}>Email: </Text>
+                <TextInput 
+                    style={styles.inputStyle}
+                    autoCapitalize="none"
+                    placeholder="Enter Email"
+                    value={email}
+                    onChangeText={setEmail}
+                /> 
+                <Text style={[styles.formLabel,{fontFamily:"IBMPlexMono_600SemiBold"} ]}>Password: </Text>
+                <TextInput 
+                    style={styles.inputStyle}
+                    autoCapitalize="none"
+                    secureTextEntry={true}
+                    placeholder="Enter Password"
+                    value={password}
+                    onChangeText={setPassword}
+                /> 
+            </View>   
+            {/* Errors go here */}
+            { errors ?  
+                <View style={styles.errors}>
+                    <Text style={styles.errorText}>{errors}</Text>
+                </View>
+            : null }
+            <Pressable style={styles.loginButton} onPress={signupPressed}>
+                <Text style={[styles.buttonText, {fontFamily:"IBMPlexMono_700Bold"}]}>Register</Text>
+            </Pressable>
+            <Pressable style={styles.signUpButton} onPress={loginPressed}>
+                <Text style={[styles.signUpText, {fontFamily:"IBMPlexMono_700Bold"}]}>Already have an account? Login.</Text>
+            </Pressable>
+        </SafeAreaView>
+      )
+    }
 }
-export default RegisterScreen
-
+​
+​
 const styles = StyleSheet.create({
     container: {
-        flex:1,
-        backgroundColor: '#fff',
-        justifyContent:'center'
+      backgroundColor:"#C5F277",
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
     },
-    headingtext:{
-        fontSize:25,
-        marginBottom:15,
-        textDecorationLine:'underline',
-        alignContent:'center',
-        textAlign: 'center',
-        margin:5 
+    screenHeading : {
+        fontSize: 30,
+        fontWeight: "400",
     },
-    text:{
-        fontSize:20,
-        alignContent:'center',
-        textAlign: 'center',
-        marginBottom:15, 
+    formContainer : {
+        alignSelf: 'stretch',
+        marginHorizontal: 20,
+        marginTop:10,
+        marginBottom: 30,
     },
-    inputtext:{
-        alignContent:'flex-start',
+    formLabel : {
+        fontWeight: "bold"
+    },
+    inputStyle : {
+        marginVertical: 15,
+        height:48,
+        padding:15,
+        borderColor: '#888',
+        borderRadius:10,
+        borderWidth:1
+    }, 
+    loginButton : {
+        backgroundColor: "#001C00",
+        alignSelf:"stretch",
+        padding:16,
         marginHorizontal:20,
-        fontSize:17,
+        alignItems:"center",
+        marginBottom:30,
+        borderRadius:10,
     },
-    inputbox:{
-        alignContent:'flex-start',
-        borderColor:'#888888',
-        borderWidth:1,
-        marginVertical:10,
-        marginHorizontal:20,
+    buttonText : {
+        color:"#C5F277",
+        fontSize: 18,
+        fontWeight: "bold"
+    },  
+    signUpButton : {
+        alignSelf:"stretch",
+        marginHorizontal:10,
+        alignItems:"center",
+        padding: 16,
+    },  
+    signUpText : {
+        color:"#001C00",
+        fontSize: 18,
+        fontWeight: "bold"
+    },
+    errors : {
+        alignSelf:"stretch",
         padding:10,
-        height:45,
-        fontSize:15,
-    },
-    newacctouchable:{
-        textAlign: 'center',
-        color:'white',
-        backgroundColor:'black',
-        margin:10,
         marginHorizontal:20,
-        padding:10,
-        height:45,
-        fontSize:17,
-        alignContent:'center',
-    },
-   
+        backgroundColor: "#C63461",
+        marginBottom: 20,
+    }, 
+    errorText: {
+        color:"white"
+    }
 });
+​
+export default RegisterScreen
