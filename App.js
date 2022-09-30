@@ -18,6 +18,7 @@ import LoginScreen from './screens/LoginScreen';
 import SplashScreen from './screens/SplashScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import ExpensesScreen from './screens/ExpensesScreen';
+import TabController from './screens/TabController';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -48,8 +49,8 @@ export default function App() {
       <Stack.Navigator 
       initialRouteName="Splash">
           <Stack.Screen
-              name="Home"
-              component={HomeScreen}
+              name="Tab"
+              component={TabController}
               options={({ navigation }) => ({
                 headerStyle: {
                   backgroundColor: '#001C00',

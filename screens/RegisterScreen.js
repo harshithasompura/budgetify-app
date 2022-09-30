@@ -11,22 +11,19 @@ import { useFonts,
 import {auth} from "../FirebaseApp";
 // get the functions from the Firebase Auth library
 import { createUserWithEmailAndPassword } from "firebase/auth";
-​
+
 const RegisterScreen = ({navigation}) => {
-​
     // ------- State Variables ---------------
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errors, setErrors] = useState("");
    
     // ------------------------ Route Params -----------------------------
-​
     // ------------------------ Lifecycle Hooks ---------------------------
     useEffect( () => {
         console.log("Register Screen Loaded")
     }, []);
    
-​
     // ---------  Event listeners ------------
     const signupPressed = async() => {
         console.log(`Register Button Pressed!`)
@@ -36,7 +33,6 @@ const RegisterScreen = ({navigation}) => {
           const userCredential = await createUserWithEmailAndPassword(auth, email, password)
           console.log("Account creation success")
           console.log(userCredential)
-​
           // - Navigate to home
           navigation.navigate("Tab");
           
@@ -45,20 +41,17 @@ const RegisterScreen = ({navigation}) => {
           setErrors(err.message) // displays errors to the UI
       }
     }
-​
     const loginPressed = async() =>  {
         console.log(`Login Button Pressed!`)
         // Navigate to Login
         navigation.navigate("Login");
     }
-​
     let [fontsLoaded] = useFonts({ IBMPlexMono_400Regular, IBMPlexMono_500Medium, IBMPlexMono_600SemiBold, IBMPlexMono_700Bold,})
     if (!fontsLoaded) {
         return <Text>Fonts are loading...</Text>
     } else {
     
     // ------------------------ View Template -----------------------
-​
     return (
         <SafeAreaView style={[styles.container]}>
             <Text style={[styles.screenHeading, {fontFamily:"IBMPlexMono_700Bold"}]}>Sign Up</Text>
@@ -98,8 +91,6 @@ const RegisterScreen = ({navigation}) => {
       )
     }
 }
-​
-​
 const styles = StyleSheet.create({
     container: {
       backgroundColor:"#C5F277",
@@ -164,5 +155,4 @@ const styles = StyleSheet.create({
         color:"white"
     }
 });
-​
 export default RegisterScreen

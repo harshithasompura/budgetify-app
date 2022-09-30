@@ -34,7 +34,7 @@ const LoginScreen = ({navigation}) => {
             const userCredential = await signInWithEmailAndPassword(auth, email, password)
             console.log(`User is logged in. Username is: ${userCredential.user.email}`)
             // Navigate to Register
-            navigation.navigate("Home");
+            navigation.navigate("Tab");
           } catch (err) {
             console.log(`Error when logging user ${err.message}`)
             setErrors(err.message) // displays errors to the UI
