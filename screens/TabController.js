@@ -6,15 +6,57 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 // Screen Imports
 import HomeScreen from './HomeScreen';
 import ExpensesScreen from './ExpensesScreen';
-// Vector Icons
-import Icon from 'react-native-vector-icons/FontAwesome';
 import SettingsScreen from './SettingsScreen';
 import CommunityScreen from './CommunityScreen';
+import EditProfileScreen from './EditProfileScreen';
+// Vector Icons
+import Icon from 'react-native-vector-icons/FontAwesome';
+
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
+// create stack navigators for each tab
+// each tab has its own stack
+const SettingsStack = createNativeStackNavigator();
+const HomeStack = createNativeStackNavigator();
+const ExpensesStack = createNativeStackNavigator();
+const CommunityStack = createNativeStackNavigator();
+
+// define screens included in the stack for Settings Tab
+const SettingsStackScreen = () => {
+  return (
+    <SettingsStack.Navigator>
+      <SettingsStack.Screen name="Your Settings" component={SettingsScreen}></SettingsStack.Screen>
+      <SettingsStack.Screen name="Edit Your Profile" component={EditProfileScreen}></SettingsStack.Screen> 
+      {/* add those screens that should be navigated inside Setting Tab in here */}
+    </SettingsStack.Navigator>
+  );
+}
+
+const ExpensesStackScreen = () => {
+  return (
+    <ExpensesStack.Navigator>
+      <ExpensesStack.Screen name="Expenses Screen" component={ExpensesScreen}></ExpensesStack.Screen>
+      {/* add those screens that should be navigated inside Expenses Tab in here */}
+    </ExpensesStack.Navigator>
+  );
+}
+
+const HomeStackScreen = () => {
+  // return (
+
+  // );
+}
+
+const CommunityStackScreen = () => {
+  // return (
+
+  // );
+}
+
 const TabController = () => {
   const Tab = createBottomTabNavigator();
 
   return (
-      
       <Tab.Navigator
         screenOptions={{
           "tabBarActiveBackgroundColor": "#001C00",
@@ -29,7 +71,7 @@ const TabController = () => {
                 headerShown: false
               }}
            />
-           <Tab.Screen name="Expenses" component={ExpensesScreen}
+           <Tab.Screen name="Expenses" component={ExpensesStackScreen}
              options={{
                 tabBarIcon: ({ color, size }) => (
                   <Icon name="money" color={color} size={size} />
@@ -45,7 +87,7 @@ const TabController = () => {
                 headerShown: false
               }}
            />
-            <Tab.Screen name="Settings" component={SettingsScreen}
+            <Tab.Screen name="Settings" component={SettingsStackScreen}
              options={{
                 tabBarIcon: ({ color, size }) => (
                   <Icon name="gear" color={color} size={size} />
@@ -54,8 +96,6 @@ const TabController = () => {
               }}
            />
         </Tab.Navigator>
-
-    
   )
 }
 
