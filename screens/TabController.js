@@ -13,6 +13,7 @@ import EditProfileScreen from './EditProfileScreen';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import CameraScreen from './components/Camera';
 
 // create stack navigators for each tab
 // each tab has its own stack
@@ -37,6 +38,10 @@ const ExpensesStackScreen = () => {
     <ExpensesStack.Navigator>
       <ExpensesStack.Screen name="Expenses Screen" component={ExpensesScreen}></ExpensesStack.Screen>
       {/* add those screens that should be navigated inside Expenses Tab in here */}
+      {/* <ExpensesStack.Screen name="Camera" component={CameraScreen}></ExpensesStack.Screen> */}
+      <ExpensesStack.Group screenOptions={{ presentation: 'modal' }}>
+        <ExpensesStack.Screen name="Camera" component={CameraScreen} />
+      </ExpensesStack.Group>
     </ExpensesStack.Navigator>
   );
 }

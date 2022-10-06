@@ -9,40 +9,11 @@ import { useFonts,
 } from '@expo-google-fonts/ibm-plex-mono'
 // Vector Icons
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { Camera, CameraType } from 'expo-camera';
-import * as MediaLibrary from 'expo-media-library';
 
-const ExpensesScreen = () => {
-  // - State Variables
-  //1. Camera Permissions
-  const [hasCameraPermissions, setCameraPermissions] = useState(false);
+
+const ExpensesScreen = ({navigation}) => {
+
   const [isCameraVisible, setCameraVisible] = useState(false);
-  const [closeCamera, setCloseCamera] = useState(false);
-  const [image, setImage] = useState(null);
-  const [type, setType] = useState(Camera.Constants.Type.back);
-  const cameraRef = useRef(null)
-
-  // - Event Listeners
-  const onCameraButtonPressed = () => {
-      console.log(`Camera Button Pressed!`)
-      setCameraVisible(true);
-      setCloseCamera(true);
-  }
-
-  const onCameraClosePressed = () => {
-    setCameraVisible(false);
-    setCloseCamera(false);
-  }
-
-  // - Lifecycle Hooks
-  useEffect(() => {
-    (async () => {
-      // Ask for camera permissions
-      MediaLibrary.requestPermissionsAsync();
-      const cameraStatus = await Camera.requestCameraPermissionsAsync();
-      setCameraPermissions(cameraStatus.status === 'granted');
-    })();
-  }, []);
 
   let [fontsLoaded] = useFonts({ IBMPlexMono_400Regular, IBMPlexMono_500Medium, IBMPlexMono_600SemiBold, IBMPlexMono_700Bold,})
   if (!fontsLoaded) {
@@ -50,47 +21,19 @@ const ExpensesScreen = () => {
   } else {
   
   // ------------------------ View Template -----------------------
-
-  const takePicture = async () => {
-    if(cameraRef) {
-      try{
-        const data = await cameraRef.current.takePictureAsync();
-        console.log(data);
-        setImage(data.uri)
-      } catch(error){
-        console.log(error)
-      }
-    }
-  }
-
-  if (hasCameraPermissions === false){
-    <Text>No Camera Permissions</Text>
-  }
   return (
     <SafeAreaView style={styles.container}>
       <View style={{flexDirection:'row', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
       <Text style={[styles.screenHeading ,{fontFamily:"IBMPlexMono_500Medium"} ]}>Expenses</Text>
-        {closeCamera &&
-          <Pressable onPress={onCameraClosePressed} style={{marginHorizontal:20}}>
-          <Icon name="close" size={20} />
-        </Pressable>
-        }
       </View>
         {!isCameraVisible && 
-         <Pressable style={styles.camera} onPress={onCameraButtonPressed}>
+         <Pressable style={styles.camera} onPress={()=>{
+            // Navigate to Register
+            navigation.navigate("Camera");
+         }}>
           <Icon name="camera" size={20} />
        </Pressable>
-        }
-        {isCameraVisible &&
-        <Camera
-          style ={styles.actualCamera}
-          type={type}
-          ref={cameraRef}
-         >
-          <Text>[CAPTURE]</Text>
-        </Camera>
-        }
-      
+        }    
     </SafeAreaView>
   )
 }
@@ -112,10 +55,6 @@ const styles = StyleSheet.create({
     marginVertical:-60,
     marginHorizontal:30,
   },
-  actualCamera : {
-    flex:1,
-    borderRadius:10,
-  }
 });
 
 export default ExpensesScreen
