@@ -9,6 +9,7 @@ import ExpensesScreen from './ExpensesScreen';
 import SettingsScreen from './SettingsScreen';
 import CommunityScreen from './CommunityScreen';
 import EditProfileScreen from './EditProfileScreen';
+import ChatScreen from './ChatScreen';
 // Vector Icons
 import Icon from 'react-native-vector-icons/FontAwesome';
 
@@ -53,9 +54,12 @@ const HomeStackScreen = () => {
 }
 
 const CommunityStackScreen = () => {
-  // return (
-
-  // );
+  return (
+    <CommunityStack.Navigator>
+      <HomeStack.Screen name="CommunityScreen" component={CommunityScreen}></HomeStack.Screen>
+      <HomeStack.Screen name="Group Chat" component={ChatScreen}></HomeStack.Screen>
+    </CommunityStack.Navigator>
+  );
 }
 
 const TabController = () => {
@@ -84,7 +88,7 @@ const TabController = () => {
                 headerShown: false
               }}
            />
-            <Tab.Screen name="Community" component={CommunityScreen}
+            <Tab.Screen name="Community" component={CommunityStackScreen}
              options={{
                 tabBarIcon: ({ color, size }) => (
                   <Icon name="star" color={color} size={size} />
