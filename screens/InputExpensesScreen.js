@@ -105,7 +105,6 @@ const InputExpensesScreen = ({ navigation }) => {
       const currentNumber = parseFloat(curValue);
       const previousNumber = parseFloat(preValue);
 
-      console.log(operator);
       switch (operator) {
         case "+": {
           setCurValue(`${(previousNumber + currentNumber).toFixed(2)}`);
