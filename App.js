@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 // Navigation imports
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, CommonActions } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Button} from 'react-native';
@@ -66,11 +66,18 @@ export default function App() {
                       try {
                         await signOut(auth)
                         console.log("User signed out")
+
+                        //reset the navigation state after logged out
+                        navigation.dispatch(
+                          CommonActions.reset({
+                            index: 0,
+                            routes: [{ name: "Login" }],
+                          })
+                        );
                       }
                       catch (err) {
-                        Alert.alert(`Signout failed, error occurred: ${err.message}`)
+                        console.log(err);
                       }
-                      navigation.navigate("Login");
                     }
                     }
                     title="Sign out"
