@@ -26,7 +26,11 @@ const CommunityStack = createNativeStackNavigator();
 // define screens included in the stack for Settings Tab
 const SettingsStackScreen = () => {
   return (
-    <SettingsStack.Navigator>
+    <SettingsStack.Navigator 
+    screenOptions={{
+      headerShown: false
+    }}
+    >
       <SettingsStack.Screen name="Your Settings" component={SettingsScreen}></SettingsStack.Screen>
       <SettingsStack.Screen name="Edit Your Profile" component={EditProfileScreen}></SettingsStack.Screen> 
       {/* add those screens that should be navigated inside Setting Tab in here */}
@@ -36,7 +40,11 @@ const SettingsStackScreen = () => {
 
 const ExpensesStackScreen = () => {
   return (
-    <ExpensesStack.Navigator>
+    <ExpensesStack.Navigator 
+    screenOptions={{
+      headerShown: false
+    }}
+    >
       <ExpensesStack.Screen name="Expenses Screen" component={ExpensesScreen}></ExpensesStack.Screen>
       {/* add those screens that should be navigated inside Expenses Tab in here */}
       {/* <ExpensesStack.Screen name="Camera" component={CameraScreen}></ExpensesStack.Screen> */}
@@ -55,7 +63,11 @@ const HomeStackScreen = () => {
 
 const CommunityStackScreen = () => {
   return (
-    <CommunityStack.Navigator>
+    <CommunityStack.Navigator 
+    screenOptions={{
+      headerShown: false
+    }}
+    >
       <HomeStack.Screen name="CommunityScreen" component={CommunityScreen}></HomeStack.Screen>
       <HomeStack.Screen name="Group Chat" component={ChatScreen}></HomeStack.Screen>
     </CommunityStack.Navigator>
