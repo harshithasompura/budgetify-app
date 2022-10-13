@@ -15,8 +15,11 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 const LoginScreen = ({navigation}) => {
 
     // ------- State Variables ---------------
+    const [loading, setLoading] = useState(false);
     const [email, setEmail] = useState('');
+    const [emailErrorMsg, setEmailErrorMsg] = useState('');
     const [password, setPassword] = useState('');
+    const [passwordErrorMsg, setPasswordErrorMsg] = useState('');
     const [errors, setErrors] = useState("");
    
     // ------------------------ Route Params -----------------------------
@@ -26,6 +29,35 @@ const LoginScreen = ({navigation}) => {
         console.log("Login Screen Loaded")
     }, []);
    
+    //Form Validation
+     const formValidation = async () => {
+        setLoading(true)
+        let errorFlag = false;
+        
+        // input validation
+        if (email.length == 0) {
+            errorFlag = true;
+            setEmailErrorMsg("Email is required feild");
+        } 
+
+        if (password.length == 0) {
+          errorFlag = true;
+          setPasswordErrorMsg("Password is required feild");
+        } else if (password.length < 8 || password.length > 20) {
+          errorFlag = true;
+          setPasswordErrorMsg("Password should be min 8 char and max 20 char");
+        }
+       
+        if (errorFlag) {
+            console.log("errorFlag");
+        } else {
+            setLoading(false);
+            setEmailErrorMsg('');
+            setPasswordErrorMsg('');
+            loginPressed();
+        }
+    }
+
 
     // ---------  Event listeners ------------
     const loginPressed = async() => {
@@ -47,6 +79,12 @@ const LoginScreen = ({navigation}) => {
         navigation.navigate("Register");
     }
 
+    const forgotPassword = async() =>  {
+        console.log(`Forgot Password Pressed!`)
+        // Navigate to ForgotPassword
+        navigation.navigate("ForgotPassword");
+    }
+
     let [fontsLoaded] = useFonts({ IBMPlexMono_400Regular, IBMPlexMono_500Medium, IBMPlexMono_600SemiBold, IBMPlexMono_700Bold,})
     if (!fontsLoaded) {
         return <Text>Fonts are loading...</Text>
@@ -59,7 +97,7 @@ const LoginScreen = ({navigation}) => {
             <Text style={[styles.screenHeading, {fontFamily:"IBMPlexMono_700Bold"}]}>Log in</Text>
             {/* Login Form */}
             <View style={[styles.formContainer]}>
-                <Text style={[styles.formLabel, ,{fontFamily:"IBMPlexMono_600SemiBold"} ]}>Email: </Text>
+                <Text style={[styles.formLabel, ,{fontFamily:"IBMPlexMono_600SemiBold"} ]}>Email </Text>
                 <TextInput 
                     style={styles.inputStyle}
                     autoCapitalize="none"
@@ -67,7 +105,8 @@ const LoginScreen = ({navigation}) => {
                     value={email}
                     onChangeText={setEmail}
                 /> 
-                <Text style={[styles.formLabel,{fontFamily:"IBMPlexMono_600SemiBold"} ]}>Password: </Text>
+                {emailErrorMsg.length > 0 && <Text style={styles.textDanger}>{emailErrorMsg}</Text>}
+                <Text style={[styles.formLabel,{fontFamily:"IBMPlexMono_600SemiBold"} ]}>Password </Text>
                 <TextInput 
                     style={styles.inputStyle}
                     autoCapitalize="none"
@@ -76,6 +115,11 @@ const LoginScreen = ({navigation}) => {
                     value={password}
                     onChangeText={setPassword}
                 /> 
+                {passwordErrorMsg.length > 0 && <Text style={styles.textDanger}>{passwordErrorMsg}</Text>}
+
+                <Pressable onPress={forgotPassword}>
+                    <Text style={styles.forgotPassword}>Forgot Password?</Text>
+                </Pressable>
             </View>   
             {/* Errors go here */}
             { errors ?  
@@ -83,7 +127,7 @@ const LoginScreen = ({navigation}) => {
                     <Text style={styles.errorText}>{errors}</Text>
                 </View>
             : null }
-            <Pressable style={styles.loginButton} onPress={loginPressed}>
+            <Pressable style={styles.loginButton} onPress={formValidation}>
                 <Text style={[styles.buttonText, {fontFamily:"IBMPlexMono_700Bold"}]}>Login</Text>
             </Pressable>
             <Pressable style={styles.signUpButton} onPress={signupPressed}>
@@ -156,6 +200,12 @@ const styles = StyleSheet.create({
     }, 
     errorText: {
         color:"white"
+    },
+    forgotPassword: {
+        fontSize: 12,
+    },
+    textDanger: {
+        color: "#dc3545"
     }
 });
 

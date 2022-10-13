@@ -19,6 +19,7 @@ import SplashScreen from './screens/SplashScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import ExpensesScreen from './screens/ExpensesScreen';
 import TabController from './screens/TabController';
+import ForgotPasswordScreen from './screens/ForgotPasswordScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -109,6 +110,13 @@ export default function App() {
                 headerShown: false, // change this to `false`
               }}
               component={LoginScreen}
+          />
+          <Stack.Screen
+              name="ForgotPassword"
+              options={{
+                headerShown: false, // change this to `false`
+              }}
+              component={ForgotPasswordScreen}
           />
           <Stack.Screen
               name="Expenses"
