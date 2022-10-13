@@ -15,7 +15,7 @@
     "@react-navigation/bottom-tabs": "^6.4.0",
     "@react-navigation/native": "^6.0.13",
     "@react-navigation/native-stack": "^6.9.0",
-    "@xmldom/xmldom": "^0.9.0-beta.2",
+    "@xmldom/xmldom": "^0.7.5",
     "expo": "~46.0.9",
     "expo-camera": "~12.3.0",
     "expo-media-library": "~14.2.0",
