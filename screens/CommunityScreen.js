@@ -1,9 +1,15 @@
+import React, {useCallback, useRef, useState} from 'react';
 import { FlatList, StyleSheet, TouchableOpacity,Text, View, } from "react-native";
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import Icon from 'react-native-vector-icons/FontAwesome';
-
+import Post from './components/Post.js';
+import BottomSheet, {BottomSheetView} from "@gorhom/bottom-sheet";
 
 const CommunityScreen = ( {navigation, route} ) => {
+ // State Variables
+ const [isOpen, setOpen] = useState(false);
+ const sheetRef = useRef(null);
+ const snapPoints = ["40%"];
   const optionList = [
                       {icon: 'chatbox-ellipses', text: 'Group Chat', screen: 'Group Chat'}, 
                       // {icon: 'chatbubbles-sharp', text: 'Forum', screen: 'ForumScreen'}
@@ -22,15 +28,31 @@ const CommunityScreen = ( {navigation, route} ) => {
 );
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, {backgroundColor: isOpen ? 'rgba(0,0,0,.6)' : "white"}]}>
       <FlatList 
         data={optionList}
         renderItem={renderItem}
       />
       {/* Add post button */}
-      <TouchableOpacity style={styles.plusIcon}> 
+      <TouchableOpacity style={styles.plusIcon} onPress={() =>{
+        setOpen(true);
+      }}> 
         <Icon name="plus" color={"#C5F277"} size={20} />
       </TouchableOpacity>
+      {/* Bottom Sheet */}
+      { 
+      isOpen ?
+      <BottomSheet 
+      ref={sheetRef}
+      snapPoints={snapPoints}
+      enablePanDownToClose={true}
+      onClose={() => setOpen(false)}
+     >
+       <BottomSheetView>
+          <Post />
+       </BottomSheetView>
+     </BottomSheet> : null
+      }
     </View>
   )
 }
