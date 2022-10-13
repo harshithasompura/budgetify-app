@@ -1,5 +1,6 @@
 import { FlatList, StyleSheet, TouchableOpacity,Text, View, } from "react-native";
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 
 const CommunityScreen = ( {navigation, route} ) => {
@@ -26,6 +27,10 @@ const CommunityScreen = ( {navigation, route} ) => {
         data={optionList}
         renderItem={renderItem}
       />
+      {/* Add post button */}
+      <TouchableOpacity style={styles.plusIcon}> 
+        <Icon name="plus" color={"#C5F277"} size={20} />
+      </TouchableOpacity>
     </View>
   )
 }
@@ -52,6 +57,17 @@ const styles = StyleSheet.create({
   },
   icon: {
     padding: 3
+  },
+  plusIcon: {
+    backgroundColor:"#001c00",
+    width:50,
+    height:50,
+    marginHorizontal:20,
+    borderRadius:50,
+    alignItems:"center",
+    justifyContent:"center",
+    marginVertical:20,
+    alignSelf:"flex-end"
   }
 });
 
