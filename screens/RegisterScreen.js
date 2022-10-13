@@ -14,16 +14,67 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 
 const RegisterScreen = ({navigation}) => {
     // ------- State Variables ---------------
+    const [loading, setLoading] = useState(false);
     const [email, setEmail] = useState('');
+    const [emailErrorMsg, setEmailErrorMsg] = useState('');
     const [password, setPassword] = useState('');
+    const [passwordErrorMsg, setPasswordErrorMsg] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [confirmPasswordErrorMsg, setConfirmPasswordErrorMsg] = useState('');
     const [errors, setErrors] = useState("");
    
     // ------------------------ Route Params -----------------------------
     // ------------------------ Lifecycle Hooks ---------------------------
     useEffect( () => {
-        console.log("Register Screen Loaded")
+        console.log("Register Screen Loaded");
     }, []);
    
+    /**
+     * authenticate user
+     */
+    const formValidation = async () => {
+        setLoading(true)
+        let errorFlag = false;
+        
+        // input validation
+        if (email.length == 0) {
+            errorFlag = true;
+            setEmailErrorMsg("Email is required feild");
+          } 
+
+        if (password.length == 0) {
+          errorFlag = true;
+          setPasswordErrorMsg("Password is required feild");
+        } else if (password.length < 8 || password.length > 20) {
+          errorFlag = true;
+          setPasswordErrorMsg("Password should be min 8 char and max 20 char");
+        } else if (password !==  confirmPassword ) {
+          errorFlag = true;
+          setPasswordErrorMsg("Passwoad and confirm password should be same.");
+        }
+        
+        if (confirmPassword.length == 0) {
+          errorFlag = true;
+          setConfirmPasswordErrorMsg("Confirm Password is required feild");
+        } else if (confirmPassword.length < 8 ||  confirmPassword.length > 20) {
+          errorFlag = true;
+          setConfirmPasswordErrorMsg("Password should be min 8 char and max 20 char");
+        } else if (password !==  confirmPassword ) {
+            errorFlag = true;
+            setConfirmPasswordErrorMsg("Passwoad and confirm password should be same.");
+        }
+       
+        if (errorFlag) {
+            console.log("errorFlag");
+        } else {
+            setLoading(false);
+            setEmailErrorMsg('');
+            setPasswordErrorMsg('');
+            setConfirmPasswordErrorMsg('');
+            signupPressed();
+        }
+    }
+
     // ---------  Event listeners ------------
     const signupPressed = async() => {
         console.log(`Register Button Pressed!`)
@@ -57,7 +108,7 @@ const RegisterScreen = ({navigation}) => {
             <Text style={[styles.screenHeading, {fontFamily:"IBMPlexMono_700Bold"}]}>Sign Up</Text>
             {/* Login Form */}
             <View style={[styles.formContainer]}>
-                <Text style={[styles.formLabel, ,{fontFamily:"IBMPlexMono_600SemiBold"} ]}>Email: </Text>
+                <Text style={[styles.formLabel, ,{fontFamily:"IBMPlexMono_600SemiBold"} ]}>Email </Text>
                 <TextInput 
                     style={styles.inputStyle}
                     autoCapitalize="none"
@@ -65,7 +116,8 @@ const RegisterScreen = ({navigation}) => {
                     value={email}
                     onChangeText={setEmail}
                 /> 
-                <Text style={[styles.formLabel,{fontFamily:"IBMPlexMono_600SemiBold"} ]}>Password: </Text>
+                {emailErrorMsg.length > 0 && <Text style={styles.textDanger}>{emailErrorMsg}</Text>}
+                <Text style={[styles.formLabel,{fontFamily:"IBMPlexMono_600SemiBold"} ]}>Password </Text>
                 <TextInput 
                     style={styles.inputStyle}
                     autoCapitalize="none"
@@ -74,6 +126,17 @@ const RegisterScreen = ({navigation}) => {
                     value={password}
                     onChangeText={setPassword}
                 /> 
+                {passwordErrorMsg.length > 0 && <Text style={styles.textDanger}>{passwordErrorMsg}</Text>}
+                <Text style={[styles.formLabel,{fontFamily:"IBMPlexMono_600SemiBold"} ]}>Confirm Password </Text>
+                <TextInput 
+                    style={styles.inputStyle}
+                    autoCapitalize="none"
+                    secureTextEntry={true}
+                    placeholder="Re-enter Password"
+                    value={confirmPassword}
+                    onChangeText={setConfirmPassword}
+                /> 
+                {confirmPasswordErrorMsg.length > 0 && <Text style={styles.textDanger}>{confirmPasswordErrorMsg}</Text>}
             </View>   
             {/* Errors go here */}
             { errors ?  
@@ -81,7 +144,7 @@ const RegisterScreen = ({navigation}) => {
                     <Text style={styles.errorText}>{errors}</Text>
                 </View>
             : null }
-            <Pressable style={styles.loginButton} onPress={signupPressed}>
+            <Pressable style={styles.loginButton} onPress={formValidation}>
                 <Text style={[styles.buttonText, {fontFamily:"IBMPlexMono_700Bold"}]}>Register</Text>
             </Pressable>
             <Pressable style={styles.signUpButton} onPress={loginPressed}>
@@ -153,6 +216,10 @@ const styles = StyleSheet.create({
     }, 
     errorText: {
         color:"white"
+    },
+    textDanger: {
+        color: "#dc3545"
     }
 });
+
 export default RegisterScreen
