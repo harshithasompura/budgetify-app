@@ -6,6 +6,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 // Screen Imports
 import HomeScreen from './HomeScreen';
 import ExpensesScreen from './ExpensesScreen';
+import InputExpensesScreen from './InputExpensesScreen';
 import SettingsScreen from './SettingsScreen';
 import CommunityScreen from './CommunityScreen';
 import EditProfileScreen from './EditProfileScreen';
@@ -15,6 +16,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import CameraScreen from './components/Camera';
+import Calculator from './components/Calculator/Calculator';
 
 // create stack navigators for each tab
 // each tab has its own stack
@@ -40,6 +42,8 @@ const ExpensesStackScreen = () => {
       <ExpensesStack.Screen name="Expenses Screen" component={ExpensesScreen}></ExpensesStack.Screen>
       {/* add those screens that should be navigated inside Expenses Tab in here */}
       {/* <ExpensesStack.Screen name="Camera" component={CameraScreen}></ExpensesStack.Screen> */}
+      <ExpensesStack.Screen name='New Expense' component={InputExpensesScreen} />
+      <ExpensesStack.Screen name='Calculator' component={Calculator} />
       <ExpensesStack.Group screenOptions={{ presentation: 'modal' }}>
         <ExpensesStack.Screen name="Camera" component={CameraScreen} />
       </ExpensesStack.Group>

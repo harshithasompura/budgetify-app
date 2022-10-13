@@ -23,38 +23,57 @@ const ExpensesScreen = ({navigation}) => {
   // ------------------------ View Template -----------------------
   return (
     <SafeAreaView style={styles.container}>
-      <View style={{flexDirection:'row', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
-      <Text style={[styles.screenHeading ,{fontFamily:"IBMPlexMono_500Medium"} ]}>Expenses</Text>
-      </View>
-        {!isCameraVisible && 
-         <Pressable style={styles.camera} onPress={()=>{
-            // Navigate to Register
-            navigation.navigate("Camera");
-         }}>
-          <Icon name="camera" size={20} />
-       </Pressable>
-        }    
+      <View style={styles.contentContainer}>
+        <View style={{flexDirection:'row', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+          <Text style={[styles.screenHeading ,{fontFamily:"IBMPlexMono_500Medium"} ]}>Expenses</Text>
+        </View>
+          {!isCameraVisible && 
+          <Pressable style={styles.camera} onPress={()=>{
+              // Navigate to Register
+              navigation.navigate("Camera");
+          }}>
+            <Icon name="camera" size={20} />
+          </Pressable>
+          }
+      </View>  
+
+      <Pressable
+        style={styles.inputExpenses}
+        onPress={()=>{navigation.navigate("New Expense")}}
+      >
+        <Text style={{ fontSize: 30, fontFamily: "IBMPlexMono_500Medium" }}>
+          Input Expenses
+        </Text>
+      </Pressable>
     </SafeAreaView>
-  )
-}
-}
+    );
+  }
+};
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor:"#fff",
+    backgroundColor: "#fff",
     flex: 1,
   },
-  screenHeading : {
-      fontSize: 30,
-      fontWeight: "400",
-      marginVertical:30,
-      marginHorizontal:30,
+  contentContainer: {
+    flex: 1,
   },
-  camera:{
-    alignSelf:'flex-end',
-    marginVertical:-60,
-    marginHorizontal:30,
+  screenHeading: {
+    fontSize: 30,
+    fontWeight: "400",
+    marginVertical: 30,
+    marginHorizontal: 30,
+  },
+  camera: {
+    alignSelf: "flex-end",
+    marginVertical: -60,
+    marginHorizontal: 30,
+  },
+  inputExpenses: {
+    marginBottom: 10,
+    alignSelf: "center",
+    backgroundColor: "#CCD1D1",
   },
 });
 
-export default ExpensesScreen
+export default ExpensesScreen;
