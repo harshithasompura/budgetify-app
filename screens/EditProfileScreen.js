@@ -77,7 +77,7 @@ const EditProfileScreen = () => {
               style={styles.inputbox}/>
                 
               <TouchableOpacity>
-                  <Text style={styles.newacctouchable} onPress={userInformation}>Update Info</Text>
+                  <Text style={styles.newacctouchable} onPress={userInformation}>Add Info</Text>
               </TouchableOpacity>
     </SafeAreaView>);
 }
