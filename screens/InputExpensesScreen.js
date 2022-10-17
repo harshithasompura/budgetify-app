@@ -212,7 +212,7 @@ const InputExpensesScreen = ({ navigation }) => {
               style={styles.details}
               onChangeText={setDetailsContent}
               value={detailsContent}
-              placeholder="Notes"
+              placeholder="Optional"
             />
           </View>
         </View>
