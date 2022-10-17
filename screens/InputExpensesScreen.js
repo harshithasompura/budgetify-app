@@ -5,21 +5,45 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
-import { Picker } from "@react-native-picker/picker";
+import DropDownPicker from "react-native-dropdown-picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { IBMPlexMono_500Medium } from "@expo-google-fonts/ibm-plex-mono";
 
 const InputExpensesScreen = ({ navigation }) => {
+  // useState for Calculator
   const [showCalculator, setShowCalculator] = useState(false);
-  const [category, setCategory] = useState("Food");
-  const [date, setDate] = useState(new Date());
-  const [showCalender, setShowCalender] = useState(false);
   const [curValue, setCurValue] = useState("0");
   const [operator, setOperator] = useState(null);
   const [preValue, setPreValue] = useState(null);
+
+  // useState for Calender
+  const [date, setDate] = useState(new Date());
+  const [showCalender, setShowCalender] = useState(false);
+
+  // useState for Category
+  const [category, setCategory] = useState(null);
+  const [openDropDown, setOpenDropDown] = useState(false);
+  const [disableDropDown, setDisableDropDown] = useState(false);
+  const [dropDownItems, setDropDownItems] = useState([
+    { label: "Food", value: "Food" },
+    { label: "Entertainment", value: "Entertainment" },
+    { label: "Transportation", value: "Transportation" },
+    { label: "Groceries", value: "Groceries" },
+    { label: "Clothing", value: "Clothing" },
+    { label: "Housing", value: "Housing" },
+    { label: "Health", value: "Health" },
+    { label: "Donations", value: "Donations" },
+    { label: "Others", value: "Others" },
+  ]);
+
+  // useState for Details
+  const [detailsContent, setDetailsContent] = useState("");
+
+  // useState for Save Button at the bottom
   const [showSave, setShowSave] = useState(true);
 
   // Open Calculator
@@ -27,20 +51,20 @@ const InputExpensesScreen = ({ navigation }) => {
     setShowCalculator(true);
     setShowCalender(false);
     setShowSave(false);
+    setDisableDropDown(true);
   };
 
   // Close Calculator
   const closeCalculator = () => {
     setShowCalculator(false);
     setShowSave(true);
-    
+    setDisableDropDown(false);
+
     if (!curValue.includes(".")) {
       setCurValue(curValue + ".00");
-    }
-    else if (curValue.endsWith(".")) {
+    } else if (curValue.endsWith(".")) {
       setCurValue(curValue + "00");
-    }
-    else if (curValue.split(".")[1].length === 1) {
+    } else if (curValue.split(".")[1].length === 1) {
       setCurValue(curValue + "0");
     }
   };
@@ -50,12 +74,14 @@ const InputExpensesScreen = ({ navigation }) => {
     setShowCalender(true);
     setShowCalculator(false);
     setShowSave(false);
+    setDisableDropDown(true);
   };
 
   // Close Calender
   const closeDatePicker = () => {
     setShowCalender(false);
     setShowSave(true);
+    setDisableDropDown(false);
   };
 
   // Run when the confirm button of calender is pressed
@@ -143,199 +169,216 @@ const InputExpensesScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView style={{ flex: 1 }}>
-        <Pressable style={styles.amountView} onPress={openCalculator}>
-          <Text style={styles.amount}>{curValue}</Text>
-        </Pressable>
+      <View style={{ flex: 1 }}>
+        <View style={styles.contentContainer}>
+          <Text style={styles.contentRowText}>
+            Amount:
+          </Text>
+          <Pressable style={styles.amountView} onPress={openCalculator}>
+            <Text style={styles.amountText}>{curValue}</Text>
+          </Pressable>
+        </View>
 
-        <Picker
-          style={styles.picker}
-          selectedValue={category}
-          onValueChange={(itemValue, itemIndex) => {
-            setCategory(itemValue);
-          }}
-        >
-          <Picker.Item label="Food" value="Food" />
-          <Picker.Item label="Entertainment" value="Entertainment" />
-          <Picker.Item label="Transportation" value="Transportation" />
-          <Picker.Item label="Groceries" value="Groceries" />
-          <Picker.Item label="Clothing" value="Clothing" />
-          <Picker.Item label="Health" value="Health" />
-          <Picker.Item label="Others" value="Others" />
-        </Picker>
-
-        <Pressable style={styles.dateTextView} onPress={openDatePicker}>
-          <Text style={{ fontSize: 30, fontFamily: "IBMPlexMono_500Medium" }}>
+        <View style={styles.contentContainer}>
+          <Text style={styles.contentRowText}>
             Date:
           </Text>
-          <Text style={styles.dateText}>{date.toLocaleDateString()}</Text>
-        </Pressable>
+          <Pressable style={styles.dateTextView} onPress={openDatePicker}>
+            <Text style={styles.dateText}>{date.toLocaleDateString()}</Text>
+          </Pressable>
+        </View>
 
-        {showCalender && (
-          <View style={styles.calenderContianer}>
-            <Pressable
-              style={styles.dateConfirmButton}
-              onPress={closeDatePicker}
-            >
-              <Text style={styles.dateConfirm}>Confirm</Text>
-            </Pressable>
-
-            <DateTimePicker
-              value={date}
-              mode="date"
-              onChange={datePickerSelect}
-              style={styles.calender}
-              display="inline"
+        <View >
+          <Text
+            style={[styles.contentRowText, {marginBottom: 5}]}
+          >
+            Category:
+          </Text>
+          <DropDownPicker
+            open={openDropDown}
+            value={category}
+            items={dropDownItems}
+            setOpen={setOpenDropDown}
+            setValue={setCategory}
+            placeholder="Select the Category"
+            textStyle={styles.dropDownText}
+            labelStyle={styles.dropDownLabel}
+            style={styles.dropDown}
+            disabled={disableDropDown ? true : false}
+          />
+          <View style={styles.contentContainer}>
+            <Text style={styles.contentRowText}>Details: </Text>
+            <TextInput
+              style={styles.details}
+              onChangeText={setDetailsContent}
+              value={detailsContent}
+              placeholder="Notes"
             />
           </View>
-        )}
+        </View>
+      </View>
 
-        {showCalculator && (
-          <View style={styles.calculator}>
-            <View style={styles.calculatorRow}>
-              <TouchableOpacity
-                onPress={() => calButtonPressed("clear")}
-                style={styles.calculatorButton}
-              >
-                <Text style={styles.calculatorText}>Clear</Text>
-              </TouchableOpacity>
+      {showCalender && (
+        <View style={styles.calenderContianer}>
+          <Pressable style={styles.dateConfirmButton} onPress={closeDatePicker}>
+            <Text style={styles.dateConfirm}>Confirm</Text>
+          </Pressable>
 
-              <TouchableOpacity
-                onPress={() => calButtonPressed("confirm")}
-                style={styles.calculatorButton}
-              >
-                <Text style={styles.calculatorText}>Confirm</Text>
-              </TouchableOpacity>
+          <DateTimePicker
+            value={date}
+            mode="date"
+            onChange={datePickerSelect}
+            style={styles.calender}
+            display="inline"
+          />
+        </View>
+      )}
 
-              <TouchableOpacity
-                onPress={() => calButtonPressed("del")}
-                style={styles.calculatorButton}
-              >
-                <Text style={styles.calculatorText}>DEL</Text>
-              </TouchableOpacity>
+      {showCalculator && (
+        <View style={styles.calculator}>
+          <View style={styles.calculatorRow}>
+          <TouchableOpacity
+              onPress={() => calButtonPressed("confirm")}
+              style={[styles.calculatorButton, {backgroundColor: "#4a963c"}]} //
+            >
+              <Text style={[styles.calculatorText, {color: "white"}]}>Confirm</Text>
+            </TouchableOpacity>
 
-              <TouchableOpacity
-                onPress={() => calButtonPressed("operator", "/")}
-                style={styles.calculatorButton}
-              >
-                <Text style={styles.calculatorText}>/</Text>
-              </TouchableOpacity>
-            </View>
+            <TouchableOpacity
+              onPress={() => calButtonPressed("clear")}
+              style={styles.calculatorButton}
+            >
+              <Text style={styles.calculatorText}>Clear</Text>
+            </TouchableOpacity>
 
-            <View style={styles.calculatorRow}>
-              <TouchableOpacity
-                onPress={() => calButtonPressed("number", "7")}
-                style={styles.calculatorButton}
-              >
-                <Text style={styles.calculatorText}>7</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => calButtonPressed("number", "8")}
-                style={styles.calculatorButton}
-              >
-                <Text style={styles.calculatorText}>8</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => calButtonPressed("number", "9")}
-                style={styles.calculatorButton}
-              >
-                <Text style={styles.calculatorText}>9</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => calButtonPressed("operator", "*")}
-                style={styles.calculatorButton}
-              >
-                <Text style={styles.calculatorText}>*</Text>
-              </TouchableOpacity>
-            </View>
+            <TouchableOpacity
+              onPress={() => calButtonPressed("del")}
+              style={styles.calculatorButton}
+            >
+              <Text style={styles.calculatorText}>DEL</Text>
+            </TouchableOpacity>
 
-            <View style={styles.calculatorRow}>
-              <TouchableOpacity
-                onPress={() => calButtonPressed("number", "4")}
-                style={styles.calculatorButton}
-              >
-                <Text style={styles.calculatorText}>4</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => calButtonPressed("number", "5")}
-                style={styles.calculatorButton}
-              >
-                <Text style={styles.calculatorText}>5</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => calButtonPressed("number", "6")}
-                style={styles.calculatorButton}
-              >
-                <Text style={styles.calculatorText}>6</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => calButtonPressed("operator", "-")}
-                style={styles.calculatorButton}
-              >
-                <Text style={styles.calculatorText}>-</Text>
-              </TouchableOpacity>
-            </View>
-
-            <View style={styles.calculatorRow}>
-              <TouchableOpacity
-                onPress={() => calButtonPressed("number", "1")}
-                style={styles.calculatorButton}
-              >
-                <Text style={styles.calculatorText}>1</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => calButtonPressed("number", "2")}
-                style={styles.calculatorButton}
-              >
-                <Text style={styles.calculatorText}>2</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => calButtonPressed("number", "3")}
-                style={styles.calculatorButton}
-              >
-                <Text style={styles.calculatorText}>3</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => calButtonPressed("operator", "+")}
-                style={styles.calculatorButton}
-              >
-                <Text style={styles.calculatorText}>+</Text>
-              </TouchableOpacity>
-            </View>
-
-            <View style={styles.calculatorRow}>
-              <TouchableOpacity
-                onPress={() => calButtonPressed("number", "0")}
-                style={styles.calculatorButton}
-              >
-                <Text style={styles.calculatorText}>0</Text>
-              </TouchableOpacity>
-              <Pressable style={styles.calculatorButton}>
-                <Text style={styles.calculatorText}></Text>
-              </Pressable>
-              <TouchableOpacity
-                onPress={() => calButtonPressed("number", ".")}
-                style={styles.calculatorButton}
-              >
-                <Text style={styles.calculatorText}>.</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => calButtonPressed("equal")}
-                style={styles.calculatorButton}
-              >
-                <Text style={styles.calculatorText}>=</Text>
-              </TouchableOpacity>
-            </View>
+            <TouchableOpacity
+              onPress={() => calButtonPressed("operator", "/")}
+              style={styles.calculatorButton}
+            >
+              <Text style={styles.calculatorText}>/</Text>
+            </TouchableOpacity>
           </View>
-        )}
-      </ScrollView>
-      
+
+          <View style={styles.calculatorRow}>
+            <TouchableOpacity
+              onPress={() => calButtonPressed("number", "7")}
+              style={styles.calculatorButton}
+            >
+              <Text style={styles.calculatorText}>7</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => calButtonPressed("number", "8")}
+              style={styles.calculatorButton}
+            >
+              <Text style={styles.calculatorText}>8</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => calButtonPressed("number", "9")}
+              style={styles.calculatorButton}
+            >
+              <Text style={styles.calculatorText}>9</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => calButtonPressed("operator", "*")}
+              style={styles.calculatorButton}
+            >
+              <Text style={styles.calculatorText}>*</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.calculatorRow}>
+            <TouchableOpacity
+              onPress={() => calButtonPressed("number", "4")}
+              style={styles.calculatorButton}
+            >
+              <Text style={styles.calculatorText}>4</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => calButtonPressed("number", "5")}
+              style={styles.calculatorButton}
+            >
+              <Text style={styles.calculatorText}>5</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => calButtonPressed("number", "6")}
+              style={styles.calculatorButton}
+            >
+              <Text style={styles.calculatorText}>6</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => calButtonPressed("operator", "-")}
+              style={styles.calculatorButton}
+            >
+              <Text style={styles.calculatorText}>-</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.calculatorRow}>
+            <TouchableOpacity
+              onPress={() => calButtonPressed("number", "1")}
+              style={styles.calculatorButton}
+            >
+              <Text style={styles.calculatorText}>1</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => calButtonPressed("number", "2")}
+              style={styles.calculatorButton}
+            >
+              <Text style={styles.calculatorText}>2</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => calButtonPressed("number", "3")}
+              style={styles.calculatorButton}
+            >
+              <Text style={styles.calculatorText}>3</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => calButtonPressed("operator", "+")}
+              style={styles.calculatorButton}
+            >
+              <Text style={styles.calculatorText}>+</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.calculatorRow}>
+            <TouchableOpacity
+              onPress={() => calButtonPressed("number", "0")}
+              style={styles.calculatorButton}
+            >
+              <Text style={styles.calculatorText}>0</Text>
+            </TouchableOpacity>
+            <Pressable style={styles.calculatorButton}>
+              <Text style={styles.calculatorText}></Text>
+            </Pressable>
+            <TouchableOpacity
+              onPress={() => calButtonPressed("number", ".")}
+              style={styles.calculatorButton}
+            >
+              <Text style={styles.calculatorText}>.</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => calButtonPressed("equal")}
+              style={styles.calculatorButton}
+            >
+              <Text style={styles.calculatorText}>=</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
+
       {showSave && (
         <Pressable
           style={styles.saveButton}
           onPress={() => {
             console.log(
-              `Amount: ${curValue}, Date: ${date.toLocaleDateString()}, Category: ${category}`
+              `Amount: ${curValue}, Date: ${date.toLocaleDateString()}, Category: ${category}, Details: ${detailsContent}`
             );
           }}
         >
@@ -351,30 +394,30 @@ const styles = StyleSheet.create({
     flex: 1,
     margin: 10,
   },
+  contentContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  contentRowText: {
+    fontSize: 30,
+    fontFamily: "IBMPlexMono_500Medium"
+  },
   amountView: {
     backgroundColor: "#fff",
     borderColor: "#72c963",
     borderWidth: 2,
     borderRadius: 20,
-    marginBottom: 20,
+    marginBottom: 10,
     height: 60,
+    width: "60%",
   },
-  amount: {
+  amountText: {
     fontSize: 45,
     fontFamily: "IBMPlexMono_500Medium",
     alignSelf: "flex-end",
     marginRight: 5,
     color: "#4a963c",
-  },
-  picker: {
-    backgroundColor: "#fff",
-    alignSelf: "center",
-    marginBottom: 10,
-    width: "100%",
-    height: 195,
-    borderColor: "#72c963",
-    borderWidth: 2,
-    borderRadius: 20,
   },
   dateTextView: {
     backgroundColor: "#fff",
@@ -384,14 +427,44 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     height: 40,
     flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center",
+    justifyContent: "flex-end",
+    width: "60%",
   },
   dateText: {
     fontSize: 32,
     fontFamily: "IBMPlexMono_500Medium",
-    alignSelf: "flex-end",
     marginRight: 5,
+    color: "#4a963c",
+  },
+  dropDown: {
+    backgroundColor: "#fff",
+    alignSelf: "center",
+    marginBottom: 10,
+    width: "100%",
+    borderColor: "#72c963",
+    borderWidth: 2,
+    borderRadius: 20,
+  },
+  dropDownLabel: {
+    fontSize: 30,
+    color: "#4a963c",
+    fontFamily: "IBMPlexMono_500Medium",
+  },
+  dropDownText: {
+    fontSize: 20,
+    color: "black",
+    fontFamily: "IBMPlexMono_500Medium",
+  },
+  details: {
+    backgroundColor: "#fff",
+    borderColor: "#72c963",
+    borderWidth: 2,
+    borderRadius: 20,
+    height: 50,
+    width: "58%",
+    padding: 10,
+    fontSize: 25,
+    fontFamily: "IBMPlexMono_500Medium",
     color: "#4a963c",
   },
   calenderContianer: {
