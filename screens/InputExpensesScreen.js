@@ -171,27 +171,21 @@ const InputExpensesScreen = ({ navigation }) => {
     <SafeAreaView style={styles.container}>
       <View style={{ flex: 1 }}>
         <View style={styles.contentContainer}>
-          <Text style={styles.contentRowText}>
-            Amount:
-          </Text>
+          <Text style={styles.contentRowText}>Amount:</Text>
           <Pressable style={styles.amountView} onPress={openCalculator}>
             <Text style={styles.amountText}>{curValue}</Text>
           </Pressable>
         </View>
 
         <View style={styles.contentContainer}>
-          <Text style={styles.contentRowText}>
-            Date:
-          </Text>
+          <Text style={styles.contentRowText}>Date:</Text>
           <Pressable style={styles.dateTextView} onPress={openDatePicker}>
             <Text style={styles.dateText}>{date.toLocaleDateString()}</Text>
           </Pressable>
         </View>
 
-        <View >
-          <Text
-            style={[styles.contentRowText, {marginBottom: 5}]}
-          >
+        <View>
+          <Text style={[styles.contentRowText, { marginBottom: 5 }]}>
             Category:
           </Text>
           <DropDownPicker
@@ -237,11 +231,13 @@ const InputExpensesScreen = ({ navigation }) => {
       {showCalculator && (
         <View style={styles.calculator}>
           <View style={styles.calculatorRow}>
-          <TouchableOpacity
+            <TouchableOpacity
               onPress={() => calButtonPressed("confirm")}
-              style={[styles.calculatorButton, {backgroundColor: "#4a963c"}]} //
+              style={[styles.calculatorButton, { backgroundColor: "#4a963c" }]} //
             >
-              <Text style={[styles.calculatorText, {color: "white"}]}>Confirm</Text>
+              <Text style={[styles.calculatorText, { color: "white" }]}>
+                Confirm
+              </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -401,7 +397,7 @@ const styles = StyleSheet.create({
   },
   contentRowText: {
     fontSize: 30,
-    fontFamily: "IBMPlexMono_500Medium"
+    fontFamily: "IBMPlexMono_500Medium",
   },
   amountView: {
     backgroundColor: "#fff",
