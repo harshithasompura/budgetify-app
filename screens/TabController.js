@@ -36,6 +36,9 @@ const SettingsStackScreen = () => {
   return (
     <SettingsStack.Navigator>
       <SettingsStack.Screen
+        options={{
+          headerShown: false,
+        }}
         name="Your Settings"
         component={SettingsScreen}
       ></SettingsStack.Screen>
@@ -52,6 +55,9 @@ const ExpensesStackScreen = () => {
   return (
     <ExpensesStack.Navigator>
       <ExpensesStack.Screen
+        options={{
+          headerShown: false,
+        }}
         name="Expenses Screen"
         component={ExpensesScreen}
       ></ExpensesStack.Screen>
@@ -77,6 +83,9 @@ const CommunityStackScreen = () => {
   return (
     <CommunityStack.Navigator>
       <HomeStack.Screen
+        options={{
+          headerShown: false,
+        }}
         name="CommunityScreen"
         component={CommunityScreen}
       ></HomeStack.Screen>

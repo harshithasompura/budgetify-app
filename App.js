@@ -44,7 +44,7 @@ export default function App() {
 
   // ------------------------ View Template -----------------------
   return (
-    <NavigationContainer> 
+    <NavigationContainer>
       <Stack.Navigator initialRouteName="Splash">
         <Stack.Screen
           name="Tab"
@@ -111,12 +111,12 @@ export default function App() {
         <Stack.Screen
           name="ForgotPassword"
           options={{
-            headerTintColor: '#B17BFF',
+            headerTintColor: "#B17BFF",
             headerTitle: "",
             headerShadowVisible: false, // applied here
             headerStyle: {
-              backgroundColor: '#F2F3F4',
-           }, 
+              backgroundColor: "#F2F3F4",
+            },
           }}
           component={ForgotPasswordScreen}
         />
