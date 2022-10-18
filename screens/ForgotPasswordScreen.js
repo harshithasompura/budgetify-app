@@ -37,6 +37,12 @@ const ForgotPasswordScreen = ({navigation}) => {
           autoCapitalize={'none'}
           keyboardType={'email-address'}
         />
+        {/* Errors go here */}
+        { errors ?  
+                <View style={styles.errors}>
+                    <Text style={styles.errorText}>{errors}</Text>
+                </View>
+            : null }
         <Pressable onPress={() => doUserPasswordReset()}>
           <View style={styles.button}>
             <Text style={styles.buttonText}>{'Request Password Reset'}</Text>

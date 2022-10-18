@@ -114,7 +114,7 @@ export default function App() {
           <Stack.Screen
               name="ForgotPassword"
               options={{
-                headerShown: false, // change this to `false`
+                headerTitle: "",
               }}
               component={ForgotPasswordScreen}
           />
