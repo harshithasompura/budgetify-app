@@ -3,11 +3,14 @@ import {
   StyleSheet,
   Text,
   SafeAreaView,
-  TextInput,
   View,
   Pressable,
+  Image,
+  FlatList,
 } from "react-native";
-import DropDownPicker from "react-native-dropdown-picker";
+import * as Progress from "react-native-progress";
+import { Divider } from "@rneui/themed";
+import BottomSheet, { BottomSheetFlatList } from "@gorhom/bottom-sheet";
 // Importing fonts
 import {
   useFonts,
@@ -20,34 +23,93 @@ import {
 import Icon from "react-native-vector-icons/FontAwesome";
 
 const ExpensesScreen = ({ navigation }) => {
-  // const [isCameraVisible, setCameraVisible] = useState(false);
+  const [plusVisible, setPlusVisible] = useState(true);
 
-  const [openDropDown, setOpenDropDown] = useState(false);
-  const [dropDownValue, setDropDownValue] = useState(null);
-  const [dropDownItems, setDropDownItems] = useState([
+  const [expensesData, setExpensesData] = useState([]);
+
+  const [openAddOptions, setOpenAddOptions] = useState(false);
+
+  const sheetRef = useRef(null);
+  const snapPoints = ["25%"];
+
+  useEffect(() => {
+    setExpensesData([
+      {
+        id: "1",
+        category: "Groceries",
+        imagePath: require(`../assets/expenses/groceries-icon.png`),
+        expense: "150.99",
+      },
+      {
+        id: "2",
+        category: "Food",
+        imagePath: require(`../assets/expenses/food-icon.png`),
+        expense: "120.00",
+      },
+      {
+        id: "3",
+        category: "Fuel",
+        imagePath: require(`../assets/expenses/fuel-icon.png`),
+        expense: "60.44",
+      },
+      {
+        id: "4",
+        category: "Housing",
+        imagePath: require(`../assets/expenses/housing-icon.png`),
+        expense: "1200.00",
+      },
+    ]);
+  }, []);
+
+  const renderFlatListItem = ({
+    item: { category, imagePath, expense },
+  }) => (
+    <Pressable>
+      <View style={styles.flatListRow}>
+        <View style={styles.flatListCategoryView}>
+          <Image style={styles.flatListCategoryIcon} source={imagePath} />
+          <Text style={styles.flatListCategoryText}>{category}</Text>
+        </View>
+        <Text style={[styles.flatListExpense, {color: openAddOptions ? 'rgba(177, 123, 255,.6)' : "#B17BFF"}]}>${expense}</Text>
+      </View>
+      <Divider style={styles.divider} />
+    </Pressable>
+  );
+
+  const bottomSheetArray = [
     {
-      label: "Camera",
-      value: "camera",
-      icon: () => <Icon name="camera" size={20} />,
+      id: 1,
+      title: "Take Photo",
+      screenName: "Camera",
+      icon: <Icon name="camera" size={20} style={{marginLeft: 20}} />,
     },
     {
-      label: "Fill in the Form",
-      value: "form",
-      icon: () => <Icon name="pencil" size={25} />,
+      id: 2,
+      title: "Fill in the Form",
+      screenName: "New Expense",
+      icon: <Icon name="pencil" size={25} style={{marginLeft: 20}}/>,
     },
-  ]);
+  ]
 
-  const dropDownChange = (value) => {
-    if (value === "camera") {
-      navigation.navigate("Camera");
-      setDropDownValue(null);
-      return;
-    } else if (value === "form") {
-      navigation.navigate("New Expense");
-      setDropDownValue(null);
-      return;
-    }
+  const bottomSheetOptionSelected = (screenName) => {
+    // navigate to corresponding screen
+    navigation.navigate(screenName);
+    setOpenAddOptions(false);
+    setPlusVisible(true);
+    return;
   };
+
+  const renderBottomSheetItem = ({ item: { title, screenName, icon } }) => (
+    <Pressable
+      onPress={() => bottomSheetOptionSelected(screenName)}
+    >
+      <Divider style={{marginBottom:20}}/>
+      <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 20}}>
+        {icon}
+        <Text style={{fontSize: 30, fontFamily:"IBMPlexMono_500Medium", marginLeft: 20}}>{title}</Text>
+      </View>
+    </Pressable>
+  );
 
   let [fontsLoaded] = useFonts({
     IBMPlexMono_400Regular,
@@ -61,8 +123,8 @@ const ExpensesScreen = ({ navigation }) => {
     // ------------------------ View Template -----------------------
     return (
       <SafeAreaView style={styles.container}>
-        <View style={styles.contentContainer}>
-          <View>
+        <View style={[styles.contentContainer, {backgroundColor: openAddOptions ? 'rgba(0,0,0,.6)' : "white"}]}>
+          <View style={styles.screenHeadingView}>
             <Text
               style={[
                 styles.screenHeading,
@@ -71,29 +133,72 @@ const ExpensesScreen = ({ navigation }) => {
             >
               Expenses
             </Text>
+
+            {plusVisible && (
+              <Pressable
+                style={styles.plus}
+                onPress={() => {
+                  // Open the bottom sheet
+                  setOpenAddOptions(true);
+                  setPlusVisible(false);
+                }}
+              >
+                <Icon name="plus" size={25} />
+              </Pressable>
+            )}
           </View>
 
-          <View style={styles.dropDownView}>
-            <DropDownPicker
-              open={openDropDown}
-              value={dropDownValue}
-              items={dropDownItems}
-              setOpen={setOpenDropDown}
-              setValue={setDropDownValue}
-              onChangeValue={(value) => dropDownChange(value)}
-              placeholder="Select Input Method"
-              textStyle={{ fontSize: 17 }}
+          <View style={[styles.summary, {backgroundColor: openAddOptions ? 'rgba(0,0,0,.6)' : "black"}]}> 
+            <Text style={[styles.summaryTitle, {color: openAddOptions ? 'rgba(224, 242, 119,.6)' : "#C5F277"}]}>Your expenses</Text>
+            <Text style={[styles.summaryExpense, {color: openAddOptions ? 'rgba(224, 242, 119,.6)' : "#C5F277"}]}>$300.56</Text>
+
+            <View style={styles.summaryRemainingView}>
+              <Text style={[styles.summaryRemaining, {color: openAddOptions ? 'rgba(224, 242, 119,.6)' : "#C5F277"}]}>Your monthly budget</Text>
+              <Text style={[styles.summaryRemaining, {color: openAddOptions ? 'rgba(224, 242, 119,.6)' : "#C5F277"}]}>$1799.45 remaining</Text>
+            </View>
+
+            <Progress.Bar
+              progress={0.3}
+              width={null}
+              height={8}
+              color={openAddOptions ? 'rgba(177, 123, 255,.6)' : "#B17BFF"}
+              unfilledColor={openAddOptions ? 'rgba(215, 217, 208,.6)' : "#fff"}
+              borderRadius={20}
+              style={styles.summaryProgressBar}
             />
+            <Pressable style={styles.summaryEditBudgetView}>
+              <Icon name="pencil" size={15} color={openAddOptions ? 'rgba(177, 123, 255,.6)' : "#B17BFF"} />
+              <Text style={[styles.summaryEditBudget, {color: openAddOptions ? 'rgba(177, 123, 255,.6)' : "#B17BFF"}]}>Edit Budget</Text>
+            </Pressable>
           </View>
-          {/* {!isCameraVisible && 
-          <Pressable style={styles.camera} onPress={()=>{
-              // Navigate to Register
-              navigation.navigate("Camera");
-          }}>
-            <Icon name="camera" size={20} />
-          </Pressable>
-          } */}
+
+          <FlatList
+            data={expensesData}
+            keyExtractor={(item) => {
+              return item.id;
+            }}
+            renderItem={renderFlatListItem}
+            style={styles.flatList}
+          />
         </View>
+
+        {openAddOptions && (
+          <BottomSheet
+            ref={sheetRef}
+            snapPoints={snapPoints}
+            enablePanDownToClose={true}
+            onClose={() => {
+              setOpenAddOptions(false);
+              setPlusVisible(true);
+            }}
+          >
+            <BottomSheetFlatList
+              data={bottomSheetArray}
+              keyExtractor={(item) => item.id}
+              renderItem={renderBottomSheetItem}
+            />
+          </BottomSheet>
+        )}
       </SafeAreaView>
     );
   }
@@ -106,29 +211,116 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flex: 1,
+  },
+  screenHeadingView: {
     flexDirection: "row",
-    justifyContent: "space-around",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   screenHeading: {
     fontSize: 30,
     fontWeight: "400",
     marginVertical: 30,
-  },
-  dropDownView: {
-    height: 30,
-    width: "50%",
-    marginVertical: 30,
-  },
-  camera: {
-    alignSelf: "flex-end",
-    marginVertical: -60,
     marginHorizontal: 30,
   },
-  inputExpenses: {
-    marginBottom: 10,
-    alignSelf: "center",
-    backgroundColor: "#CCD1D1",
+  plus: {
+    alignSelf: "flex-end",
+    marginVertical: 30,
+    marginHorizontal: 30,
   },
+  summary: {
+    alignSelf: "center",
+    borderWidth: 1,
+    borderRadius: 20,
+    borderColor: "black",
+    backgroundColor: "black",
+    width: "85%",
+  },
+  summaryTitle: {
+    color: "#C5F277",
+    marginLeft: 15,
+    marginTop: 15,
+    fontSize: 20,
+  },
+  summaryExpense: {
+    color: "#C5F277",
+    marginLeft: 15,
+    marginTop: 10,
+    fontFamily: "IBMPlexMono_500Medium",
+    fontSize: 36,
+  },
+  summaryRemainingView: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 10,
+    marginLeft: 15,
+    marginRight: 15,
+  },
+  summaryRemaining: {
+    color: "#C5F277",
+    fontSize: 15,
+  },
+  summaryProgressBar: {
+    marginTop: 15,
+    marginLeft: 15,
+    marginRight: 15,
+    borderColor: "gray",
+  },
+  summaryEditBudgetView: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    marginRight: 15,
+    marginTop: 15,
+    marginBottom: 15,
+  },
+  summaryEditBudget: {
+    color: "#B17BFF",
+    fontSize: 15,
+    fontWeight: "bold",
+    marginLeft: 5,
+  },
+  flatList: {
+    marginTop: 50,
+    alignSelf: "center",
+    width: "80%",
+  },
+  flatListRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  flatListCategoryView: {
+    flexDirection: "row",
+  },
+  flatListCategoryIcon: {
+    height: 25,
+    width: 25,
+  },
+  flatListCategoryText: {
+    fontSize: 25,
+    fontWeight: "300",
+    marginLeft: 20,
+  },
+  flatListExpense: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#B17BFF",
+  },
+  divider: {
+    marginTop: 20,
+    marginBottom: 20,
+  },
+  // dropDownView: {
+  //   height: 30,
+  //   width: "50%",
+  //   marginVertical: 30,
+  // },
+
+  // inputExpenses: {
+  //   marginBottom: 10,
+  //   alignSelf: "center",
+  //   backgroundColor: "#CCD1D1",
+  // },
 });
 
 export default ExpensesScreen;
