@@ -77,6 +77,7 @@ const InputExpensesScreen = ({ navigation }) => {
   const openDatePicker = () => {
     setShowCalender(true);
     setShowCalculator(false);
+    
 
     if (!curValue.includes(".")) {
       setCurValue(curValue + ".00");
@@ -170,7 +171,7 @@ const InputExpensesScreen = ({ navigation }) => {
           return;
         }
         default: {
-          setCurValue(`${currentNumber.toFixed(2)}`);
+          setCurValue(`${(currentNumber).toFixed(2)}`);
           return;
         }
       }
@@ -201,7 +202,8 @@ const InputExpensesScreen = ({ navigation }) => {
                 temp = curValue + "00";
               } else if (curValue.split(".")[1].length === 1) {
                 temp = curValue + "0";
-              } else {
+              }
+              else {
                 temp = curValue;
               }
               console.log(
@@ -223,16 +225,15 @@ const InputExpensesScreen = ({ navigation }) => {
             <Text style={styles.amountText}>${curValue}</Text>
           </View>
 
-          <Pressable style={styles.contentContainer} onPress={openDatePicker}>
+          <Pressable style={styles.contentContainer}
+            onPress={openDatePicker}>
             <Text style={styles.contentText}>
               {isDateSelected ? date.toLocaleDateString() : "Date of Expense"}
             </Text>
           </Pressable>
 
           <Pressable style={styles.contentContainer}>
-            <Text style={styles.contentText}>
-              {category ? category : "Select Category"}
-            </Text>
+            <Text style={styles.contentText}>{category ? category : "Select Category"}</Text>
           </Pressable>
 
           {showCalculator && (

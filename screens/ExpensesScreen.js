@@ -7,14 +7,11 @@ import {
   Pressable,
   Image,
   FlatList,
-  TouchableOpacity,
+  TouchableOpacity
 } from "react-native";
 import * as Progress from "react-native-progress";
 import { Divider } from "@rneui/themed";
-import BottomSheet, {
-  BottomSheetFlatList,
-  BottomSheetView,
-} from "@gorhom/bottom-sheet";
+import BottomSheet, { BottomSheetFlatList, BottomSheetView } from "@gorhom/bottom-sheet";
 
 // Importing fonts
 import {
@@ -32,8 +29,7 @@ const ExpensesScreen = ({ navigation }) => {
 
   const [expensesData, setExpensesData] = useState([]);
 
-  const [openInputExpensesOptions, setOpenInputExpensesOptions] =
-    useState(false);
+  const [openInputExpensesOptions, setOpenInputExpensesOptions] = useState(false);
 
   const sheetRef = useRef(null);
   const snapPoints = ["25%"];
@@ -69,28 +65,20 @@ const ExpensesScreen = ({ navigation }) => {
 
   useEffect(() => {
     setPlusVisible(true);
-  }, [openInputExpensesOptions]);
+  }, [openInputExpensesOptions])
+  
 
   // render the expenses flatList
-  const renderFlatListItem = ({ item: { category, imagePath, expense } }) => (
+  const renderFlatListItem = ({
+    item: { category, imagePath, expense },
+  }) => (
     <Pressable>
       <View style={styles.flatListRow}>
         <View style={styles.flatListCategoryView}>
           <Image style={styles.flatListCategoryIcon} source={imagePath} />
           <Text style={styles.flatListCategoryText}>{category}</Text>
         </View>
-        <Text
-          style={[
-            styles.flatListExpense,
-            {
-              color: openInputExpensesOptions
-                ? "rgba(177, 123, 255,.6)"
-                : "#B17BFF",
-            },
-          ]}
-        >
-          ${expense}
-        </Text>
+        <Text style={[styles.flatListExpense, {color: openInputExpensesOptions ? 'rgba(177, 123, 255,.6)' : "#B17BFF"}]}>${expense}</Text>
       </View>
       <Divider style={styles.divider} />
     </Pressable>
@@ -102,15 +90,15 @@ const ExpensesScreen = ({ navigation }) => {
       id: 1,
       title: "Take Photo",
       screenName: "Camera",
-      icon: <Icon name="camera" size={20} style={{ marginLeft: 20 }} />,
+      icon: <Icon name="camera" size={20} style={{marginLeft: 20}} />,
     },
     {
       id: 2,
       title: "Fill in the Form",
       screenName: "Add Expense",
-      icon: <Icon name="pencil" size={25} style={{ marginLeft: 20 }} />,
+      icon: <Icon name="pencil" size={25} style={{marginLeft: 20}}/>,
     },
-  ];
+  ]
 
   const bottomSheetOptionSelected = (screenName) => {
     // navigate to corresponding screen
@@ -122,21 +110,13 @@ const ExpensesScreen = ({ navigation }) => {
 
   // render the bottom sheet flatList
   const renderBottomSheetItem = ({ item: { title, screenName, icon } }) => (
-    <Pressable onPress={() => bottomSheetOptionSelected(screenName)}>
-      <Divider style={{ marginBottom: 20 }} />
-      <View
-        style={{ flexDirection: "row", alignItems: "center", marginBottom: 20 }}
-      >
+    <Pressable
+      onPress={() => bottomSheetOptionSelected(screenName)}
+    >
+      <Divider style={{marginBottom:20}}/>
+      <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 20}}>
         {icon}
-        <Text
-          style={{
-            fontSize: 30,
-            fontFamily: "IBMPlexMono_500Medium",
-            marginLeft: 20,
-          }}
-        >
-          {title}
-        </Text>
+        <Text style={{fontSize: 30, fontFamily:"IBMPlexMono_500Medium", marginLeft: 20}}>{title}</Text>
       </View>
     </Pressable>
   );
@@ -153,16 +133,7 @@ const ExpensesScreen = ({ navigation }) => {
     // ------------------------ View Template -----------------------
     return (
       <SafeAreaView style={styles.container}>
-        <View
-          style={[
-            styles.contentContainer,
-            {
-              backgroundColor: openInputExpensesOptions
-                ? "rgba(0,0,0,.6)"
-                : "white",
-            },
-          ]}
-        >
+        <View style={[styles.contentContainer, {backgroundColor: openInputExpensesOptions ? 'rgba(0,0,0,.6)' : "white"}]}>
           <View style={styles.screenHeadingView}>
             <Text
               style={[
@@ -186,103 +157,27 @@ const ExpensesScreen = ({ navigation }) => {
             )}
           </View>
 
-          <View
-            style={[
-              styles.summary,
-              {
-                backgroundColor: openInputExpensesOptions
-                  ? "rgba(0,0,0,.6)"
-                  : "black",
-              },
-            ]}
-          >
-            <Text
-              style={[
-                styles.summaryTitle,
-                {
-                  color: openInputExpensesOptions
-                    ? "rgba(224, 242, 119,.6)"
-                    : "#C5F277",
-                },
-              ]}
-            >
-              Your expenses
-            </Text>
-            <Text
-              style={[
-                styles.summaryExpense,
-                {
-                  color: openInputExpensesOptions
-                    ? "rgba(224, 242, 119,.6)"
-                    : "#C5F277",
-                },
-              ]}
-            >
-              $300.56
-            </Text>
+          <View style={[styles.summary, {backgroundColor: openInputExpensesOptions ? 'rgba(0,0,0,.6)' : "black"}]}> 
+            <Text style={[styles.summaryTitle, {color: openInputExpensesOptions ? 'rgba(224, 242, 119,.6)' : "#C5F277"}]}>Your expenses</Text>
+            <Text style={[styles.summaryExpense, {color: openInputExpensesOptions ? 'rgba(224, 242, 119,.6)' : "#C5F277"}]}>$300.56</Text>
 
             <View style={styles.summaryRemainingView}>
-              <Text
-                style={[
-                  styles.summaryRemaining,
-                  {
-                    color: openInputExpensesOptions
-                      ? "rgba(224, 242, 119,.6)"
-                      : "#C5F277",
-                  },
-                ]}
-              >
-                Your monthly budget
-              </Text>
-              <Text
-                style={[
-                  styles.summaryRemaining,
-                  {
-                    color: openInputExpensesOptions
-                      ? "rgba(224, 242, 119,.6)"
-                      : "#C5F277",
-                  },
-                ]}
-              >
-                $1799.45 remaining
-              </Text>
+              <Text style={[styles.summaryRemaining, {color: openInputExpensesOptions ? 'rgba(224, 242, 119,.6)' : "#C5F277"}]}>Your monthly budget</Text>
+              <Text style={[styles.summaryRemaining, {color: openInputExpensesOptions ? 'rgba(224, 242, 119,.6)' : "#C5F277"}]}>$1799.45 remaining</Text>
             </View>
 
             <Progress.Bar
               progress={0.3}
               width={null}
               height={8}
-              color={
-                openInputExpensesOptions ? "rgba(177, 123, 255,.6)" : "#B17BFF"
-              }
-              unfilledColor={
-                openInputExpensesOptions ? "rgba(215, 217, 208,.6)" : "#fff"
-              }
+              color={openInputExpensesOptions ? 'rgba(177, 123, 255,.6)' : "#B17BFF"}
+              unfilledColor={openInputExpensesOptions ? 'rgba(215, 217, 208,.6)' : "#fff"}
               borderRadius={20}
               style={styles.summaryProgressBar}
             />
             <Pressable style={styles.summaryEditBudgetView}>
-              <Icon
-                name="pencil"
-                size={15}
-                color={
-                  openInputExpensesOptions
-                    ? "rgba(177, 123, 255,.6)"
-                    : "#B17BFF"
-                }
-              />
-              <Text
-                style={[
-                  styles.summaryEditBudget,
-                  {
-                    color: openInputExpensesOptions
-                      ? "rgba(177, 123, 255,.6)"
-                      : "#B17BFF",
-                  },
-                ]}
-              >
-                Edit Budget
-              </Text>
+              <Icon name="pencil" size={15} color={openInputExpensesOptions ? 'rgba(177, 123, 255,.6)' : "#B17BFF"} />
+              <Text style={[styles.summaryEditBudget, {color: openInputExpensesOptions ? 'rgba(177, 123, 255,.6)' : "#B17BFF"}]}>Edit Budget</Text>
             </Pressable>
           </View>
 
