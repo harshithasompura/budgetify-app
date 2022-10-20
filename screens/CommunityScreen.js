@@ -1,6 +1,12 @@
 import React, { useCallback, useRef, useState } from "react";
-import { StyleSheet, TouchableOpacity, Text, View } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import {
+  FlatList,
+  StyleSheet,
+  TouchableOpacity,
+  Text,
+  View,
+} from "react-native";
+import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import Icon from "react-native-vector-icons/FontAwesome";
 import Post from "./components/Post.js";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
@@ -10,6 +16,26 @@ const CommunityScreen = ({ navigation, route }) => {
   const [isOpen, setOpen] = useState(false);
   const sheetRef = useRef(null);
   const snapPoints = ["40%"];
+  const optionList = [
+    { icon: "chatbox-ellipses", text: "Group Chat", screen: "Group Chat" },
+    // {icon: 'chatbubbles-sharp', text: 'Forum', screen: 'ForumScreen'}
+  ];
+
+  const renderItem = ({ item }) => (
+    <TouchableOpacity
+      onPress={() => {
+        navigation.navigate(item.screen);
+      }}
+    >
+      <View style={styles.listItem}>
+        <View style={{ flexDirection: "row" }}>
+          <Ionicons style={styles.icon} name={item.icon} size={35} />
+          <Text style={styles.text}> {item.text} </Text>
+        </View>
+        <FontAwesome name="angle-right" size={30} color="orangered" />
+      </View>
+    </TouchableOpacity>
+  );
 
   return (
     <View
@@ -18,29 +44,7 @@ const CommunityScreen = ({ navigation, route }) => {
         { backgroundColor: isOpen ? "rgba(0,0,0,.6)" : "white" },
       ]}
     >
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-          margin: 20,
-        }}
-      >
-        {/* Header: Title + Chat button/icon */}
-        <Text
-          style={[styles.screenHeading, { fontFamily: "IBMPlexMono_700Bold" }]}
-        >
-          Community
-        </Text>
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate("Chats List");
-          }}
-        >
-          <Ionicons style={styles.icon} name="chatbox-ellipses" size={35} />
-        </TouchableOpacity>
-      </View>
-      <View style={styles.postFeed}>{/* Post feed should go here */}</View>
+      <FlatList data={optionList} renderItem={renderItem} />
       {/* Add post button */}
       <TouchableOpacity
         style={styles.plusIcon}
@@ -59,7 +63,13 @@ const CommunityScreen = ({ navigation, route }) => {
           onClose={() => setOpen(false)}
         >
           <BottomSheetView>
-            <Post />
+            <Post
+              postResult={(data) => {
+                if (data === true) {
+                  setOpen(false);
+                }
+              }}
+            />
           </BottomSheetView>
         </BottomSheet>
       ) : null}
@@ -72,9 +82,20 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
   },
-  screenHeading: {
-    fontSize: 30,
-    fontWeight: "400",
+  listItem: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: 10,
+    borderBottomColor: "#D6D6D6",
+    borderBottomWidth: 1,
+  },
+  text: {
+    flexDirection: "column",
+    alignItems: "flex-start",
+    justifyContent: "center",
+    fontSize: 25,
+    padding: 5,
   },
   icon: {
     padding: 3,
@@ -89,9 +110,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginVertical: 20,
     alignSelf: "flex-end",
-  },
-  postFeed: {
-    flex: 1,
   },
 });
 

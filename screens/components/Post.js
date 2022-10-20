@@ -12,17 +12,19 @@ import { db } from "../../FirebaseApp";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { auth } from "../../FirebaseApp";
 import { onAuthStateChanged } from "firebase/auth";
-const Post = () => {
+const Post = (props) => {
   const [comment, setComment] = useState("");
   const [uid, setUid] = useState();
+  const [username, setUsername] = useState();
+  const blankAvatar = `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBGwlAahaapmmJ7Riv_L_ZujOcfWSUJnm71g&usqp=CAU`;
 
   useEffect(() => {
     const unsubscribeOnAuth = onAuthStateChanged(auth, (user) => {
       if (user) {
         setUid(user.uid);
-        // setUsername(() => {
-        //     return user.email.split('@')[0];
-        // });
+        setUsername(() => {
+          return user.email.split("@")[0];
+        });
       } else {
         console.log("no signed-in user");
       }
@@ -36,18 +38,19 @@ const Post = () => {
   const addComment = async () => {
     try {
       await addDoc(collection(db, "post"), {
+        username,
+        userAvatar: blankAvatar,
         uid,
         createdAt: serverTimestamp(),
         comment,
+        likesCount: 0,
+        replyComment: [],
       });
+      // Post is successful
+      props.postResult(true);
     } catch (err) {
       console.log(err);
     }
-    // addDoc(collection(db, 'chat-room'), {
-    //     uid,
-    //     comment,
-    //     creation: firebase.firestore.FieldValue.serverTimestamp(),
-    //   })
   };
 
   return (
@@ -61,11 +64,20 @@ const Post = () => {
         }}
       >
         {/* Header */}
-        <Text style={{ fontSize: 19, fontWeight: "bold", flex: 1 }}>
+        <Text
+          style={{
+            fontSize: 19,
+            fontWeight: "bold",
+            flex: 1,
+            fontFamily: "IBMPlexMono_700Bold",
+          }}
+        >
           Create a Post
         </Text>
         <Pressable style={styles.postButton} onPress={addComment}>
-          <Text style={{ color: "white" }}>Post</Text>
+          <Text style={{ color: "white", fontFamily: "IBMPlexMono_500Medium" }}>
+            Post
+          </Text>
         </Pressable>
       </View>
       <View style={{ display: "flex", flexDirection: "row", marginTop: 10 }}>
@@ -73,7 +85,7 @@ const Post = () => {
         <Image
           style={styles.logo}
           source={{
-            uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBGwlAahaapmmJ7Riv_L_ZujOcfWSUJnm71g&usqp=CAU",
+            uri: blankAvatar,
           }}
         />
         <TextInput
@@ -91,6 +103,7 @@ const styles = StyleSheet.create({
     height: "100%",
     padding: 20,
     margin: 10,
+    fontFamily: "IBMPlexMono_500Medium",
   },
   logo: {
     width: 66,
