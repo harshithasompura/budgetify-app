@@ -24,6 +24,10 @@ import Icon from "react-native-vector-icons/FontAwesome";
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import CameraScreen from "./components/Camera";
+import ManageCategoriesScreen from "./ManageCategoriesScreen";
+import ChangePasswordScreen from "./ChangePasswordScreen";
+import ManageCurrenciesScreen from "./ManageCurrenciesScreen";
+import NotificationScreen from "./NotificationScreen";
 
 // create stack navigators for each tab
 // each tab has its own stack
@@ -46,6 +50,54 @@ const SettingsStackScreen = () => {
       <SettingsStack.Screen
         name="Edit Your Profile"
         component={EditProfileScreen}
+      ></SettingsStack.Screen>
+      <SettingsStack.Screen
+      options={{
+        headerTintColor: "#B17BFF",
+        headerTitle: "",
+        headerShadowVisible: false, // applied here
+        headerStyle: {
+          backgroundColor: "#F2F3F4",
+        },
+      }}
+        name="ChangePassword"
+        component={ChangePasswordScreen}
+      ></SettingsStack.Screen>
+      <SettingsStack.Screen
+      options={{
+        headerTintColor: "#B17BFF",
+        headerTitle: "",
+        headerShadowVisible: false, // applied here
+        headerStyle: {
+          backgroundColor: "#F2F3F4",
+        },
+      }}
+        name="ManageCategories"
+        component={ManageCategoriesScreen}
+      ></SettingsStack.Screen>
+            <SettingsStack.Screen
+            options={{
+              headerTintColor: "#B17BFF",
+              headerTitle: "",
+              headerShadowVisible: false, // applied here
+              headerStyle: {
+                backgroundColor: "#F2F3F4",
+              },
+            }}
+        name="ManageCurrencies"
+        component={ManageCurrenciesScreen}
+      ></SettingsStack.Screen>
+            <SettingsStack.Screen
+            options={{
+              headerTintColor: "#B17BFF",
+              headerTitle: "",
+              headerShadowVisible: false, // applied here
+              headerStyle: {
+                backgroundColor: "#F2F3F4",
+              },
+            }}
+        name="Notifications"
+        component={NotificationScreen}
       ></SettingsStack.Screen>
       {/* add those screens that should be navigated inside Setting Tab in here */}
     </SettingsStack.Navigator>
