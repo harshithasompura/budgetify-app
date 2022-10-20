@@ -22,22 +22,48 @@ const CommunityScreen = ({ navigation, route }) => {
   const sheetRef = useRef(null);
   const snapPoints = ["40%"];
   const [postsList, setPostsList] = useState([]);
+  const [likeButton, setLikeButton] = useState("heart-outline")
 
   const renderItem = ({item}) => {
-    const date = new Date(item.createdAt);
-    const minutes =  date.getDate()  + "-" + (date.getMonth()+1) + "-" + date.getFullYear() + " " +
-    date.getHours() + ":" + date.getMinutes();
+   const date = item.createdAt;
+   var minutes;
+   if(date === ""){
+    minutes = "";
+   } else {
+     minutes =  date.getDate()  + "-" + (date.getMonth()+1) + "-" + date.getFullYear() + " " +  date.getHours() + ":" + date.getMinutes();
+   }
     return(
       <View style={[styles.postContainer, {fontFamily:"IBMPlexMono_500Medium"}]}>
           <View style={styles.postHeader}>
             {/* Post header */}
             <Image style={styles.userAvatar} source={{ url: item.userPhoto }} />
             <View>
-              <Text style={[{fontFamily:"IBMPlexMono_500Medium"}]}>@{item.username}</Text>
+              <Text style={[{fontFamily:"IBMPlexMono_700Bold"}]}>@{item.username}</Text>
               <Text>{minutes}</Text>
             </View>
           </View>
-           <Text style={[{fontFamily:"IBMPlexMono_400Regular", fontSize:18}]}> {item.comment} </Text>
+          <Text style={[{color: "#B17BFF",fontFamily:"IBMPlexMono_400Regular", fontSize:20, marginLeft:0, marginTop:4, paddingBottom:20}]}> {item.comment} </Text>
+          <View style={{flexDirection:"row", marginLeft:4}}>
+            {/* Icons - likes and comments*/}
+            <TouchableOpacity onPress={() =>{
+              if(likeButton === "heart-outline"){
+                setLikeButton("heart");
+              } else{
+                setLikeButton("heart-outline");
+              }
+            }}>
+              <Ionicons style={{color:"#8C8C8C", marginTop:10, marginRight:20}} name={likeButton} size={30} />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() =>{
+              // if(likeButton === "heart-outline"){
+              //   setLikeButton("heart");
+              // } else{
+              //   setLikeButton("heart-outline");
+              // }
+            }}>
+              <Icon style={{color:"#8C8C8C", marginTop:10, marginRight:10}} name="comment-o" size={30} />
+            </TouchableOpacity>
+          </View>
       </View>
     );
   }
@@ -49,7 +75,7 @@ const CommunityScreen = ({ navigation, route }) => {
         comment: doc.data().comment,
         username: doc.data().username,
         userPhoto: doc.data().userAvatar,
-        createdAt: Date((doc.data().createdAt.seconds)),
+        createdAt: (doc.data().createdAt) === null ? "" : (doc.data().createdAt).toDate(),
         // name: doc.data().name,
         // isGroup: doc.data().isGroup,
         
@@ -93,7 +119,7 @@ const CommunityScreen = ({ navigation, route }) => {
       <View style={styles.postFeed}>
         {/* Post feed should go here */}
         <FlatList data={postsList} renderItem={renderItem} />
-      </View>
+      
       {/* Add post button */}
       <TouchableOpacity
         style={styles.plusIcon}
@@ -123,6 +149,7 @@ const CommunityScreen = ({ navigation, route }) => {
         </BottomSheet>
       ) : null}
     </View>
+    </View>
   );
 };
 
@@ -142,22 +169,26 @@ const styles = StyleSheet.create({
     backgroundColor: "#001c00",
     width: 50,
     height: 50,
-    marginHorizontal: 20,
+    // marginHorizontal: 20,
     borderRadius: 50,
     alignItems: "center",
     justifyContent: "center",
-    marginVertical: 20,
+    // marginVertical: 20,
     alignSelf: "flex-end",
   },
   postFeed: {
     flex: 2,
+    // borderWidth:1,
+    marginHorizontal:20,
+    height:"100%",
   },
   postContainer :{
     borderRadius:8,
-    borderWidth:1,
-    marginHorizontal:20,
-    marginVertical:8,
-    padding:20,
+    // borderWidth:1,
+    borderBottomWidth:1,
+    paddingHorizontal:20,
+    paddingVertical:10,
+    marginBottom:4,
   },
   postHeader:{
     flexDirection:"row",
@@ -165,8 +196,9 @@ const styles = StyleSheet.create({
     marginBottom:10,
   },
   userAvatar: {
-    height: 60,
-    width: 60,
+    height: 70,
+    alignSelf:"flex-start",
+    width: 70,
     backgroundColor:"pink",
   },
 });
