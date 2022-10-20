@@ -1,4 +1,11 @@
-import {StyleSheet, Text, SafeAreaView, TextInput, View, Pressable} from "react-native";
+import {
+  StyleSheet,
+  Text,
+  SafeAreaView,
+  TextInput,
+  View,
+  Pressable,
+} from "react-native";
 
 const ManageCurrenciesScreen = () => {
   return (

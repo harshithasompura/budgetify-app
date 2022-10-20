@@ -52,50 +52,50 @@ const SettingsStackScreen = () => {
         component={EditProfileScreen}
       ></SettingsStack.Screen>
       <SettingsStack.Screen
-      options={{
-        headerTintColor: "#B17BFF",
-        headerTitle: "",
-        headerShadowVisible: false, // applied here
-        headerStyle: {
-          backgroundColor: "#F2F3F4",
-        },
-      }}
+        options={{
+          headerTintColor: "#B17BFF",
+          headerTitle: "",
+          headerShadowVisible: false, // applied here
+          headerStyle: {
+            backgroundColor: "#F2F3F4",
+          },
+        }}
         name="ChangePassword"
         component={ChangePasswordScreen}
       ></SettingsStack.Screen>
       <SettingsStack.Screen
-      options={{
-        headerTintColor: "#B17BFF",
-        headerTitle: "",
-        headerShadowVisible: false, // applied here
-        headerStyle: {
-          backgroundColor: "#F2F3F4",
-        },
-      }}
+        options={{
+          headerTintColor: "#B17BFF",
+          headerTitle: "",
+          headerShadowVisible: false, // applied here
+          headerStyle: {
+            backgroundColor: "#F2F3F4",
+          },
+        }}
         name="ManageCategories"
         component={ManageCategoriesScreen}
       ></SettingsStack.Screen>
-            <SettingsStack.Screen
-            options={{
-              headerTintColor: "#B17BFF",
-              headerTitle: "",
-              headerShadowVisible: false, // applied here
-              headerStyle: {
-                backgroundColor: "#F2F3F4",
-              },
-            }}
+      <SettingsStack.Screen
+        options={{
+          headerTintColor: "#B17BFF",
+          headerTitle: "",
+          headerShadowVisible: false, // applied here
+          headerStyle: {
+            backgroundColor: "#F2F3F4",
+          },
+        }}
         name="ManageCurrencies"
         component={ManageCurrenciesScreen}
       ></SettingsStack.Screen>
-            <SettingsStack.Screen
-            options={{
-              headerTintColor: "#B17BFF",
-              headerTitle: "",
-              headerShadowVisible: false, // applied here
-              headerStyle: {
-                backgroundColor: "#F2F3F4",
-              },
-            }}
+      <SettingsStack.Screen
+        options={{
+          headerTintColor: "#B17BFF",
+          headerTitle: "",
+          headerShadowVisible: false, // applied here
+          headerStyle: {
+            backgroundColor: "#F2F3F4",
+          },
+        }}
         name="Notifications"
         component={NotificationScreen}
       ></SettingsStack.Screen>
@@ -176,7 +176,7 @@ const TabController = () => {
         tabBarInactiveTintColor: "gray",
       }}
     >
-      <Tab.Screen
+      {/* <Tab.Screen
         component={HomeScreen}
         name="Home"
         options={{
@@ -185,7 +185,7 @@ const TabController = () => {
           ),
           headerShown: false,
         }}
-      />
+      /> */}
       <Tab.Screen
         name="Expenses"
         component={ExpensesStackScreen}

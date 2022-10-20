@@ -76,7 +76,18 @@ const ExpensesScreen = ({ navigation }) => {
           <Image style={styles.flatListCategoryIcon} source={imagePath} />
           <Text style={styles.flatListCategoryText}>{category}</Text>
         </View>
-        <Text style={[styles.flatListExpense, {color: openInputExpensesOptions ? 'rgba(202, 170, 250,.6)' : "#B17BFF"}]}>${expense}</Text>
+        <Text
+          style={[
+            styles.flatListExpense,
+            {
+              color: openInputExpensesOptions
+                ? "rgba(202, 170, 250,.6)"
+                : "#B17BFF",
+            },
+          ]}
+        >
+          ${expense}
+        </Text>
       </View>
       <Divider style={styles.divider} />
     </Pressable>
@@ -238,14 +249,37 @@ const ExpensesScreen = ({ navigation }) => {
               progress={0.3}
               width={null}
               height={8}
-              color={openInputExpensesOptions ? 'rgba(202, 170, 250,.6)' : "#B17BFF"}
-              unfilledColor={openInputExpensesOptions ? 'rgba(215, 217, 208,.6)' : "#fff"}
+              color={
+                openInputExpensesOptions ? "rgba(202, 170, 250,.6)" : "#B17BFF"
+              }
+              unfilledColor={
+                openInputExpensesOptions ? "rgba(215, 217, 208,.6)" : "#fff"
+              }
               borderRadius={20}
               style={styles.summaryProgressBar}
             />
             <Pressable style={styles.summaryEditBudgetView}>
-              <Icon name="pencil" size={15} color={openInputExpensesOptions ? 'rgba(202, 170, 250,.6)' : "#B17BFF"} />
-              <Text style={[styles.summaryEditBudget, {color: openInputExpensesOptions ? 'rgba(202, 170, 250,.6)' : "#B17BFF"}]}>Edit Budget</Text>
+              <Icon
+                name="pencil"
+                size={15}
+                color={
+                  openInputExpensesOptions
+                    ? "rgba(202, 170, 250,.6)"
+                    : "#B17BFF"
+                }
+              />
+              <Text
+                style={[
+                  styles.summaryEditBudget,
+                  {
+                    color: openInputExpensesOptions
+                      ? "rgba(202, 170, 250,.6)"
+                      : "#B17BFF",
+                  },
+                ]}
+              >
+                Edit Budget
+              </Text>
             </Pressable>
           </View>
 
