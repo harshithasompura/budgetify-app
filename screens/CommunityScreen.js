@@ -199,6 +199,7 @@ const styles = StyleSheet.create({
     height: 70,
     alignSelf:"flex-start",
     width: 70,
+    backgroundColor:"pink",
   },
 });
 
