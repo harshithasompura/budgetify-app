@@ -18,6 +18,7 @@ import SettingsScreen from "./SettingsScreen";
 import CommunityScreen from "./CommunityScreen";
 import EditProfileScreen from "./EditProfileScreen";
 import ChatScreen from "./ChatScreen";
+import ChatsListScreen from "./ChatsListScreen";
 // Vector Icons
 import Icon from "react-native-vector-icons/FontAwesome";
 
@@ -78,17 +79,29 @@ const HomeStackScreen = () => {
 const CommunityStackScreen = () => {
   return (
     <CommunityStack.Navigator>
-      <HomeStack.Screen
+      <CommunityStack.Screen
         options={{
           headerShown: false,
         }}
         name="CommunityScreen"
         component={CommunityScreen}
-      ></HomeStack.Screen>
-      <HomeStack.Screen
-        name="Group Chat"
+      ></CommunityStack.Screen>
+
+      <CommunityStack.Screen
+        options={{
+          headerShown: false,
+        }}
+        name="Chats List"
+        component={ChatsListScreen}
+      ></CommunityStack.Screen>
+
+      <CommunityStack.Screen
+        options={{
+          headerShown: false,
+        }}
+        name="Chat Room"
         component={ChatScreen}
-      ></HomeStack.Screen>
+      ></CommunityStack.Screen>
     </CommunityStack.Navigator>
   );
 };

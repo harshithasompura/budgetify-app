@@ -34,7 +34,7 @@ const CommunityScreen = ({ navigation, route }) => {
         </Text>
         <TouchableOpacity
           onPress={() => {
-            navigation.navigate("Group Chat");
+            navigation.navigate("Chats List");
           }}
         >
           <Ionicons style={styles.icon} name="chatbox-ellipses" size={35} />
