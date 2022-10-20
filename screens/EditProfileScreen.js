@@ -43,7 +43,7 @@ const EditProfileScreen = () => {
       };
       try {
         const insertedDocument = await addDoc(
-          collection(db, "users", loggedInUser, "data"),
+          collection(db, "users", loggedInUser, "studentdata"),
           dataToInsert
         );
         console.log(`Document created, id is: ${insertedDocument.id}`);
@@ -55,7 +55,7 @@ const EditProfileScreen = () => {
   };
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.headingtext}> Update Your Profile </Text>
+      <Text style={styles.screenHeading}> Student Information </Text>
 
       <Text style={styles.inputtext}>Email:</Text>
       <TextInput
@@ -66,16 +66,16 @@ const EditProfileScreen = () => {
         value={loggedInUser}
         style={styles.inputbox}
       />
-      <Text style={styles.inputtext}>Name:</Text>
+      <Text style={styles.inputtext}>Username:</Text>
       <TextInput
-        placeholder="Enter Name"
-        textContentType="emailAddress"
+        placeholder="Enter Username"
         autoCapitalize="none"
         returnKeyType="next"
         value={studentNameFromUser}
         onChangeText={setStudentNameFromUser}
         style={styles.inputbox}
       />
+      
       <Text style={styles.inputtext}>Student ID:</Text>
 
       <TextInput
@@ -87,80 +87,63 @@ const EditProfileScreen = () => {
       />
 
       <TouchableOpacity>
-        <Text style={styles.newacctouchable} onPress={userInformation}>
-          Add Info
+        <Text style={styles.addInfoPress} onPress={userInformation}>
+          Add Student Information
         </Text>
       </TouchableOpacity>
+      
     </SafeAreaView>
   );
 };
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
+    flex:1,
+    justifyContent:'center',
+    backgroundColor: '#fff',
+    
   },
   screenHeading: {
-    fontSize: 30,
-    fontWeight: "400",
+    fontSize:25,
+    alignContent:'center',
+    textAlign: 'center',
+    margin:5, 
+   fontWeight:"bold",
+    fontFamily: "IBMPlexMono_500Medium", 
+    textDecorationLine: 'underline'
+     
   },
-  formContainer: {
-    alignSelf: "stretch",
-    marginHorizontal: 20,
-    marginTop: 10,
-    marginBottom: 30,
-  },
-  formLabel: {
-    fontWeight: "bold",
-  },
-  inputStyle: {
-    marginVertical: 15,
-    height: 48,
-    padding: 15,
-    borderColor: "#888",
-    borderRadius: 10,
-    borderWidth: 1,
-  },
-  loginButton: {
-    backgroundColor: "#001C00",
-    alignSelf: "stretch",
-    padding: 16,
-    marginHorizontal: 20,
-    alignItems: "center",
-    marginBottom: 30,
-    borderRadius: 10,
-  },
-  buttonText: {
-    color: "#C5F277",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  signUpButton: {
-    alignSelf: "stretch",
-    marginHorizontal: 10,
-    alignItems: "center",
-    padding: 16,
-  },
-  signUpText: {
-    color: "#001C00",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  errors: {
-    alignSelf: "stretch",
-    padding: 10,
-    marginHorizontal: 20,
-    backgroundColor: "#C63461",
-    marginBottom: 20,
-  },
-  errorText: {
-    color: "white",
-  },
-  forgotPassword: {
-    fontSize: 12,
-  },
-  textDanger: {
-    color: "#dc3545",
-  },
+  inputtext:{
+    alignContent:'flex-start',
+    marginHorizontal:10,
+    fontSize:17,
+    fontFamily: "IBMPlexMono_500Medium", 
+
+},
+inputbox:{
+    alignContent:'flex-start',
+    borderColor:'#888888',
+    borderWidth:1,
+    margin:10,
+    padding:10,
+    height:45,
+    fontSize:15,
+    fontFamily: "IBMPlexMono_500Medium", 
+
+},
+addInfoPress:{
+  textAlign: 'center',
+  color:'red',
+  margin:10,
+  padding:10,
+  height:45,
+  fontSize:20,
+  borderWidth:1,
+  color: "#C5F277",
+  backgroundColor:'black',
+  alignContent:'center',
+  fontWeight:"bold",
+  fontFamily: "IBMPlexMono_500Medium", 
+
+},
 });
 export default EditProfileScreen;
