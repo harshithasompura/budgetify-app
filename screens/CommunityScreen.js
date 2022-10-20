@@ -59,7 +59,13 @@ const CommunityScreen = ({ navigation, route }) => {
           onClose={() => setOpen(false)}
         >
           <BottomSheetView>
-            <Post />
+            <Post
+              postResult={(data) => {
+                if (data === true) {
+                  setOpen(false);
+                }
+              }}
+            />
           </BottomSheetView>
         </BottomSheet>
       ) : null}

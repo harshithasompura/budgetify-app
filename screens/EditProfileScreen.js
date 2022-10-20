@@ -75,7 +75,7 @@ const EditProfileScreen = () => {
         onChangeText={setStudentNameFromUser}
         style={styles.inputbox}
       />
-      
+
       <Text style={styles.inputtext}>Student ID:</Text>
 
       <TextInput
@@ -91,59 +91,53 @@ const EditProfileScreen = () => {
           Add Student Information
         </Text>
       </TouchableOpacity>
-      
     </SafeAreaView>
   );
 };
 const styles = StyleSheet.create({
   container: {
-    flex:1,
-    justifyContent:'center',
-    backgroundColor: '#fff',
-    
+    flex: 1,
+    justifyContent: "center",
+    backgroundColor: "#fff",
   },
   screenHeading: {
-    fontSize:25,
-    alignContent:'center',
-    textAlign: 'center',
-    margin:5, 
-   fontWeight:"bold",
-    fontFamily: "IBMPlexMono_500Medium", 
-    textDecorationLine: 'underline'
-     
+    fontSize: 25,
+    alignContent: "center",
+    textAlign: "center",
+    margin: 5,
+    fontWeight: "bold",
+    fontFamily: "IBMPlexMono_500Medium",
+    textDecorationLine: "underline",
   },
-  inputtext:{
-    alignContent:'flex-start',
-    marginHorizontal:10,
-    fontSize:17,
-    fontFamily: "IBMPlexMono_500Medium", 
-
-},
-inputbox:{
-    alignContent:'flex-start',
-    borderColor:'#888888',
-    borderWidth:1,
-    margin:10,
-    padding:10,
-    height:45,
-    fontSize:15,
-    fontFamily: "IBMPlexMono_500Medium", 
-
-},
-addInfoPress:{
-  textAlign: 'center',
-  color:'red',
-  margin:10,
-  padding:10,
-  height:45,
-  fontSize:20,
-  borderWidth:1,
-  color: "#C5F277",
-  backgroundColor:'black',
-  alignContent:'center',
-  fontWeight:"bold",
-  fontFamily: "IBMPlexMono_500Medium", 
-
-},
+  inputtext: {
+    alignContent: "flex-start",
+    marginHorizontal: 10,
+    fontSize: 17,
+    fontFamily: "IBMPlexMono_500Medium",
+  },
+  inputbox: {
+    alignContent: "flex-start",
+    borderColor: "#888888",
+    borderWidth: 1,
+    margin: 10,
+    padding: 10,
+    height: 45,
+    fontSize: 15,
+    fontFamily: "IBMPlexMono_500Medium",
+  },
+  addInfoPress: {
+    textAlign: "center",
+    color: "red",
+    margin: 10,
+    padding: 10,
+    height: 45,
+    fontSize: 20,
+    borderWidth: 1,
+    color: "#C5F277",
+    backgroundColor: "black",
+    alignContent: "center",
+    fontWeight: "bold",
+    fontFamily: "IBMPlexMono_500Medium",
+  },
 });
 export default EditProfileScreen;
