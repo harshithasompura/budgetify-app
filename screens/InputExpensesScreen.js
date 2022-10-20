@@ -1,5 +1,7 @@
 import { useState } from "react";
 import {
+  Alert,
+  Image,
   Pressable,
   SafeAreaView,
   ScrollView,
@@ -11,17 +13,25 @@ import {
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { IBMPlexMono_500Medium } from "@expo-google-fonts/ibm-plex-mono";
+
+// Importing fonts
+import {
+  IBMPlexMono_400Regular,
+  IBMPlexMono_500Medium,
+} from "@expo-google-fonts/ibm-plex-mono";
+// Vector Icons
+import Icon from "react-native-vector-icons/FontAwesome";
 
 const InputExpensesScreen = ({ navigation }) => {
   // useState for Calculator
-  const [showCalculator, setShowCalculator] = useState(false);
+  const [showCalculator, setShowCalculator] = useState(true);
   const [curValue, setCurValue] = useState("0");
   const [operator, setOperator] = useState(null);
   const [preValue, setPreValue] = useState(null);
 
   // useState for Calender
   const [date, setDate] = useState(new Date());
+  const [isDateSelected, setIsDateSelected] = useState(false);
   const [showCalender, setShowCalender] = useState(false);
 
   // useState for Category
@@ -40,25 +50,34 @@ const InputExpensesScreen = ({ navigation }) => {
     { label: "Others", value: "Others" },
   ]);
 
-  // useState for Details
-  const [detailsContent, setDetailsContent] = useState("");
+  // // Open Calculator
+  // const openCalculator = () => {
+  //   setShowCalculator(true);
+  //   setShowCalender(false);
+  //   setShowSave(false);
+  //   setDisableDropDown(true);
+  // };
 
-  // useState for Save Button at the bottom
-  const [showSave, setShowSave] = useState(true);
+  // // Close Calculator
+  // const closeCalculator = () => {
+  //   setShowCalculator(false);
+  //   setShowSave(true);
+  //   setDisableDropDown(false);
 
-  // Open Calculator
-  const openCalculator = () => {
-    setShowCalculator(true);
-    setShowCalender(false);
-    setShowSave(false);
-    setDisableDropDown(true);
-  };
+  //   if (!curValue.includes(".")) {
+  //     setCurValue(curValue + ".00");
+  //   } else if (curValue.endsWith(".")) {
+  //     setCurValue(curValue + "00");
+  //   } else if (curValue.split(".")[1].length === 1) {
+  //     setCurValue(curValue + "0");
+  //   }
+  // };
 
-  // Close Calculator
-  const closeCalculator = () => {
+  // Open Calender
+  const openDatePicker = () => {
+    setShowCalender(true);
     setShowCalculator(false);
-    setShowSave(true);
-    setDisableDropDown(false);
+    
 
     if (!curValue.includes(".")) {
       setCurValue(curValue + ".00");
@@ -69,19 +88,10 @@ const InputExpensesScreen = ({ navigation }) => {
     }
   };
 
-  // Open Calender
-  const openDatePicker = () => {
-    setShowCalender(true);
-    setShowCalculator(false);
-    setShowSave(false);
-    setDisableDropDown(true);
-  };
-
   // Close Calender
   const closeDatePicker = () => {
     setShowCalender(false);
-    setShowSave(true);
-    setDisableDropDown(false);
+    setShowCalculator(true);
   };
 
   // Run when the confirm button of calender is pressed
@@ -148,7 +158,7 @@ const InputExpensesScreen = ({ navigation }) => {
           setOperator(null);
           return;
         }
-        case "*": {
+        case "x": {
           setCurValue(`${(previousNumber * currentNumber).toFixed(2)}`);
           setPreValue(null);
           setOperator(null);
@@ -161,6 +171,7 @@ const InputExpensesScreen = ({ navigation }) => {
           return;
         }
         default: {
+          setCurValue(`${(currentNumber).toFixed(2)}`);
           return;
         }
       }
@@ -169,218 +180,233 @@ const InputExpensesScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={{ flex: 1 }}>
-        <View style={styles.contentContainer}>
-          <Text style={styles.contentRowText}>Amount:</Text>
-          <Pressable style={styles.amountView} onPress={openCalculator}>
-            <Text style={styles.amountText}>{curValue}</Text>
+      <View style={{ flex: 1, marginTop: 10 }}>
+        <View style={styles.screenHeadingView}>
+          <Text style={styles.screenHeading}>Add Expense</Text>
+          <Pressable
+            style={styles.checkIconView}
+            onPress={() => {
+              if (isDateSelected === false) {
+                Alert.alert("Please select a date");
+                return;
+              }
+              if (category === null) {
+                Alert.alert("Please select a category");
+                return;
+              }
+
+              let temp = "";
+              if (!curValue.includes(".")) {
+                temp = curValue + ".00";
+              } else if (curValue.endsWith(".")) {
+                temp = curValue + "00";
+              } else if (curValue.split(".")[1].length === 1) {
+                temp = curValue + "0";
+              }
+              else {
+                temp = curValue;
+              }
+              console.log(
+                `Amount: ${temp}, Date: ${date.toLocaleDateString()}, Category: ${category}`
+              );
+              setCurValue(temp);
+              setOperator(null);
+            }}
+          >
+            <Image
+              style={styles.checkIcon}
+              source={require(`../assets/check-icon.png`)}
+            />
           </Pressable>
         </View>
 
-        <View style={styles.contentContainer}>
-          <Text style={styles.contentRowText}>Date:</Text>
-          <Pressable style={styles.dateTextView} onPress={openDatePicker}>
-            <Text style={styles.dateText}>{date.toLocaleDateString()}</Text>
+        <View style={{ flex: 1 }}>
+          <View style={styles.amountView}>
+            <Text style={styles.amountText}>${curValue}</Text>
+          </View>
+
+          <Pressable style={styles.contentContainer}
+            onPress={openDatePicker}>
+            <Text style={styles.contentText}>
+              {isDateSelected ? date.toLocaleDateString() : "Date of Expense"}
+            </Text>
           </Pressable>
+
+          <Pressable style={styles.contentContainer}>
+            <Text style={styles.contentText}>{category ? category : "Select Category"}</Text>
+          </Pressable>
+
+          {showCalculator && (
+            <View>
+              <View style={styles.calculator}>
+                <View style={styles.calculatorRow}>
+                  <TouchableOpacity
+                    onPress={() => calButtonPressed("number", "7")}
+                    style={styles.calculatorButton}
+                  >
+                    <Text style={styles.calculatorText}>7</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    onPress={() => calButtonPressed("number", "8")}
+                    style={styles.calculatorButton}
+                  >
+                    <Text style={styles.calculatorText}>8</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    onPress={() => calButtonPressed("number", "9")}
+                    style={styles.calculatorButton}
+                  >
+                    <Text style={styles.calculatorText}>9</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    onPress={() => calButtonPressed("operator", "+")}
+                    style={styles.calculatorButton}
+                  >
+                    <Text style={styles.calculatorText}>+</Text>
+                  </TouchableOpacity>
+                </View>
+
+                <View style={styles.calculatorRow}>
+                  <TouchableOpacity
+                    onPress={() => calButtonPressed("number", "4")}
+                    style={styles.calculatorButton}
+                  >
+                    <Text style={styles.calculatorText}>4</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    onPress={() => calButtonPressed("number", "5")}
+                    style={styles.calculatorButton}
+                  >
+                    <Text style={styles.calculatorText}>5</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    onPress={() => calButtonPressed("number", "6")}
+                    style={styles.calculatorButton}
+                  >
+                    <Text style={styles.calculatorText}>6</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    onPress={() => calButtonPressed("operator", "-")}
+                    style={styles.calculatorButton}
+                  >
+                    <Text style={styles.calculatorText}>-</Text>
+                  </TouchableOpacity>
+                </View>
+
+                <View style={styles.calculatorRow}>
+                  <TouchableOpacity
+                    onPress={() => calButtonPressed("number", "1")}
+                    style={styles.calculatorButton}
+                  >
+                    <Text style={styles.calculatorText}>1</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    onPress={() => calButtonPressed("number", "2")}
+                    style={styles.calculatorButton}
+                  >
+                    <Text style={styles.calculatorText}>2</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    onPress={() => calButtonPressed("number", "3")}
+                    style={styles.calculatorButton}
+                  >
+                    <Text style={styles.calculatorText}>3</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    onPress={() => calButtonPressed("operator", "x")}
+                    style={styles.calculatorButton}
+                  >
+                    <Text style={styles.calculatorText}>x</Text>
+                  </TouchableOpacity>
+                </View>
+
+                <View style={styles.calculatorRow}>
+                  <TouchableOpacity
+                    onPress={() => calButtonPressed("number", ".")}
+                    style={styles.calculatorButton}
+                  >
+                    <Text style={styles.calculatorText}>.</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    onPress={() => calButtonPressed("number", "0")}
+                    style={styles.calculatorButton}
+                  >
+                    <Text style={styles.calculatorText}>0</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    onPress={() => calButtonPressed("equal")}
+                    style={styles.calculatorButton}
+                  >
+                    <Text style={styles.calculatorText}>=</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    onPress={() => calButtonPressed("operator", "/")}
+                    style={styles.calculatorButton}
+                  >
+                    <Text style={styles.calculatorText}>/</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+
+              <Pressable
+                style={styles.clearTextView}
+                onPress={() => calButtonPressed("clear")}
+              >
+                <Text style={styles.clearText}>Clear</Text>
+              </Pressable>
+            </View>
+          )}
+
+          {/* <View>
+            <Text style={[styles.contentRowText, { marginBottom: 5 }]}>
+              Category:
+            </Text>
+            <DropDownPicker
+              open={openDropDown}
+              value={category}
+              items={dropDownItems}
+              setOpen={setOpenDropDown}
+              setValue={setCategory}
+              placeholder="Select the Category"
+              textStyle={styles.dropDownText}
+              labelStyle={styles.dropDownLabel}
+              style={styles.dropDown}
+              disabled={disableDropDown ? true : false}
+            />
+          </View> */}
         </View>
 
-        <View>
-          <Text style={[styles.contentRowText, { marginBottom: 5 }]}>
-            Category:
-          </Text>
-          <DropDownPicker
-            open={openDropDown}
-            value={category}
-            items={dropDownItems}
-            setOpen={setOpenDropDown}
-            setValue={setCategory}
-            placeholder="Select the Category"
-            textStyle={styles.dropDownText}
-            labelStyle={styles.dropDownLabel}
-            style={styles.dropDown}
-            disabled={disableDropDown ? true : false}
-          />
-          <View style={styles.contentContainer}>
-            <Text style={styles.contentRowText}>Details: </Text>
-            <TextInput
-              style={styles.details}
-              onChangeText={setDetailsContent}
-              value={detailsContent}
-              placeholder="Optional"
+        {showCalender && (
+          <View style={styles.calenderContianer}>
+            <Pressable
+              style={styles.dateConfirmButton}
+              onPress={closeDatePicker}
+            >
+              <Text style={styles.dateConfirm}>Confirm</Text>
+            </Pressable>
+
+            <DateTimePicker
+              value={date}
+              mode="date"
+              onChange={datePickerSelect}
+              style={styles.calender}
+              display="inline"
             />
           </View>
-        </View>
+        )}
       </View>
-
-      {showCalender && (
-        <View style={styles.calenderContianer}>
-          <Pressable style={styles.dateConfirmButton} onPress={closeDatePicker}>
-            <Text style={styles.dateConfirm}>Confirm</Text>
-          </Pressable>
-
-          <DateTimePicker
-            value={date}
-            mode="date"
-            onChange={datePickerSelect}
-            style={styles.calender}
-            display="inline"
-          />
-        </View>
-      )}
-
-      {showCalculator && (
-        <View style={styles.calculator}>
-          <View style={styles.calculatorRow}>
-            <TouchableOpacity
-              onPress={() => calButtonPressed("confirm")}
-              style={[styles.calculatorButton, { backgroundColor: "#4a963c" }]} //
-            >
-              <Text style={[styles.calculatorText, { color: "white" }]}>
-                Confirm
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => calButtonPressed("clear")}
-              style={styles.calculatorButton}
-            >
-              <Text style={styles.calculatorText}>Clear</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => calButtonPressed("del")}
-              style={styles.calculatorButton}
-            >
-              <Text style={styles.calculatorText}>DEL</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => calButtonPressed("operator", "/")}
-              style={styles.calculatorButton}
-            >
-              <Text style={styles.calculatorText}>/</Text>
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.calculatorRow}>
-            <TouchableOpacity
-              onPress={() => calButtonPressed("number", "7")}
-              style={styles.calculatorButton}
-            >
-              <Text style={styles.calculatorText}>7</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => calButtonPressed("number", "8")}
-              style={styles.calculatorButton}
-            >
-              <Text style={styles.calculatorText}>8</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => calButtonPressed("number", "9")}
-              style={styles.calculatorButton}
-            >
-              <Text style={styles.calculatorText}>9</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => calButtonPressed("operator", "*")}
-              style={styles.calculatorButton}
-            >
-              <Text style={styles.calculatorText}>*</Text>
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.calculatorRow}>
-            <TouchableOpacity
-              onPress={() => calButtonPressed("number", "4")}
-              style={styles.calculatorButton}
-            >
-              <Text style={styles.calculatorText}>4</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => calButtonPressed("number", "5")}
-              style={styles.calculatorButton}
-            >
-              <Text style={styles.calculatorText}>5</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => calButtonPressed("number", "6")}
-              style={styles.calculatorButton}
-            >
-              <Text style={styles.calculatorText}>6</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => calButtonPressed("operator", "-")}
-              style={styles.calculatorButton}
-            >
-              <Text style={styles.calculatorText}>-</Text>
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.calculatorRow}>
-            <TouchableOpacity
-              onPress={() => calButtonPressed("number", "1")}
-              style={styles.calculatorButton}
-            >
-              <Text style={styles.calculatorText}>1</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => calButtonPressed("number", "2")}
-              style={styles.calculatorButton}
-            >
-              <Text style={styles.calculatorText}>2</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => calButtonPressed("number", "3")}
-              style={styles.calculatorButton}
-            >
-              <Text style={styles.calculatorText}>3</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => calButtonPressed("operator", "+")}
-              style={styles.calculatorButton}
-            >
-              <Text style={styles.calculatorText}>+</Text>
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.calculatorRow}>
-            <TouchableOpacity
-              onPress={() => calButtonPressed("number", "0")}
-              style={styles.calculatorButton}
-            >
-              <Text style={styles.calculatorText}>0</Text>
-            </TouchableOpacity>
-            <Pressable style={styles.calculatorButton}>
-              <Text style={styles.calculatorText}></Text>
-            </Pressable>
-            <TouchableOpacity
-              onPress={() => calButtonPressed("number", ".")}
-              style={styles.calculatorButton}
-            >
-              <Text style={styles.calculatorText}>.</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => calButtonPressed("equal")}
-              style={styles.calculatorButton}
-            >
-              <Text style={styles.calculatorText}>=</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      )}
-
-      {showSave && (
-        <Pressable
-          style={styles.saveButton}
-          onPress={() => {
-            console.log(
-              `Amount: ${curValue}, Date: ${date.toLocaleDateString()}, Category: ${category}, Details: ${detailsContent}`
-            );
-          }}
-        >
-          <Text style={styles.saveText}>Save</Text>
-        </Pressable>
-      )}
     </SafeAreaView>
   );
 };
@@ -388,81 +414,112 @@ const InputExpensesScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    margin: 10,
+    backgroundColor: "#fff",
+    borderWidth: 1,
+    borderRadius: 10,
+    borderColor: "#fff",
   },
-  contentContainer: {
+  screenHeadingView: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
+    alignSelf: "center",
+    width: "85%",
   },
-  contentRowText: {
+  screenHeading: {
     fontSize: 30,
-    fontFamily: "IBMPlexMono_500Medium",
+    fontWeight: "200",
+    fontFamily: "IBMPlexMono_400Regular",
+  },
+  checkIconView: {
+    alignSelf: "flex-end",
+  },
+  checkIcon: {
+    height: 35,
+    width: 35,
   },
   amountView: {
-    backgroundColor: "#fff",
-    borderColor: "#72c963",
-    borderWidth: 2,
-    borderRadius: 20,
-    marginBottom: 10,
-    height: 60,
-    width: "60%",
+    marginTop: 10,
+    marginRight: 40,
+    flexDirection: "row",
+    justifyContent: "flex-end",
   },
   amountText: {
     fontSize: 45,
     fontFamily: "IBMPlexMono_500Medium",
-    alignSelf: "flex-end",
-    marginRight: 5,
-    color: "#4a963c",
+    color: "#B17BFF",
   },
-  dateTextView: {
-    backgroundColor: "#fff",
-    borderColor: "#72c963",
-    borderWidth: 2,
-    borderRadius: 20,
-    marginBottom: 10,
-    height: 40,
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    width: "60%",
-  },
-  dateText: {
-    fontSize: 32,
-    fontFamily: "IBMPlexMono_500Medium",
-    marginRight: 5,
-    color: "#4a963c",
-  },
-  dropDown: {
-    backgroundColor: "#fff",
-    alignSelf: "center",
-    marginBottom: 10,
-    width: "100%",
-    borderColor: "#72c963",
-    borderWidth: 2,
-    borderRadius: 20,
-  },
-  dropDownLabel: {
-    fontSize: 30,
-    color: "#4a963c",
-    fontFamily: "IBMPlexMono_500Medium",
-  },
-  dropDownText: {
-    fontSize: 20,
-    color: "black",
-    fontFamily: "IBMPlexMono_500Medium",
-  },
-  details: {
-    backgroundColor: "#fff",
-    borderColor: "#72c963",
-    borderWidth: 2,
-    borderRadius: 20,
+  contentContainer: {
+    borderColor: "black",
+    borderWidth: 1,
+    borderRadius: 15,
+    marginTop: 15,
     height: 50,
-    width: "58%",
-    padding: 10,
-    fontSize: 25,
-    fontFamily: "IBMPlexMono_500Medium",
-    color: "#4a963c",
+    width: "85%",
+    alignSelf: "center",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
   },
+  contentText: {
+    fontSize: 20,
+    fontFamily: "IBMPlexMono_500Medium",
+    letterSpacing: -1,
+    color: "black",
+  },
+  calculator: {
+    borderWidth: 1,
+    borderRadius: 15,
+    borderColor: "black",
+    marginTop: 15,
+    width: "85%",
+    alignSelf: "center",
+  },
+  calculatorRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  calculatorButton: {
+    justifyContent: "center",
+    height: 100,
+    width: "25%",
+  },
+  calculatorText: {
+    alignSelf: "center",
+    fontSize: 48,
+    fontFamily: "IBMPlexMono_500Medium",
+    color: "#1A191C75",
+  },
+  clearTextView: {
+    marginTop: 10,
+    marginRight: 40,
+    alignSelf: "flex-end",
+  },
+  clearText: {
+    fontSize: 45,
+    fontFamily: "Arial",
+    color: "black",
+  },
+
+  // dropDown: {
+  //   backgroundColor: "#fff",
+  //   alignSelf: "center",
+  //   marginBottom: 10,
+  //   width: "100%",
+  //   borderColor: "#72c963",
+  //   borderWidth: 2,
+  //   borderRadius: 20,
+  // },
+  // dropDownLabel: {
+  //   fontSize: 30,
+  //   color: "#4a963c",
+  //   fontFamily: "IBMPlexMono_500Medium",
+  // },
+  // dropDownText: {
+  //   fontSize: 20,
+  //   color: "black",
+  //   fontFamily: "IBMPlexMono_500Medium",
+  // },
+
   calenderContianer: {
     borderWidth: 7,
     borderRadius: 20,
@@ -482,43 +539,6 @@ const styles = StyleSheet.create({
     height: 290,
     width: "100%",
     backgroundColor: "#fff",
-  },
-  calculator: {
-    borderWidth: 2,
-    borderRadius: 5,
-    borderColor: "#72c963",
-    marginTop: 10,
-  },
-  calculatorRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  calculatorButton: {
-    backgroundColor: "#6FD6B6",
-    borderWidth: 1,
-    borderColor: "#EDEDED",
-    justifyContent: "center",
-    height: 50,
-    width: "25%",
-  },
-  calculatorText: {
-    alignSelf: "center",
-    fontSize: 20,
-    fontFamily: "IBMPlexMono_500Medium",
-    color: "#fff",
-  },
-  saveButton: {
-    borderRadius: 10,
-    backgroundColor: "#5eb54e",
-    height: 40,
-    width: 120,
-    alignSelf: "center",
-    justifyContent: "center",
-  },
-  saveText: {
-    fontSize: 20,
-    color: "#fff",
-    alignSelf: "center",
   },
 });
 

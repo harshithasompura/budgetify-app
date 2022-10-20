@@ -7,10 +7,12 @@ import {
   Pressable,
   Image,
   FlatList,
+  TouchableOpacity
 } from "react-native";
 import * as Progress from "react-native-progress";
 import { Divider } from "@rneui/themed";
-import BottomSheet, { BottomSheetFlatList } from "@gorhom/bottom-sheet";
+import BottomSheet, { BottomSheetFlatList, BottomSheetView } from "@gorhom/bottom-sheet";
+
 // Importing fonts
 import {
   useFonts,
@@ -27,7 +29,7 @@ const ExpensesScreen = ({ navigation }) => {
 
   const [expensesData, setExpensesData] = useState([]);
 
-  const [openAddOptions, setOpenAddOptions] = useState(false);
+  const [openInputExpensesOptions, setOpenInputExpensesOptions] = useState(false);
 
   const sheetRef = useRef(null);
   const snapPoints = ["25%"];
@@ -61,6 +63,12 @@ const ExpensesScreen = ({ navigation }) => {
     ]);
   }, []);
 
+  useEffect(() => {
+    setPlusVisible(true);
+  }, [openInputExpensesOptions])
+  
+
+  // render the expenses flatList
   const renderFlatListItem = ({
     item: { category, imagePath, expense },
   }) => (
@@ -70,12 +78,13 @@ const ExpensesScreen = ({ navigation }) => {
           <Image style={styles.flatListCategoryIcon} source={imagePath} />
           <Text style={styles.flatListCategoryText}>{category}</Text>
         </View>
-        <Text style={[styles.flatListExpense, {color: openAddOptions ? 'rgba(177, 123, 255,.6)' : "#B17BFF"}]}>${expense}</Text>
+        <Text style={[styles.flatListExpense, {color: openInputExpensesOptions ? 'rgba(177, 123, 255,.6)' : "#B17BFF"}]}>${expense}</Text>
       </View>
       <Divider style={styles.divider} />
     </Pressable>
   );
 
+  // Bottom Sheet FlatList Setting
   const bottomSheetArray = [
     {
       id: 1,
@@ -86,7 +95,7 @@ const ExpensesScreen = ({ navigation }) => {
     {
       id: 2,
       title: "Fill in the Form",
-      screenName: "New Expense",
+      screenName: "Add Expense",
       icon: <Icon name="pencil" size={25} style={{marginLeft: 20}}/>,
     },
   ]
@@ -94,11 +103,12 @@ const ExpensesScreen = ({ navigation }) => {
   const bottomSheetOptionSelected = (screenName) => {
     // navigate to corresponding screen
     navigation.navigate(screenName);
-    setOpenAddOptions(false);
+    setOpenInputExpensesOptions(false);
     setPlusVisible(true);
     return;
   };
 
+  // render the bottom sheet flatList
   const renderBottomSheetItem = ({ item: { title, screenName, icon } }) => (
     <Pressable
       onPress={() => bottomSheetOptionSelected(screenName)}
@@ -123,7 +133,7 @@ const ExpensesScreen = ({ navigation }) => {
     // ------------------------ View Template -----------------------
     return (
       <SafeAreaView style={styles.container}>
-        <View style={[styles.contentContainer, {backgroundColor: openAddOptions ? 'rgba(0,0,0,.6)' : "white"}]}>
+        <View style={[styles.contentContainer, {backgroundColor: openInputExpensesOptions ? 'rgba(0,0,0,.6)' : "white"}]}>
           <View style={styles.screenHeadingView}>
             <Text
               style={[
@@ -139,8 +149,7 @@ const ExpensesScreen = ({ navigation }) => {
                 style={styles.plus}
                 onPress={() => {
                   // Open the bottom sheet
-                  setOpenAddOptions(true);
-                  setPlusVisible(false);
+                  setOpenInputExpensesOptions(true);
                 }}
               >
                 <Icon name="plus" size={25} />
@@ -148,27 +157,27 @@ const ExpensesScreen = ({ navigation }) => {
             )}
           </View>
 
-          <View style={[styles.summary, {backgroundColor: openAddOptions ? 'rgba(0,0,0,.6)' : "black"}]}> 
-            <Text style={[styles.summaryTitle, {color: openAddOptions ? 'rgba(224, 242, 119,.6)' : "#C5F277"}]}>Your expenses</Text>
-            <Text style={[styles.summaryExpense, {color: openAddOptions ? 'rgba(224, 242, 119,.6)' : "#C5F277"}]}>$300.56</Text>
+          <View style={[styles.summary, {backgroundColor: openInputExpensesOptions ? 'rgba(0,0,0,.6)' : "black"}]}> 
+            <Text style={[styles.summaryTitle, {color: openInputExpensesOptions ? 'rgba(224, 242, 119,.6)' : "#C5F277"}]}>Your expenses</Text>
+            <Text style={[styles.summaryExpense, {color: openInputExpensesOptions ? 'rgba(224, 242, 119,.6)' : "#C5F277"}]}>$300.56</Text>
 
             <View style={styles.summaryRemainingView}>
-              <Text style={[styles.summaryRemaining, {color: openAddOptions ? 'rgba(224, 242, 119,.6)' : "#C5F277"}]}>Your monthly budget</Text>
-              <Text style={[styles.summaryRemaining, {color: openAddOptions ? 'rgba(224, 242, 119,.6)' : "#C5F277"}]}>$1799.45 remaining</Text>
+              <Text style={[styles.summaryRemaining, {color: openInputExpensesOptions ? 'rgba(224, 242, 119,.6)' : "#C5F277"}]}>Your monthly budget</Text>
+              <Text style={[styles.summaryRemaining, {color: openInputExpensesOptions ? 'rgba(224, 242, 119,.6)' : "#C5F277"}]}>$1799.45 remaining</Text>
             </View>
 
             <Progress.Bar
               progress={0.3}
               width={null}
               height={8}
-              color={openAddOptions ? 'rgba(177, 123, 255,.6)' : "#B17BFF"}
-              unfilledColor={openAddOptions ? 'rgba(215, 217, 208,.6)' : "#fff"}
+              color={openInputExpensesOptions ? 'rgba(177, 123, 255,.6)' : "#B17BFF"}
+              unfilledColor={openInputExpensesOptions ? 'rgba(215, 217, 208,.6)' : "#fff"}
               borderRadius={20}
               style={styles.summaryProgressBar}
             />
             <Pressable style={styles.summaryEditBudgetView}>
-              <Icon name="pencil" size={15} color={openAddOptions ? 'rgba(177, 123, 255,.6)' : "#B17BFF"} />
-              <Text style={[styles.summaryEditBudget, {color: openAddOptions ? 'rgba(177, 123, 255,.6)' : "#B17BFF"}]}>Edit Budget</Text>
+              <Icon name="pencil" size={15} color={openInputExpensesOptions ? 'rgba(177, 123, 255,.6)' : "#B17BFF"} />
+              <Text style={[styles.summaryEditBudget, {color: openInputExpensesOptions ? 'rgba(177, 123, 255,.6)' : "#B17BFF"}]}>Edit Budget</Text>
             </Pressable>
           </View>
 
@@ -182,14 +191,13 @@ const ExpensesScreen = ({ navigation }) => {
           />
         </View>
 
-        {openAddOptions && (
+        {openInputExpensesOptions ? (
           <BottomSheet
             ref={sheetRef}
             snapPoints={snapPoints}
             enablePanDownToClose={true}
             onClose={() => {
-              setOpenAddOptions(false);
-              setPlusVisible(true);
+              setOpenInputExpensesOptions(false);
             }}
           >
             <BottomSheetFlatList
@@ -198,7 +206,7 @@ const ExpensesScreen = ({ navigation }) => {
               renderItem={renderBottomSheetItem}
             />
           </BottomSheet>
-        )}
+        ) : null}
       </SafeAreaView>
     );
   }
@@ -233,17 +241,14 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 20,
     borderColor: "black",
-    backgroundColor: "black",
     width: "85%",
   },
   summaryTitle: {
-    color: "#C5F277",
     marginLeft: 15,
     marginTop: 15,
     fontSize: 20,
   },
   summaryExpense: {
-    color: "#C5F277",
     marginLeft: 15,
     marginTop: 10,
     fontFamily: "IBMPlexMono_500Medium",
@@ -257,7 +262,6 @@ const styles = StyleSheet.create({
     marginRight: 15,
   },
   summaryRemaining: {
-    color: "#C5F277",
     fontSize: 15,
   },
   summaryProgressBar: {
@@ -274,7 +278,6 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   summaryEditBudget: {
-    color: "#B17BFF",
     fontSize: 15,
     fontWeight: "bold",
     marginLeft: 5,
@@ -310,17 +313,6 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 20,
   },
-  // dropDownView: {
-  //   height: 30,
-  //   width: "50%",
-  //   marginVertical: 30,
-  // },
-
-  // inputExpenses: {
-  //   marginBottom: 10,
-  //   alignSelf: "center",
-  //   backgroundColor: "#CCD1D1",
-  // },
 });
 
 export default ExpensesScreen;

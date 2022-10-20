@@ -62,13 +62,9 @@ const ExpensesStackScreen = () => {
         component={ExpensesScreen}
       ></ExpensesStack.Screen>
       {/* add those screens that should be navigated inside Expenses Tab in here */}
-      {/* <ExpensesStack.Screen name="Camera" component={CameraScreen}></ExpensesStack.Screen> */}
-      <ExpensesStack.Screen
-        name="New Expense"
-        component={InputExpensesScreen}
-      />
       <ExpensesStack.Group screenOptions={{ presentation: "modal" }}>
         <ExpensesStack.Screen name="Camera" component={CameraScreen} />
+        <ExpensesStack.Screen options={{headerTitle:"", headerStyle:{backgroundColor:"rgba(219, 219, 219,0.9)"}}} name="Add Expense" component={InputExpensesScreen} />
       </ExpensesStack.Group>
     </ExpensesStack.Navigator>
   );
