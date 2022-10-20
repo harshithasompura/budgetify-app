@@ -1,18 +1,17 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Alert,
   Image,
   Pressable,
   SafeAreaView,
-  ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
-import DropDownPicker from "react-native-dropdown-picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { Divider } from "@rneui/themed";
+import BottomSheet, { BottomSheetFlatList } from "@gorhom/bottom-sheet";
 
 // Importing fonts
 import {
@@ -29,76 +28,41 @@ const InputExpensesScreen = ({ navigation }) => {
   const [operator, setOperator] = useState(null);
   const [preValue, setPreValue] = useState(null);
 
-  // useState for Calender
+  // useState for DatePicker
   const [date, setDate] = useState(new Date());
-  const [isDateSelected, setIsDateSelected] = useState(false);
   const [showCalender, setShowCalender] = useState(false);
+  const [isDateSelected, setIsDateSelected] = useState(false);
 
   // useState for Category
   const [category, setCategory] = useState(null);
-  const [openDropDown, setOpenDropDown] = useState(false);
-  const [disableDropDown, setDisableDropDown] = useState(false);
-  const [dropDownItems, setDropDownItems] = useState([
-    { label: "Food", value: "Food" },
-    { label: "Entertainment", value: "Entertainment" },
-    { label: "Transportation", value: "Transportation" },
-    { label: "Groceries", value: "Groceries" },
-    { label: "Clothing", value: "Clothing" },
-    { label: "Housing", value: "Housing" },
-    { label: "Health", value: "Health" },
-    { label: "Donations", value: "Donations" },
-    { label: "Others", value: "Others" },
-  ]);
+  const [showCategoriesMenu, setShowCategoriesMenu] = useState(false);
 
-  // // Open Calculator
-  // const openCalculator = () => {
-  //   setShowCalculator(true);
-  //   setShowCalender(false);
-  //   setShowSave(false);
-  //   setDisableDropDown(true);
-  // };
+  const sheetRef = useRef(null);
+  const snapPoints = ["70%"];
 
-  // // Close Calculator
-  // const closeCalculator = () => {
-  //   setShowCalculator(false);
-  //   setShowSave(true);
-  //   setDisableDropDown(false);
+  useEffect(() => {
+    setShowCalculator(true);
+  }, [showCategoriesMenu]);
 
-  //   if (!curValue.includes(".")) {
-  //     setCurValue(curValue + ".00");
-  //   } else if (curValue.endsWith(".")) {
-  //     setCurValue(curValue + "00");
-  //   } else if (curValue.split(".")[1].length === 1) {
-  //     setCurValue(curValue + "0");
-  //   }
-  // };
-
-  // Open Calender
+  // Open DatePicker
   const openDatePicker = () => {
     setShowCalender(true);
     setShowCalculator(false);
-
-    if (!curValue.includes(".")) {
-      setCurValue(curValue + ".00");
-    } else if (curValue.endsWith(".")) {
-      setCurValue(curValue + "00");
-    } else if (curValue.split(".")[1].length === 1) {
-      setCurValue(curValue + "0");
-    }
   };
 
-  // Close Calender
-  const closeDatePicker = () => {
+  // Run when the Confirm Button of DatePicker is pressed
+  const confirmDatePicker = () => {
     setShowCalender(false);
     setShowCalculator(true);
+    setIsDateSelected(true);
   };
 
-  // Run when the confirm button of calender is pressed
+  // Run when the date of DatePicker is pressed
   const datePickerSelect = (event, selectedDate) => {
     setDate(selectedDate);
   };
 
-  // Run when button of calculator is pressed
+  // Run when button of Calculator is pressed
   const calButtonPressed = (type, value = "") => {
     if (type === "number") {
       if ((curValue === "0") & (value !== ".")) {
@@ -177,60 +141,151 @@ const InputExpensesScreen = ({ navigation }) => {
     }
   };
 
+  // Run when Check Button at the top is pressed
+  const checkPress = () => {
+    if (isDateSelected === false) {
+      Alert.alert("Please select a date");
+      return;
+    }
+    if (category === null) {
+      Alert.alert("Please select a category");
+      return;
+    }
+
+    let temp = "";
+    if (!curValue.includes(".")) {
+      temp = curValue + ".00";
+    } else if (curValue.endsWith(".")) {
+      temp = curValue + "00";
+    } else if (curValue.split(".")[1].length === 1) {
+      temp = curValue + "0";
+    } else {
+      temp = curValue;
+    }
+    console.log(
+      `Amount: ${temp}, Date: ${date.toLocaleDateString()}, Category: ${category}`
+    );
+    setCurValue(temp);
+    setOperator(null);
+  };
+
+  // For Category Bottom Sheet
+  const categoriesArray = [
+    {
+      id: 1,
+      title: "Groceries",
+      imagePath: require(`../assets/expenses/groceries-icon.png`),
+    },
+    {
+      id: "2",
+      title: "Food",
+      imagePath: require(`../assets/expenses/food-icon.png`),
+    },
+    {
+      id: "3",
+      title: "Fuel",
+      imagePath: require(`../assets/expenses/fuel-icon.png`),
+    },
+    {
+      id: "4",
+      title: "Housing",
+      imagePath: require(`../assets/expenses/housing-icon.png`),
+    },
+  ];
+
+  const renderFlatListItem = ({ item: { title, imagePath } }) => (
+    <Pressable
+      style={styles.flatListContentContainer}
+      onPress={() => setCategory(title)}
+    >
+      <Divider style={styles.divider} />
+      <View style={styles.flatListRow}>
+        <View style={styles.flatListCategoryView}>
+          <Image style={styles.flatListCategoryIcon} source={imagePath} />
+          <Text style={styles.flatListCategoryText}>{title}</Text>
+        </View>
+
+        {category === title && (
+          <Image
+            style={{ height: 30, width: 37 }}
+            source={require(`../assets/expenses/check-icon.png`)}
+          />
+        )}
+      </View>
+    </Pressable>
+  );
+
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView
+      style={[
+        styles.container,
+        { backgroundColor: showCategoriesMenu ? "rgba(0,0,0,.6)" : "white" },
+      ]}
+    >
       <View style={{ flex: 1, marginTop: 10 }}>
         <View style={styles.screenHeadingView}>
           <Text style={styles.screenHeading}>Add Expense</Text>
           <Pressable
             style={styles.checkIconView}
-            onPress={() => {
-              if (isDateSelected === false) {
-                Alert.alert("Please select a date");
-                return;
-              }
-              if (category === null) {
-                Alert.alert("Please select a category");
-                return;
-              }
-
-              let temp = "";
-              if (!curValue.includes(".")) {
-                temp = curValue + ".00";
-              } else if (curValue.endsWith(".")) {
-                temp = curValue + "00";
-              } else if (curValue.split(".")[1].length === 1) {
-                temp = curValue + "0";
-              } else {
-                temp = curValue;
-              }
-              console.log(
-                `Amount: ${temp}, Date: ${date.toLocaleDateString()}, Category: ${category}`
-              );
-              setCurValue(temp);
-              setOperator(null);
-            }}
+            onPress={showCategoriesMenu ? null : checkPress}
           >
             <Image
               style={styles.checkIcon}
-              source={require(`../assets/check-icon.png`)}
+              source={require(`../assets/expenses/check-icon.png`)}
             />
           </Pressable>
         </View>
 
         <View style={{ flex: 1 }}>
           <View style={styles.amountView}>
-            <Text style={styles.amountText}>${curValue}</Text>
+            <Text
+              style={[
+                styles.amountText,
+                {
+                  color: showCategoriesMenu
+                    ? "rgba(202, 170, 250,.6)"
+                    : "#B17BFF",
+                },
+              ]}
+            >
+              ${curValue}
+            </Text>
           </View>
 
-          <Pressable style={styles.contentContainer} onPress={openDatePicker}>
-            <Text style={styles.contentText}>
+          <Pressable
+            style={[
+              styles.contentContainer,
+              isDateSelected ? { backgroundColor: "black" } : null,
+            ]}
+            onPress={showCategoriesMenu ? null : openDatePicker}
+          >
+            <Text
+              style={[
+                styles.contentText,
+                isDateSelected ? { color: "#C5F277", fontSize: 30 } : null,
+              ]}
+            >
               {isDateSelected ? date.toLocaleDateString() : "Date of Expense"}
             </Text>
           </Pressable>
 
-          <Pressable style={styles.contentContainer}>
-            <Text style={styles.contentText}>
+          <Pressable
+            style={[
+              styles.contentContainer,
+              category ? { backgroundColor: "black" } : null,
+            ]}
+            onPress={() => {
+              setShowCategoriesMenu(true);
+              setShowCalender(false);
+              // setShowCalculator(true);
+            }}
+          >
+            <Text
+              style={[
+                styles.contentText,
+                category ? { color: "#C5F277", fontSize: 30 } : null,
+              ]}
+            >
               {category ? category : "Select Category"}
             </Text>
           </Pressable>
@@ -368,43 +423,43 @@ const InputExpensesScreen = ({ navigation }) => {
             </View>
           )}
 
-          {/* <View>
-            <Text style={[styles.contentRowText, { marginBottom: 5 }]}>
-              Category:
-            </Text>
-            <DropDownPicker
-              open={openDropDown}
-              value={category}
-              items={dropDownItems}
-              setOpen={setOpenDropDown}
-              setValue={setCategory}
-              placeholder="Select the Category"
-              textStyle={styles.dropDownText}
-              labelStyle={styles.dropDownLabel}
-              style={styles.dropDown}
-              disabled={disableDropDown ? true : false}
-            />
-          </View> */}
-        </View>
+          {showCalender && (
+            <View style={styles.calenderContianer}>
+              <Pressable
+                style={styles.dateConfirmButton}
+                onPress={confirmDatePicker}
+              >
+                <Text style={styles.dateConfirm}>Confirm</Text>
+              </Pressable>
 
-        {showCalender && (
-          <View style={styles.calenderContianer}>
-            <Pressable
-              style={styles.dateConfirmButton}
-              onPress={closeDatePicker}
+              <DateTimePicker
+                value={date}
+                mode="date"
+                onChange={datePickerSelect}
+                style={styles.calender}
+                display="inline"
+              />
+            </View>
+          )}
+
+          {showCategoriesMenu ? (
+            <BottomSheet
+              ref={sheetRef}
+              snapPoints={snapPoints}
+              enablePanDownToClose={true}
+              onClose={() => {
+                setShowCategoriesMenu(false);
+              }}
             >
-              <Text style={styles.dateConfirm}>Confirm</Text>
-            </Pressable>
-
-            <DateTimePicker
-              value={date}
-              mode="date"
-              onChange={datePickerSelect}
-              style={styles.calender}
-              display="inline"
-            />
-          </View>
-        )}
+              <BottomSheetFlatList
+                data={categoriesArray}
+                keyExtractor={(item) => item.id}
+                renderItem={renderFlatListItem}
+                style={styles.flatList}
+              />
+            </BottomSheet>
+          ) : null}
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -413,16 +468,12 @@ const InputExpensesScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
-    borderWidth: 1,
-    borderRadius: 10,
-    borderColor: "#fff",
   },
   screenHeadingView: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignSelf: "center",
-    width: "85%",
+    width: "90%",
   },
   screenHeading: {
     fontSize: 30,
@@ -438,7 +489,7 @@ const styles = StyleSheet.create({
   },
   amountView: {
     marginTop: 10,
-    marginRight: 40,
+    marginRight: 25,
     flexDirection: "row",
     justifyContent: "flex-end",
   },
@@ -453,7 +504,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     marginTop: 15,
     height: 50,
-    width: "85%",
+    width: "90%",
     alignSelf: "center",
     flexDirection: "row",
     justifyContent: "center",
@@ -470,7 +521,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     borderColor: "black",
     marginTop: 15,
-    width: "85%",
+    width: "90%",
     alignSelf: "center",
   },
   calculatorRow: {
@@ -490,7 +541,7 @@ const styles = StyleSheet.create({
   },
   clearTextView: {
     marginTop: 10,
-    marginRight: 40,
+    marginRight: 25,
     alignSelf: "flex-end",
   },
   clearText: {
@@ -498,46 +549,58 @@ const styles = StyleSheet.create({
     fontFamily: "Arial",
     color: "black",
   },
-
-  // dropDown: {
-  //   backgroundColor: "#fff",
-  //   alignSelf: "center",
-  //   marginBottom: 10,
-  //   width: "100%",
-  //   borderColor: "#72c963",
-  //   borderWidth: 2,
-  //   borderRadius: 20,
-  // },
-  // dropDownLabel: {
-  //   fontSize: 30,
-  //   color: "#4a963c",
-  //   fontFamily: "IBMPlexMono_500Medium",
-  // },
-  // dropDownText: {
-  //   fontSize: 20,
-  //   color: "black",
-  //   fontFamily: "IBMPlexMono_500Medium",
-  // },
-
   calenderContianer: {
-    borderWidth: 7,
+    borderWidth: 1.2,
     borderRadius: 20,
-    borderColor: "#72c963",
-    marginBottom: 10,
+    borderColor: "black",
+    marginTop: 15,
+    alignSelf: "center",
+    width: "90%",
   },
   dateConfirmButton: {
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
     backgroundColor: "#C5F277",
-    paddingTop: 5,
-    paddingBottom: 5,
+    paddingTop: 10,
+    paddingBottom: 10,
   },
   dateConfirm: {
     alignSelf: "center",
     fontSize: 20,
   },
   calender: {
-    height: 290,
+    height: 350,
+  },
+  flatList: {
     width: "100%",
-    backgroundColor: "#fff",
+    boderWidth: 1,
+    borderTopRightRadius: 20,
+    borderTopLeftRadius: 20,
+  },
+  flatListContentContainer: {
+    width: "80%",
+    alignSelf: "center",
+  },
+  flatListRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  flatListCategoryView: {
+    flexDirection: "row",
+  },
+  flatListCategoryIcon: {
+    height: 25,
+    width: 25,
+  },
+  flatListCategoryText: {
+    fontSize: 25,
+    fontWeight: "300",
+    marginLeft: 20,
+  },
+  divider: {
+    marginTop: 20,
+    marginBottom: 20,
   },
 });
 
