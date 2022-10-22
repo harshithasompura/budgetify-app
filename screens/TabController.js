@@ -8,7 +8,7 @@ import {
   Pressable,
 } from "react-native";
 // Navigation imports
-import { NavigationContainer } from "@react-navigation/native";
+import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 // Screen Imports
 import HomeScreen from "./HomeScreen";
@@ -168,6 +168,11 @@ const CommunityStackScreen = () => {
 const TabController = () => {
   const Tab = createBottomTabNavigator();
 
+  const getTabBarVisibility = (route) => {
+    const routeName = getFocusedRouteNameFromRoute(route) ?? '';
+    return (routeName === 'Chat Room') ? 'none' : 'flex';
+  }
+
   return (
     <Tab.Navigator
       screenOptions={{
@@ -199,12 +204,13 @@ const TabController = () => {
       <Tab.Screen
         name="Community"
         component={CommunityStackScreen}
-        options={{
+        options={({route}) => ({
+          tabBarStyle: { display: getTabBarVisibility(route) },
           tabBarIcon: ({ color, size }) => (
             <Icon name="star" color={color} size={size} />
           ),
           headerShown: false,
-        }}
+        })}
       />
       <Tab.Screen
         name="Settings"
