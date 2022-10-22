@@ -6,6 +6,8 @@ import {
   View,
   Pressable,
   Image,
+  Platform,
+  Alert
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
@@ -13,10 +15,32 @@ import * as ImagePicker from "expo-image-picker";
 import { useEffect, useState } from "react";
 import { auth } from "../FirebaseApp";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 
 const SettingsScreen = ({ navigation, route }) => {
   const [loggedInUser, setLoggedInUser] = useState("");
   const [image, setImage] = useState(null);
+
+  const uploadImageToCloud = async (imageUri) => {
+    const response = await fetch(imageUri);
+    const file = await response.blob();
+    const filename = imageUri.substring(imageUri.lastIndexOf('/') + 1);
+    const storage = getStorage();
+    const imgRef = ref(storage, `userAvatars/${filename}`);
+
+    try {
+      await uploadBytes(imgRef, file);
+      const url = await getDownloadURL(imgRef);
+      alert(
+        "file Uploaded and get the link"
+      );
+      console.log(url);
+    } catch(err) {
+      console.log(err);
+    }
+    
+
+  };
 
   useEffect(() => {
     checkForCameraRollPermission();
@@ -68,12 +92,12 @@ const SettingsScreen = ({ navigation, route }) => {
     let _image = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
+      quality: 0
     });
     console.log(JSON.stringify(_image));
     if (!_image.cancelled) {
       setImage(_image.uri);
+      uploadImageToCloud(_image.uri);
     }
   };
 
