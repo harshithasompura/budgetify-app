@@ -2,17 +2,12 @@ import {
   StyleSheet,
   Text,
   View,
-  TextInput,
   Pressable,
-  Alert,
-  FlatList,
-  TouchableOpacity,
   Image,
-  useWindowDimensions,
 } from "react-native";
 import React, { useState, useCallback, useEffect, useRef } from "react";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
-import { GiftedChat, Bubble, Send } from "react-native-gifted-chat";
+import { GiftedChat, Bubble} from "react-native-gifted-chat";
 import { db } from "../FirebaseApp";
 import {
   collection,
@@ -25,6 +20,7 @@ import {
 } from "firebase/firestore";
 import { auth } from "../FirebaseApp";
 import { onAuthStateChanged } from "firebase/auth";
+import { getBottomSpace } from 'react-native-iphone-x-helper'
 
 const blankAvatarUrl = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
@@ -97,7 +93,7 @@ const ChatScreen = ({ navigation, route }) => {
   }, []);
 
   return (
-    <View style={{ backgroundColor: "white", flex: 1 }}>
+    <View style={{ flex: 1, marginBottom: getBottomSpace(), backgroundColor: 'white'}}>
       <View style={styles.chatTitleContainer}>
         <Pressable
           style={styles.backArrow}
@@ -110,6 +106,7 @@ const ChatScreen = ({ navigation, route }) => {
         <Image style={styles.avatar} source={{ url: objectIcon }} />
         <Text style={styles.title}>{objectName}</Text>
       </View>
+      
       <GiftedChat
         messages={messages}
         onSend={(messages) => onSend(messages)}
@@ -133,10 +130,14 @@ const ChatScreen = ({ navigation, route }) => {
                 right: {
                   backgroundColor: "black",
                 },
+                left: {
+                  backgroundColor: "#C5F277",
+                },
               }}
             />
           );
         }}
+        bottomOffset={getBottomSpace()}
       />
     </View>
   );
