@@ -12,8 +12,13 @@ import {
 } from "react-native";
 import * as Progress from "react-native-progress";
 import { Divider } from "@rneui/themed";
-import DialogInput from 'react-native-dialog-input';
+import DialogInput from "react-native-dialog-input";
 import BottomSheet, { BottomSheetFlatList } from "@gorhom/bottom-sheet";
+
+// Firebase
+import { auth, db } from "../FirebaseApp";
+import { onAuthStateChanged } from "firebase/auth";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 
 // Importing fonts
 import {
@@ -31,47 +36,78 @@ const ExpensesScreen = ({ navigation }) => {
   const [openInputExpensesOptions, setOpenInputExpensesOptions] =
     useState(false);
 
+  // Current User
+  const [uid, setUid] = useState("testingUID");
+
   // Expense Data
   const [expensesData, setExpensesData] = useState([]);
   // const [groceriesExpense, setGroceriesExpense] = useState("150.49");
   // const [foodExpense, setFoodExpense] = useState("120.00");
   // const [fuelExpense, setFuelExpense] = useState("60.44");
   // const [housingExpense, setHousingExpense] = useState("500.00");
-  const [groceriesExpense, setGroceriesExpense] = useState("0.00");
-  const [foodExpense, setFoodExpense] = useState("0.00");
-  const [fuelExpense, setFuelExpense] = useState("0.00");
-  const [housingExpense, setHousingExpense] = useState("0.00");
+  const [groceriesExpense, setGroceriesExpense] = useState(0);
+  const [foodExpense, setFoodExpense] = useState(0);
+  const [fuelExpense, setFuelExpense] = useState(0);
+  const [housingExpense, setHousingExpense] = useState(0);
 
-  const [totalExpenses, setTotalExpenses] = useState("0.00");
+  const [totalExpenses, setTotalExpenses] = useState(0);
 
   // Budget
   const [budget, setBudget] = useState(0);
   const [budgetPopUp, setBudgetPopUp] = useState(false);
-  
 
   const sheetRef = useRef(null);
   const snapPoints = ["25%"];
 
+  // Get the current user
   useEffect(() => {
-    setGroceriesExpense("150.49");
-    setFoodExpense("120.00");
-    setFuelExpense("60.44")
-    setHousingExpense("500.00");
+    const unsubscribeOnAuth = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUid(user.email);
+      } else {
+        console.log("no signed-in user");
+      }
+    });
+  }, []);
 
-    setBudget(1000);
-  }, [])
-
+  // Get the expenses of each categories and the monthly budget from Firestore
   useEffect(() => {
-    const groceriesExpenseNumber = parseFloat(groceriesExpense);
-    const foodExpenseNumber = parseFloat(foodExpense);
-    const fuelExpenseNumber = parseFloat(fuelExpense);
-    const housingExpenseNumber = parseFloat(housingExpense);
+    setGroceriesExpense(150.49);
+    setFoodExpense(120);
+    setFuelExpense(60.44);
+    setHousingExpense(500);
 
-    const totalExpensesNumber = groceriesExpenseNumber + foodExpenseNumber + fuelExpenseNumber + housingExpenseNumber;
+    getBudgetAndExpensesFromFirestore();
+  }, [uid, budget, openInputExpensesOptions]);
 
-    setTotalExpenses(totalExpensesNumber.toFixed(2));
-  }, [expensesData])
-  
+  const getBudgetAndExpensesFromFirestore = async () => {
+    const docRef = doc(db, "users", uid);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      console.log("Document data:", docSnap.data());
+
+      if (docSnap.data().budget) {
+        const { budget } = docSnap.data();
+        setBudget(budget);
+      }
+      
+    } else {
+      // doc.data() will be undefined in this case
+      console.log("No such document!");
+    }
+  };
+
+  // Get the total expense
+  useEffect(() => {
+    const totalExpensesNumber =
+      groceriesExpense +
+      foodExpense +
+      fuelExpense +
+      housingExpense;
+
+    setTotalExpenses(totalExpensesNumber);
+  }, [expensesData]);
 
   useEffect(() => {
     setExpensesData([
@@ -109,10 +145,18 @@ const ExpensesScreen = ({ navigation }) => {
   //Edit Budget
   const editBudget = (value) => {
     value = parseFloat(value).toFixed(2);
-    // const newBudget = parseFloat(value.toFixed(2));
     setBudget(parseFloat(value));
     setBudgetPopUp(false);
-  }
+
+    saveBudgetToFirestore(parseFloat(value));
+  };
+
+  const saveBudgetToFirestore = async (value) => {
+    const userRef = doc(db, "users", uid);
+    await updateDoc(userRef, {
+      budget: value,
+    });
+  };
 
   // render the expenses flatList
   const renderFlatListItem = ({ item: { category, imagePath, expense } }) => (
@@ -132,7 +176,7 @@ const ExpensesScreen = ({ navigation }) => {
             },
           ]}
         >
-          ${expense}
+          ${expense.toFixed(2)}
         </Text>
       </View>
       <Divider style={styles.divider} />
@@ -261,7 +305,7 @@ const ExpensesScreen = ({ navigation }) => {
                 },
               ]}
             >
-              ${totalExpenses}
+              ${totalExpenses.toFixed(2)}
             </Text>
 
             <View style={styles.summaryRemainingView}>
@@ -287,12 +331,13 @@ const ExpensesScreen = ({ navigation }) => {
                   },
                 ]}
               >
-                ${`${(budget - parseFloat(totalExpenses)).toFixed(2)}`} remaining
+                ${`${(budget - parseFloat(totalExpenses)).toFixed(2)}`}{" "}
+                remaining
               </Text>
             </View>
 
             <Progress.Bar
-              progress={(budget - parseFloat(totalExpenses))/budget}
+              progress={(budget - parseFloat(totalExpenses)) / budget}
               width={null}
               height={8}
               color={
@@ -335,13 +380,19 @@ const ExpensesScreen = ({ navigation }) => {
           <DialogInput
             isDialogVisible={budgetPopUp}
             title={"Enter Monthly Budget"}
-            message={`Your current budget is $${parseFloat(budget).toFixed(2)}` }
-            hintInput ={"enter your budget here"}
-            submitInput={ (value) => {editBudget(value)} }
+            message={`Your current budget is $${parseFloat(budget).toFixed(2)}`}
+            hintInput={"enter your budget here"}
+            submitInput={(value) => {
+              editBudget(value);
+            }}
             closeDialog={() => setBudgetPopUp(false)}
             modalStyle={{ backgroundColor: "rgba(0,0,0,.6)" }}
-            dialogStyle={{ backgroundColor: "#dedfde", paddingLeft: 15, paddingRight: 15 }}
-            textInputProps={{keyboardType:"numeric"}}
+            dialogStyle={{
+              backgroundColor: "#dedfde",
+              paddingLeft: 15,
+              paddingRight: 15,
+            }}
+            textInputProps={{ keyboardType: "numeric" }}
           />
 
           <FlatList
