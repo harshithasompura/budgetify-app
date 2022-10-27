@@ -33,26 +33,33 @@ const ExpensesScreen = ({ navigation }) => {
 
   // Expense Data
   const [expensesData, setExpensesData] = useState([]);
-  const [groceriesExpense, setGroceriesExpense] = useState("150.49");
-  const [foodExpense, setFoodExpense] = useState("120.00");
-  const [fuelExpense, setFuelExpense] = useState("60.44");
-  const [housingExpense, setHousingExpense] = useState("500.00");
+  // const [groceriesExpense, setGroceriesExpense] = useState("150.49");
+  // const [foodExpense, setFoodExpense] = useState("120.00");
+  // const [fuelExpense, setFuelExpense] = useState("60.44");
+  // const [housingExpense, setHousingExpense] = useState("500.00");
+  const [groceriesExpense, setGroceriesExpense] = useState("0.00");
+  const [foodExpense, setFoodExpense] = useState("0.00");
+  const [fuelExpense, setFuelExpense] = useState("0.00");
+  const [housingExpense, setHousingExpense] = useState("0.00");
+
   const [totalExpenses, setTotalExpenses] = useState("0.00");
 
   // Budget
-  const [budget, setBudget] = useState(1000);
+  const [budget, setBudget] = useState(0);
   const [budgetPopUp, setBudgetPopUp] = useState(false);
   
 
   const sheetRef = useRef(null);
   const snapPoints = ["25%"];
 
-  // useEffect(() => {
-  //   setGroceriesExpense("150.49");
-  //   setFoodExpense("120.00");
-  //   setFuelExpense("60.44")
-  //   setHousingExpense("500.00");
-  // }, [])
+  useEffect(() => {
+    setGroceriesExpense("150.49");
+    setFoodExpense("120.00");
+    setFuelExpense("60.44")
+    setHousingExpense("500.00");
+
+    setBudget(1000);
+  }, [])
 
   useEffect(() => {
     const groceriesExpenseNumber = parseFloat(groceriesExpense);
@@ -93,7 +100,7 @@ const ExpensesScreen = ({ navigation }) => {
         expense: housingExpense,
       },
     ]);
-  }, []);
+  }, [groceriesExpense, foodExpense, fuelExpense, housingExpense]);
 
   useEffect(() => {
     setPlusVisible(true);
