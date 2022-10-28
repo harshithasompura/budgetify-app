@@ -17,6 +17,8 @@ import {
 } from "@expo-google-fonts/ibm-plex-mono";
 // Firebase imports
 import { auth } from "../FirebaseApp";
+import { db } from "./../FirebaseApp";
+import { collection, setDoc, doc } from "firebase/firestore";
 // get the functions from the Firebase Auth library
 import { createUserWithEmailAndPassword } from "firebase/auth";
 
@@ -30,6 +32,8 @@ const RegisterScreen = ({ navigation }) => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [confirmPasswordErrorMsg, setConfirmPasswordErrorMsg] = useState("");
   const [errors, setErrors] = useState("");
+  const [username, setUsername] = useState();
+  const blankAvatar = `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBGwlAahaapmmJ7Riv_L_ZujOcfWSUJnm71g&usqp=CAU`;
 
   // ------------------------ Route Params -----------------------------
   // ------------------------ Lifecycle Hooks ---------------------------
@@ -93,6 +97,9 @@ const RegisterScreen = ({ navigation }) => {
     try {
       // - send the values to Firebase Authentication
       // and wait for Firebase Auth to create a user with those credential
+      setUsername(() => {
+        return email.split("@")[0];
+      });
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         email,
@@ -100,6 +107,11 @@ const RegisterScreen = ({ navigation }) => {
       );
       console.log("Account creation success");
       console.log(userCredential);
+      // - Add user to Firebase
+      await setDoc(doc(db, "users", email), {
+        name: username,
+        icon: blankAvatar,
+      });
       // - Navigate to home
       navigation.navigate("Tab");
     } catch (err) {
