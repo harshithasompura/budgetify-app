@@ -169,6 +169,7 @@ const ChatsListScreen = ({ navigation }) => {
         initialLayout={{ width: layout.width }}
         renderTabBar={renderTabBar}
         style={styles.tabView}
+        swipeEnabled={false}
       />
     </View>
   );
