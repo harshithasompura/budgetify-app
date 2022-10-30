@@ -108,7 +108,7 @@ const RegisterScreen = ({ navigation }) => {
       console.log("Account creation success");
       console.log(userCredential);
       // - Add user to Firebase
-      await addDoc(collection(db, "users"), {
+      await setDoc(doc(db, "users", email), {
         name: email,
         email: email,
         icon: blankAvatar,
