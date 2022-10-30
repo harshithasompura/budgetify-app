@@ -18,7 +18,7 @@ import {
 // Firebase imports
 import { auth } from "../FirebaseApp";
 import { db } from "./../FirebaseApp";
-import { collection, setDoc, doc } from "firebase/firestore";
+import { collection, setDoc, doc, addDoc } from "firebase/firestore";
 // get the functions from the Firebase Auth library
 import { createUserWithEmailAndPassword } from "firebase/auth";
 
@@ -108,8 +108,9 @@ const RegisterScreen = ({ navigation }) => {
       console.log("Account creation success");
       console.log(userCredential);
       // - Add user to Firebase
-      await setDoc(doc(db, "users", email), {
+      await addDoc(collection(db, "users"), {
         name: username,
+        email: email,
         icon: blankAvatar,
       });
       // - Navigate to home

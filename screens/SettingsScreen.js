@@ -7,7 +7,7 @@ import {
   Pressable,
   Image,
   Platform,
-  Alert
+  Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
@@ -24,22 +24,18 @@ const SettingsScreen = ({ navigation, route }) => {
   const uploadImageToCloud = async (imageUri) => {
     const response = await fetch(imageUri);
     const file = await response.blob();
-    const filename = imageUri.substring(imageUri.lastIndexOf('/') + 1);
+    const filename = imageUri.substring(imageUri.lastIndexOf("/") + 1);
     const storage = getStorage();
     const imgRef = ref(storage, `userAvatars/${filename}`);
 
     try {
       await uploadBytes(imgRef, file);
       const url = await getDownloadURL(imgRef);
-      alert(
-        "file Uploaded and get the link"
-      );
+      alert("file Uploaded and get the link");
       console.log(url);
-    } catch(err) {
+    } catch (err) {
       console.log(err);
     }
-    
-
   };
 
   useEffect(() => {
@@ -92,7 +88,7 @@ const SettingsScreen = ({ navigation, route }) => {
     let _image = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
-      quality: 0
+      quality: 0,
     });
     console.log(JSON.stringify(_image));
     if (!_image.cancelled) {
