@@ -169,9 +169,9 @@ const TabController = () => {
   const Tab = createBottomTabNavigator();
 
   const getTabBarVisibility = (route) => {
-    const routeName = getFocusedRouteNameFromRoute(route) ?? '';
-    return (routeName === 'Chat Room') ? 'none' : 'flex';
-  }
+    const routeName = getFocusedRouteNameFromRoute(route) ?? "";
+    return routeName === "Chat Room" ? "none" : "flex";
+  };
 
   return (
     <Tab.Navigator
@@ -204,7 +204,7 @@ const TabController = () => {
       <Tab.Screen
         name="Community"
         component={CommunityStackScreen}
-        options={({route}) => ({
+        options={({ route }) => ({
           tabBarStyle: { display: getTabBarVisibility(route) },
           tabBarIcon: ({ color, size }) => (
             <Icon name="star" color={color} size={size} />
