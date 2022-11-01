@@ -16,7 +16,7 @@ import useExpenses from './hook/useExpenses'
 
 // Firebase
 import { db } from "../FirebaseApp";
-import { addDoc, collection, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 
 // Importing fonts
 import {
@@ -63,7 +63,7 @@ const InputExpensesScreen = ({ route }) => {
   }, []);
 
   const getAllExpensesFromFirestore = async () => {
-    const docRef = doc(db,"expenses", userEmail);
+    const docRef = doc(db, "users", userEmail);
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
@@ -251,7 +251,7 @@ const InputExpensesScreen = ({ route }) => {
       `${date.getMonth() + 1}`
     ][`${date.getDate()}`].push(parseFloat(tempExpense));
 
-    await setDoc(doc(db, "expenses", userEmail), {
+    await updateDoc(doc(db, "users", userEmail), {
       allExpenses: tempAllExpenses,
     });
 
