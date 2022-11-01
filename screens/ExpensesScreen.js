@@ -41,14 +41,16 @@ const ExpensesScreen = ({ navigation }) => {
 
   // Expense Data
   const [expensesData, setExpensesData] = useState([]);
-  // const [groceriesExpense, setGroceriesExpense] = useState("150.49");
-  // const [foodExpense, setFoodExpense] = useState("120.00");
-  // const [fuelExpense, setFuelExpense] = useState("60.44");
-  // const [housingExpense, setHousingExpense] = useState("500.00");
+
   const [groceriesExpense, setGroceriesExpense] = useState(0);
   const [foodExpense, setFoodExpense] = useState(0);
   const [fuelExpense, setFuelExpense] = useState(0);
+  const [transportationExpense, setTransportationExpense] = useState(0);
+  const [entertainmentExpense, setEntertainmentExpense] = useState(0);
   const [housingExpense, setHousingExpense] = useState(0);
+  const [clothingExpense, setClothingExpense] = useState(0);
+  const [healthExpense, setHealthExpense] = useState(0);
+  const [othersExpense, setOtherExpense] = useState(0);
 
   const [totalExpenses, setTotalExpenses] = useState(0);
 
@@ -56,6 +58,7 @@ const ExpensesScreen = ({ navigation }) => {
   const [budget, setBudget] = useState(0);
   const [budgetPopUp, setBudgetPopUp] = useState(false);
 
+  // Bottom Sheet Setting
   const sheetRef = useRef(null);
   const snapPoints = ["25%"];
 
@@ -74,8 +77,13 @@ const ExpensesScreen = ({ navigation }) => {
   useEffect(() => {
     setGroceriesExpense(150.49);
     setFoodExpense(120);
-    setFuelExpense(60.44);
+    setFuelExpense(0);
+    setTransportationExpense(60.8);
+    setEntertainmentExpense(0);
     setHousingExpense(500);
+    setClothingExpense(0);
+    setHealthExpense(0);
+    setOtherExpense(0);
 
     getBudgetAndExpensesFromFirestore();
   }, [uid, budget, openInputExpensesOptions]);
@@ -86,10 +94,13 @@ const ExpensesScreen = ({ navigation }) => {
 
     if (docSnap.exists()) {
       console.log("Document data:", docSnap.data());
+      const { budget, allExpenses } = docSnap.data();
 
-      if (docSnap.data().budget) {
-        const { budget } = docSnap.data();
+      if (budget) {
         setBudget(budget);
+      }
+
+      if (allExpenses) {
       }
     } else {
       // doc.data() will be undefined in this case
@@ -99,9 +110,10 @@ const ExpensesScreen = ({ navigation }) => {
 
   // Get the total expense
   useEffect(() => {
-    const totalExpensesNumber =
-      groceriesExpense + foodExpense + fuelExpense + housingExpense;
-
+    const totalExpensesNumber = expensesData.reduce(
+      (total, currElement) => total + currElement.expense,
+      0
+    );
     setTotalExpenses(totalExpensesNumber);
   }, [expensesData]);
 
@@ -127,12 +139,52 @@ const ExpensesScreen = ({ navigation }) => {
       },
       {
         id: "4",
+        category: "Transportation",
+        imagePath: require(`../assets/expenses/transportation-icon.png`),
+        expense: transportationExpense,
+      },
+      {
+        id: "5",
+        category: "Entertainment",
+        imagePath: require(`../assets/expenses/entertainment-icon.png`),
+        expense: entertainmentExpense,
+      },
+      {
+        id: "6",
         category: "Housing",
         imagePath: require(`../assets/expenses/housing-icon.png`),
         expense: housingExpense,
       },
+      {
+        id: "7",
+        category: "Clothing",
+        imagePath: require(`../assets/expenses/clothing-icon.png`),
+        expense: clothingExpense,
+      },
+      {
+        id: "8",
+        category: "Health",
+        imagePath: require(`../assets/expenses/health-icon.png`),
+        expense: healthExpense,
+      },
+      {
+        id: "9",
+        category: "Others",
+        imagePath: require(`../assets/expenses/others-icon.png`),
+        expense: othersExpense,
+      },
     ]);
-  }, [groceriesExpense, foodExpense, fuelExpense, housingExpense]);
+  }, [
+    groceriesExpense,
+    foodExpense,
+    fuelExpense,
+    transportationExpense,
+    entertainmentExpense,
+    housingExpense,
+    clothingExpense,
+    healthExpense,
+    othersExpense,
+  ]);
 
   useEffect(() => {
     setPlusVisible(true);
@@ -392,7 +444,7 @@ const ExpensesScreen = ({ navigation }) => {
           />
 
           <FlatList
-            data={expensesData}
+            data={expensesData.filter(element => element.expense !== 0)}
             keyExtractor={(item) => {
               return item.id;
             }}
@@ -504,6 +556,7 @@ const styles = StyleSheet.create({
   },
   flatListCategoryView: {
     flexDirection: "row",
+    alignItems: "center",
   },
   flatListCategoryIcon: {
     height: 25,

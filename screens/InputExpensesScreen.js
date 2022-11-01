@@ -172,7 +172,7 @@ const InputExpensesScreen = ({ navigation }) => {
   // For Category Bottom Sheet
   const categoriesArray = [
     {
-      id: 1,
+      id: "1",
       title: "Groceries",
       imagePath: require(`../assets/expenses/groceries-icon.png`),
     },
@@ -188,8 +188,33 @@ const InputExpensesScreen = ({ navigation }) => {
     },
     {
       id: "4",
+      title: "Transportation",
+      imagePath: require(`../assets/expenses/transportation-icon.png`),
+    },
+    {
+      id: "5",
+      title: "Entertainment",
+      imagePath: require(`../assets/expenses/entertainment-icon.png`),
+    },
+    {
+      id: "6",
       title: "Housing",
       imagePath: require(`../assets/expenses/housing-icon.png`),
+    },
+    {
+      id: "7",
+      title: "Clothing",
+      imagePath: require(`../assets/expenses/clothing-icon.png`),
+    },
+    {
+      id: "8",
+      title: "Health",
+      imagePath: require(`../assets/expenses/health-icon.png`),
+    },
+    {
+      id: "9",
+      title: "Others",
+      imagePath: require(`../assets/expenses/others-icon.png`),
     },
   ];
 
@@ -588,6 +613,8 @@ const styles = StyleSheet.create({
   },
   flatListCategoryView: {
     flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 20,
   },
   flatListCategoryIcon: {
     height: 25,
@@ -599,7 +626,7 @@ const styles = StyleSheet.create({
     marginLeft: 20,
   },
   divider: {
-    marginTop: 20,
+    // marginTop: 20,
     marginBottom: 20,
   },
 });
