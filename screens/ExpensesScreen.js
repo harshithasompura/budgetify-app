@@ -91,7 +91,6 @@ const ExpensesScreen = ({ navigation }) => {
         const { budget } = docSnap.data();
         setBudget(budget);
       }
-      
     } else {
       // doc.data() will be undefined in this case
       console.log("No such document!");
@@ -101,10 +100,7 @@ const ExpensesScreen = ({ navigation }) => {
   // Get the total expense
   useEffect(() => {
     const totalExpensesNumber =
-      groceriesExpense +
-      foodExpense +
-      fuelExpense +
-      housingExpense;
+      groceriesExpense + foodExpense + fuelExpense + housingExpense;
 
     setTotalExpenses(totalExpensesNumber);
   }, [expensesData]);

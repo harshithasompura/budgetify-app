@@ -18,7 +18,7 @@ import {
 // Firebase imports
 import { auth } from "../FirebaseApp";
 import { db } from "./../FirebaseApp";
-import { collection, setDoc, doc } from "firebase/firestore";
+import { collection, setDoc, doc, addDoc } from "firebase/firestore";
 // get the functions from the Firebase Auth library
 import { createUserWithEmailAndPassword } from "firebase/auth";
 
