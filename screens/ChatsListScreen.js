@@ -10,7 +10,10 @@ import {
 } from "react-native";
 import AddUsersSheet from "./components/AddUsersSheet";
 import { useState, useEffect, useRef, useCallback } from "react";
-import BottomSheet, { BottomSheetView, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
+import BottomSheet, {
+  BottomSheetView,
+  BottomSheetBackdrop,
+} from "@gorhom/bottom-sheet";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 import { db } from "../FirebaseApp";
@@ -23,13 +26,13 @@ import {
   orderBy,
   where,
   doc,
-  getDoc
+  getDoc,
 } from "firebase/firestore";
 
 const blankAvatarUrl = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
 const ChatsListScreen = ({ navigation }) => {
-  const snapPoints = ['75%'];
+  const snapPoints = ["75%"];
   const sheetRef = useRef(null);
   const [isOpen, setOpen] = useState(false);
   const [chatsList, setChatsList] = useState([]);
@@ -80,10 +83,10 @@ const ChatsListScreen = ({ navigation }) => {
       collection(db, "private-chats"),
       where("members", "array-contains", uid)
     );
-    
+
     //get related chatrooms and create listener for the chat list
     const unsubscribeChats = onSnapshot(chatsQuery, async (querySnapshot) => {
-      const chatsPromises = querySnapshot.docs.map(async document => {
+      const chatsPromises = querySnapshot.docs.map(async (document) => {
         for (const member of document.data().members) {
           if (uid !== member) {
             const docRef = doc(db, "users", member);
@@ -92,8 +95,8 @@ const ChatsListScreen = ({ navigation }) => {
             return {
               id: document.id,
               name: docSnap.data().name,
-              icon: docSnap.data().icon
-            }
+              icon: docSnap.data().icon,
+            };
           }
         }
       });
@@ -121,9 +124,8 @@ const ChatsListScreen = ({ navigation }) => {
     group: GroupRoute,
   });
 
-
   const renderBackdrop = useCallback(
-    props => (
+    (props) => (
       <BottomSheetBackdrop
         {...props}
         disappearsOnIndex={-1}
@@ -189,18 +191,14 @@ const ChatsListScreen = ({ navigation }) => {
       >
         <Ionicons name="arrow-back-sharp" size={40} color="black" />
       </Pressable>
-      <View style={{flexDirection: 'row', 
-                    position: 'relative'}}>
+      <View style={{ flexDirection: "row", position: "relative" }}>
         <Text style={styles.title}>Messages</Text>
 
-        <Pressable
-            style={styles.addUserBtn}
-            onPress={() => setOpen(true)}
-        >
+        <Pressable style={styles.addUserBtn} onPress={() => setOpen(true)}>
           <Ionicons name="add-circle" size={40} color="black" />
         </Pressable>
       </View>
-      
+
       <TabView
         navigationState={{ index, routes }}
         renderScene={renderScene}
@@ -212,20 +210,16 @@ const ChatsListScreen = ({ navigation }) => {
       />
 
       {isOpen ? (
-          <BottomSheet
-            ref={sheetRef}
-            snapPoints={snapPoints}
-            enablePanDownToClose={true}
-            onClose={() => setOpen(false)}
-            backdropComponent={renderBackdrop}
-          >
-            <AddUsersSheet
-              navigation={navigation}
-              uid={uid}
-            />
-          </BottomSheet>
-        ) : null}
-      
+        <BottomSheet
+          ref={sheetRef}
+          snapPoints={snapPoints}
+          enablePanDownToClose={true}
+          onClose={() => setOpen(false)}
+          backdropComponent={renderBackdrop}
+        >
+          <AddUsersSheet navigation={navigation} uid={uid} />
+        </BottomSheet>
+      ) : null}
     </View>
   );
 };
@@ -272,11 +266,11 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   addUserBtn: {
-    position: 'absolute',
+    position: "absolute",
     right: 0,
     padding: 10,
-    alignSelf: 'center'
-  }
+    alignSelf: "center",
+  },
 });
 
 export default ChatsListScreen;

@@ -169,11 +169,12 @@ const TabController = () => {
   const Tab = createBottomTabNavigator();
 
   const getTabBarVisibility = (route) => {
-    const routeName = getFocusedRouteNameFromRoute(route) ?? '';
-    return (routeName === 'Chats List' || 
-            routeName === 'Chat Room') ? 'none' : 'flex';
+    const routeName = getFocusedRouteNameFromRoute(route) ?? "";
+    return routeName === "Chats List" || routeName === "Chat Room"
+      ? "none"
+      : "flex";
   };
-  
+
   return (
     <Tab.Navigator
       screenOptions={{
