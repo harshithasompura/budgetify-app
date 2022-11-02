@@ -17,6 +17,7 @@ import {
   orderBy,
   getDoc,
   doc,
+  setDoc,
 } from "firebase/firestore";
 import { auth } from "../FirebaseApp";
 import { onAuthStateChanged } from "firebase/auth";
@@ -76,8 +77,12 @@ const ChatScreen = ({ navigation, route }) => {
   }, []);
 
   const onSend = useCallback(async (messages = []) => {
-    setMessages((previousMessages) =>
-      GiftedChat.append(previousMessages, messages)
+    let isNew;
+    setMessages((previousMessages) => {
+      isNew = previousMessages.length === 0 ? true : false;
+      return GiftedChat.append(previousMessages, messages);
+    }
+      
     );
     const { _id, createdAt, text, user } = messages[0];
     try {
@@ -87,6 +92,13 @@ const ChatScreen = ({ navigation, route }) => {
         text,
         user,
       });
+
+      if (isNew && route.params.collectionName === 'private-chats') {
+        await setDoc(doc(db, collectionName, collectionId), {
+          members: collectionId.split('&')
+        });
+      }
+
     } catch (err) {
       console.log(err);
     }

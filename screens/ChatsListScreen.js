@@ -8,7 +8,9 @@ import {
   Image,
   useWindowDimensions,
 } from "react-native";
-import { useState, useEffect, useRef } from "react";
+import AddUsersSheet from "./components/AddUsersSheet";
+import { useState, useEffect, useRef, useCallback } from "react";
+import BottomSheet, { BottomSheetView, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 import { db } from "../FirebaseApp";
@@ -16,17 +18,21 @@ import { auth } from "../FirebaseApp";
 import { onAuthStateChanged } from "firebase/auth";
 import {
   collection,
-  addDoc,
   onSnapshot,
   query,
   orderBy,
   where,
+  doc,
+  getDoc
 } from "firebase/firestore";
 
 const blankAvatarUrl = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
 const ChatsListScreen = ({ navigation }) => {
-  const [userList, setUserList] = useState([]);
+  const snapPoints = ['75%'];
+  const sheetRef = useRef(null);
+  const [isOpen, setOpen] = useState(false);
+  const [chatsList, setChatsList] = useState([]);
   const [groupsList, setGroupsList] = useState([]);
   const [uid, setUid] = useState();
   const [index, setIndex] = useState(0);
@@ -63,33 +69,47 @@ const ChatsListScreen = ({ navigation }) => {
     };
   }, []);
 
+  // called when uid's stage changed
   useEffect(() => {
     if (!didMount.current) {
       didMount.current = true;
       return;
     }
 
-    const userQuery = query(
-      collection(db, "users"),
-      where("__name__", "!=", uid),
-      orderBy("__name__")
+    const chatsQuery = query(
+      collection(db, "private-chats"),
+      where("members", "array-contains", uid)
     );
-    const unsubscribeUsers = onSnapshot(userQuery, (querySnapshot) => {
-      const usersFromFB = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        icon: doc.data().icon,
-        name: doc.data().name,
-      }));
-      setUserList(usersFromFB);
+    
+    //get related chatrooms and create listener for the chat list
+    const unsubscribeChats = onSnapshot(chatsQuery, async (querySnapshot) => {
+      const chatsPromises = querySnapshot.docs.map(async document => {
+        for (const member of document.data().members) {
+          if (uid !== member) {
+            const docRef = doc(db, "users", member);
+            const docSnap = await getDoc(docRef);
+            // console.log(document.id);
+            return {
+              id: document.id,
+              name: docSnap.data().name,
+              icon: docSnap.data().icon
+            }
+          }
+        }
+      });
+
+      //wait until all promises resolved
+      const chatsFromFB = await Promise.all(chatsPromises);
+      setChatsList(chatsFromFB);
     });
 
-    return unsubscribeUsers;
+    return unsubscribeChats;
   }, [uid]);
 
   const layout = useWindowDimensions();
 
   const IndividualRoute = () => (
-    <FlatList data={userList} renderItem={renderItem} />
+    <FlatList data={chatsList} renderItem={renderItem} />
   );
 
   const GroupRoute = () => (
@@ -101,17 +121,25 @@ const ChatsListScreen = ({ navigation }) => {
     group: GroupRoute,
   });
 
+
+  const renderBackdrop = useCallback(
+    props => (
+      <BottomSheetBackdrop
+        {...props}
+        disappearsOnIndex={-1}
+        appearsOnIndex={0}
+        opacity={0.75}
+      />
+    ),
+    []
+  );
+
   const renderItem = ({ item }) => (
     <TouchableOpacity
       activeOpacity={0.8}
       onPress={() => {
         let collectionId = item.id;
         let collectionName = item.isGroup ? "group-chats" : "private-chats";
-        if (!item.isGroup) {
-          const uid1 = uid;
-          const uid2 = item.id;
-          collectionId = uid1 < uid2 ? uid1 + uid2 : uid2 + uid1;
-        }
         navigation.navigate("Chat Room", {
           collectionId: collectionId,
           collectionName: collectionName,
@@ -161,7 +189,18 @@ const ChatsListScreen = ({ navigation }) => {
       >
         <Ionicons name="arrow-back-sharp" size={40} color="black" />
       </Pressable>
-      <Text style={styles.title}>Messages</Text>
+      <View style={{flexDirection: 'row', 
+                    position: 'relative'}}>
+        <Text style={styles.title}>Messages</Text>
+
+        <Pressable
+            style={styles.addUserBtn}
+            onPress={() => setOpen(true)}
+        >
+          <Ionicons name="add-circle" size={40} color="black" />
+        </Pressable>
+      </View>
+      
       <TabView
         navigationState={{ index, routes }}
         renderScene={renderScene}
@@ -171,6 +210,22 @@ const ChatsListScreen = ({ navigation }) => {
         style={styles.tabView}
         swipeEnabled={false}
       />
+
+      {isOpen ? (
+          <BottomSheet
+            ref={sheetRef}
+            snapPoints={snapPoints}
+            enablePanDownToClose={true}
+            onClose={() => setOpen(false)}
+            backdropComponent={renderBackdrop}
+          >
+            <AddUsersSheet
+              navigation={navigation}
+              uid={uid}
+            />
+          </BottomSheet>
+        ) : null}
+      
     </View>
   );
 };
@@ -209,13 +264,19 @@ const styles = StyleSheet.create({
   title: {
     // backgroundColor: 'green',
     fontSize: 32,
-    padding: 15,
+    // padding: 15,
     marginLeft: 18,
     fontWeight: "bold",
   },
   tabView: {
     margin: 10,
   },
+  addUserBtn: {
+    position: 'absolute',
+    right: 0,
+    padding: 10,
+    alignSelf: 'center'
+  }
 });
 
 export default ChatsListScreen;
