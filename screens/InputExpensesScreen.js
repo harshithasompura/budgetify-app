@@ -13,15 +13,23 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { Divider } from "@rneui/themed";
 import BottomSheet, { BottomSheetFlatList } from "@gorhom/bottom-sheet";
 
+// Firebase
+import { db } from "../FirebaseApp";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+
 // Importing fonts
 import {
   IBMPlexMono_400Regular,
   IBMPlexMono_500Medium,
 } from "@expo-google-fonts/ibm-plex-mono";
-// Vector Icons
-import Icon from "react-native-vector-icons/FontAwesome";
 
-const InputExpensesScreen = ({ navigation }) => {
+const InputExpensesScreen = ({ route }) => {
+  // url parameters
+  const { userEmail } = route.params;
+
+  // useState for Expenses
+  const [expenses, setExpenses] = useState({});
+
   // useState for Calculator
   const [showCalculator, setShowCalculator] = useState(true);
   const [curValue, setCurValue] = useState("0");
@@ -43,6 +51,30 @@ const InputExpensesScreen = ({ navigation }) => {
   useEffect(() => {
     setShowCalculator(true);
   }, [showCategoriesMenu]);
+
+  // Fetch all the expenses from firestore
+  useEffect(() => {
+    getAllExpensesFromFirestore();
+  }, [])
+
+  const getAllExpensesFromFirestore = async () => {
+    const docRef = doc(db, "users", userEmail);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      const { allExpenses } = docSnap.data();
+
+      if (allExpenses) {
+        setExpenses(allExpenses);
+      }
+      else {
+        console.log("No data in allExpenses");
+      }
+    } else {
+      // doc.data() will be undefined in this case
+      console.log("No such document!");
+    }
+  };
 
   // Open DatePicker
   const openDatePicker = () => {
@@ -142,13 +174,17 @@ const InputExpensesScreen = ({ navigation }) => {
   };
 
   // Run when Check Button at the top is pressed
-  const checkPress = () => {
+  const checkPressed = () => {
     if (isDateSelected === false) {
       Alert.alert("Please select a date");
       return;
     }
     if (category === null) {
       Alert.alert("Please select a category");
+      return;
+    }
+    if (curValue === "0" || curValue === "0." || curValue === "0.0" || curValue === "0.00") {
+      Alert.alert("Please enter a number");
       return;
     }
 
@@ -162,57 +198,81 @@ const InputExpensesScreen = ({ navigation }) => {
     } else {
       temp = curValue;
     }
-    console.log(
-      `Amount: ${temp}, Date: ${date.toLocaleDateString()}, Category: ${category}`
-    );
+
+    saveExpenseToFireStore(temp);
+
     setCurValue(temp);
     setOperator(null);
+
+    Alert.alert("Expense Saved");
   };
+
+  // Save the expense to firestore
+  const saveExpenseToFireStore = async (tempExpense) => {
+    let tempAllExpenses = expenses;
+    if (!tempAllExpenses[category]) {
+      tempAllExpenses[category] = {};
+    }
+    if (!tempAllExpenses[category][`${date.getFullYear()}`]) {
+      tempAllExpenses[category][`${date.getFullYear()}`] = {};
+    }
+    if (!tempAllExpenses[category][`${date.getFullYear()}`][`${date.getMonth() + 1}`]) {
+      tempAllExpenses[category][`${date.getFullYear()}`][`${date.getMonth() + 1}`] = {};
+    }
+    if (!tempAllExpenses[category][`${date.getFullYear()}`][`${date.getMonth() + 1}`][`${date.getDate()}`]) {
+      tempAllExpenses[category][`${date.getFullYear()}`][`${date.getMonth() + 1}`][`${date.getDate()}`] = [];
+    }
+    tempAllExpenses[category][`${date.getFullYear()}`][`${date.getMonth() + 1}`][`${date.getDate()}`].push(parseFloat(tempExpense));
+
+    await updateDoc(doc(db, "users", userEmail), {allExpenses: tempAllExpenses});
+
+    setExpenses(tempAllExpenses);
+  }
 
   // For Category Bottom Sheet
   const categoriesArray = [
     {
-      id: "1",
+      id: "0",
       title: "Groceries",
       imagePath: require(`../assets/expenses/groceries-icon.png`),
     },
     {
-      id: "2",
+      id: "1",
       title: "Food",
       imagePath: require(`../assets/expenses/food-icon.png`),
     },
     {
-      id: "3",
+      id: "2",
       title: "Fuel",
       imagePath: require(`../assets/expenses/fuel-icon.png`),
     },
     {
-      id: "4",
+      id: "3",
       title: "Transportation",
       imagePath: require(`../assets/expenses/transportation-icon.png`),
     },
     {
-      id: "5",
+      id: "4",
       title: "Entertainment",
       imagePath: require(`../assets/expenses/entertainment-icon.png`),
     },
     {
-      id: "6",
+      id: "5",
       title: "Housing",
       imagePath: require(`../assets/expenses/housing-icon.png`),
     },
     {
-      id: "7",
+      id: "6",
       title: "Clothing",
       imagePath: require(`../assets/expenses/clothing-icon.png`),
     },
     {
-      id: "8",
+      id: "7",
       title: "Health",
       imagePath: require(`../assets/expenses/health-icon.png`),
     },
     {
-      id: "9",
+      id: "8",
       title: "Others",
       imagePath: require(`../assets/expenses/others-icon.png`),
     },
@@ -221,7 +281,10 @@ const InputExpensesScreen = ({ navigation }) => {
   const renderFlatListItem = ({ item: { title, imagePath } }) => (
     <Pressable
       style={styles.flatListContentContainer}
-      onPress={() => setCategory(title)}
+      onPress={() => {
+        setCategory(title);
+        setShowCategoriesMenu(false);
+      }}
     >
       <Divider style={styles.divider} />
       <View style={styles.flatListRow}>
@@ -232,7 +295,7 @@ const InputExpensesScreen = ({ navigation }) => {
 
         {category === title && (
           <Image
-            style={{ height: 30, width: 37 }}
+            style={{ height: 40, width: 40 }}
             source={require(`../assets/expenses/check-icon.png`)}
           />
         )}
@@ -252,7 +315,7 @@ const InputExpensesScreen = ({ navigation }) => {
           <Text style={styles.screenHeading}>Add Expense</Text>
           <Pressable
             style={styles.checkIconView}
-            onPress={showCategoriesMenu ? null : checkPress}
+            onPress={showCategoriesMenu ? null : checkPressed}
           >
             <Image
               style={styles.checkIcon}

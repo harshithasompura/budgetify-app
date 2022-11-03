@@ -7,8 +7,6 @@ import {
   Pressable,
   Image,
   FlatList,
-  TouchableOpacity,
-  Alert,
 } from "react-native";
 import * as Progress from "react-native-progress";
 import { Divider } from "@rneui/themed";
@@ -36,10 +34,10 @@ const ExpensesScreen = ({ navigation }) => {
   const [openInputExpensesOptions, setOpenInputExpensesOptions] =
     useState(false);
 
-  // Current User
-  const [uid, setUid] = useState("testingUID");
+  // useState for Current User
+  const [userEmail, setUserEmail] = useState("testingUID");
 
-  // Expense Data
+  // useState for Expense Data
   const [expensesData, setExpensesData] = useState([]);
 
   const [groceriesExpense, setGroceriesExpense] = useState(0);
@@ -50,12 +48,12 @@ const ExpensesScreen = ({ navigation }) => {
   const [housingExpense, setHousingExpense] = useState(0);
   const [clothingExpense, setClothingExpense] = useState(0);
   const [healthExpense, setHealthExpense] = useState(0);
-  const [othersExpense, setOtherExpense] = useState(0);
+  const [othersExpense, setOthersExpense] = useState(0);
 
   const [totalExpenses, setTotalExpenses] = useState(0);
 
-  // Budget
-  const [budget, setBudget] = useState(0);
+  // useState for Budget
+  const [budget, setBudget] = useState(1000);
   const [budgetPopUp, setBudgetPopUp] = useState(false);
 
   // Bottom Sheet Setting
@@ -66,7 +64,8 @@ const ExpensesScreen = ({ navigation }) => {
   useEffect(() => {
     const unsubscribeOnAuth = onAuthStateChanged(auth, (user) => {
       if (user) {
-        setUid(user.email);
+        setUserEmail(user.email);
+        console.log(userEmail);
       } else {
         console.log("no signed-in user");
       }
@@ -75,21 +74,11 @@ const ExpensesScreen = ({ navigation }) => {
 
   // Get the expenses of each categories and the monthly budget from Firestore
   useEffect(() => {
-    setGroceriesExpense(150.49);
-    setFoodExpense(120);
-    setFuelExpense(0);
-    setTransportationExpense(60.8);
-    setEntertainmentExpense(0);
-    setHousingExpense(500);
-    setClothingExpense(0);
-    setHealthExpense(0);
-    setOtherExpense(0);
-
     getBudgetAndExpensesFromFirestore();
-  }, [uid, budget, openInputExpensesOptions]);
+  }, [userEmail, budget, openInputExpensesOptions]);
 
   const getBudgetAndExpensesFromFirestore = async () => {
-    const docRef = doc(db, "users", uid);
+    const docRef = doc(db, "users", userEmail);
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
@@ -101,11 +90,61 @@ const ExpensesScreen = ({ navigation }) => {
       }
 
       if (allExpenses) {
+        if (allExpenses["Groceries"]) {
+          setGroceriesExpense(calculateMonthExpense(allExpenses["Groceries"]));
+        }
+        if (allExpenses["Food"]) {
+          setFoodExpense(calculateMonthExpense(allExpenses["Food"]));
+        }
+        if (allExpenses["Fuel"]) {
+          setFuelExpense(calculateMonthExpense(allExpenses["Fuel"]));
+        }
+        if (allExpenses["Transportation"]) {
+          setTransportationExpense(
+            calculateMonthExpense(allExpenses["Transportation"])
+          );
+        }
+        if (allExpenses["Entertainment"]) {
+          setEntertainmentExpense(
+            calculateMonthExpense(allExpenses["Entertainment"])
+          );
+        }
+        if (allExpenses["Housing"]) {
+          setHousingExpense(calculateMonthExpense(allExpenses["Housing"]));
+        }
+        if (allExpenses["Clothing"]) {
+          setClothingExpense(calculateMonthExpense(allExpenses["Clothing"]));
+        }
+        if (allExpenses["Health"]) {
+          setHealthExpense(calculateMonthExpense(allExpenses["Health"]));
+        }
+        if (allExpenses["Others"]) {
+          setOthersExpense(calculateMonthExpense(allExpenses["Others"]));
+        }
       }
     } else {
       // doc.data() will be undefined in this case
       console.log("No such document!");
     }
+  };
+
+  // Get the sum of the expense in current month
+  const calculateMonthExpense = (expenseOfCategory) => {
+    const date = new Date();
+    if (expenseOfCategory[date.getFullYear()]) {
+      if (expenseOfCategory[date.getFullYear()][date.getMonth() + 1]) {
+        const tempMonthExpense =
+          expenseOfCategory[date.getFullYear()][date.getMonth() + 1];
+        let total = 0;
+
+        for (const [key, value] of Object.entries(tempMonthExpense)) {
+          const dateExpense = value.reduce((acc, item) => acc + item, 0);
+          total = total + dateExpense;
+        }
+        return total;
+      }
+    }
+    return 0;
   };
 
   // Get the total expense
@@ -120,55 +159,55 @@ const ExpensesScreen = ({ navigation }) => {
   useEffect(() => {
     setExpensesData([
       {
-        id: "1",
+        id: "0",
         category: "Groceries",
         imagePath: require(`../assets/expenses/groceries-icon.png`),
         expense: groceriesExpense,
       },
       {
-        id: "2",
+        id: "1",
         category: "Food",
         imagePath: require(`../assets/expenses/food-icon.png`),
         expense: foodExpense,
       },
       {
-        id: "3",
+        id: "2",
         category: "Fuel",
         imagePath: require(`../assets/expenses/fuel-icon.png`),
         expense: fuelExpense,
       },
       {
-        id: "4",
+        id: "3",
         category: "Transportation",
         imagePath: require(`../assets/expenses/transportation-icon.png`),
         expense: transportationExpense,
       },
       {
-        id: "5",
+        id: "4",
         category: "Entertainment",
         imagePath: require(`../assets/expenses/entertainment-icon.png`),
         expense: entertainmentExpense,
       },
       {
-        id: "6",
+        id: "5",
         category: "Housing",
         imagePath: require(`../assets/expenses/housing-icon.png`),
         expense: housingExpense,
       },
       {
-        id: "7",
+        id: "6",
         category: "Clothing",
         imagePath: require(`../assets/expenses/clothing-icon.png`),
         expense: clothingExpense,
       },
       {
-        id: "8",
+        id: "7",
         category: "Health",
         imagePath: require(`../assets/expenses/health-icon.png`),
         expense: healthExpense,
       },
       {
-        id: "9",
+        id: "8",
         category: "Others",
         imagePath: require(`../assets/expenses/others-icon.png`),
         expense: othersExpense,
@@ -200,7 +239,7 @@ const ExpensesScreen = ({ navigation }) => {
   };
 
   const saveBudgetToFirestore = async (value) => {
-    const userRef = doc(db, "users", uid);
+    const userRef = doc(db, "users", userEmail);
     await updateDoc(userRef, {
       budget: value,
     });
@@ -249,7 +288,7 @@ const ExpensesScreen = ({ navigation }) => {
 
   const bottomSheetOptionSelected = (screenName) => {
     // navigate to corresponding screen
-    navigation.navigate(screenName);
+    navigation.navigate(screenName, { userEmail: userEmail });
     setOpenInputExpensesOptions(false);
     setPlusVisible(true);
     return;
@@ -444,7 +483,7 @@ const ExpensesScreen = ({ navigation }) => {
           />
 
           <FlatList
-            data={expensesData.filter(element => element.expense !== 0)}
+            data={expensesData.filter((element) => element.expense !== 0)}
             keyExtractor={(item) => {
               return item.id;
             }}
@@ -545,7 +584,7 @@ const styles = StyleSheet.create({
     marginLeft: 5,
   },
   flatList: {
-    marginTop: 50,
+    marginTop: 30,
     alignSelf: "center",
     width: "80%",
   },
