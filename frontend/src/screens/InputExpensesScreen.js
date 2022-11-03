@@ -19,6 +19,10 @@ import useExpenses from "../redux/hook/useExpenses";
 import { db } from "../../FirebaseApp";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 
+// Firebase
+import { db } from "../FirebaseApp";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+
 // Importing fonts
 import {
   IBMPlexMono_400Regular,
@@ -263,7 +267,7 @@ const InputExpensesScreen = ({ route }) => {
     });
 
     setExpenses(tempAllExpenses);
-  };
+  }
 
   // For Category Bottom Sheet
   const categoriesArray = [
