@@ -23,6 +23,10 @@ import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../FirebaseApp";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 
+// Firebase
+import { db } from "../FirebaseApp";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+
 // Importing fonts
 import {
   IBMPlexMono_400Regular,
