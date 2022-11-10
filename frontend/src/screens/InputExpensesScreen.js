@@ -18,14 +18,6 @@ import useExpenses from '../redux/hook/useExpenses'
 import { db } from "../../FirebaseApp";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 
-// Firebase
-import { db } from "../FirebaseApp";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
-
-// Firebase
-import { db } from "../FirebaseApp";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
-
 // Importing fonts
 import {
   IBMPlexMono_400Regular,
@@ -237,18 +229,34 @@ const InputExpensesScreen = ({ route }) => {
     if (!tempAllExpenses[category][`${date.getFullYear()}`]) {
       tempAllExpenses[category][`${date.getFullYear()}`] = {};
     }
-    if (!tempAllExpenses[category][`${date.getFullYear()}`][`${date.getMonth() + 1}`]) {
-      tempAllExpenses[category][`${date.getFullYear()}`][`${date.getMonth() + 1}`] = {};
+    if (
+      !tempAllExpenses[category][`${date.getFullYear()}`][
+        `${date.getMonth() + 1}`
+      ]
+    ) {
+      tempAllExpenses[category][`${date.getFullYear()}`][
+        `${date.getMonth() + 1}`
+      ] = {};
     }
-    if (!tempAllExpenses[category][`${date.getFullYear()}`][`${date.getMonth() + 1}`][`${date.getDate()}`]) {
-      tempAllExpenses[category][`${date.getFullYear()}`][`${date.getMonth() + 1}`][`${date.getDate()}`] = [];
+    if (
+      !tempAllExpenses[category][`${date.getFullYear()}`][
+        `${date.getMonth() + 1}`
+      ][`${date.getDate()}`]
+    ) {
+      tempAllExpenses[category][`${date.getFullYear()}`][
+        `${date.getMonth() + 1}`
+      ][`${date.getDate()}`] = [];
     }
-    tempAllExpenses[category][`${date.getFullYear()}`][`${date.getMonth() + 1}`][`${date.getDate()}`].push(parseFloat(tempExpense));
+    tempAllExpenses[category][`${date.getFullYear()}`][
+      `${date.getMonth() + 1}`
+    ][`${date.getDate()}`].push(parseFloat(tempExpense));
 
-    await updateDoc(doc(db, "users", userEmail), {allExpenses: tempAllExpenses});
+    await updateDoc(doc(db, "users", userEmail), {
+      allExpenses: tempAllExpenses,
+    });
 
     setExpenses(tempAllExpenses);
-  }
+  };
 
   // For Category Bottom Sheet
   const categoriesArray = [
