@@ -12,6 +12,7 @@ import * as Progress from "react-native-progress";
 import { Divider } from "@rneui/themed";
 import DialogInput from "react-native-dialog-input";
 import BottomSheet, { BottomSheetFlatList } from "@gorhom/bottom-sheet";
+import useExpenses from './hook/useExpenses'
 
 // Firebase
 import { auth, db } from "../FirebaseApp";
@@ -30,6 +31,41 @@ import {
 import Icon from "react-native-vector-icons/FontAwesome";
 
 const ExpensesScreen = ({ navigation }) => {
+
+  // redux state
+  const {
+    // state for budget
+    budget,
+
+    // state for expenses data
+    groceriesExpense,
+    foodExpense,
+    fuelExpense,
+    transportationExpense,
+    entertainmentExpense,
+    housingExpense,
+    clothingExpense,
+    healthExpense,
+    othersExpense,
+    expensesData,
+    
+    // state for budget
+    setBudget,
+
+    // state for expenses data
+    setGroceriesExpense,
+    setFoodExpense,
+    setFuelExpense,
+    setTransportationExpense,
+    setEntertainmentExpense,
+    setHousingExpense,
+    setClothingExpense,
+    setHealthExpense,
+    setOthersExpense,
+    setExpensesData,
+    fetchExpenses
+  } = useExpenses();
+  
   const [plusVisible, setPlusVisible] = useState(true);
   const [openInputExpensesOptions, setOpenInputExpensesOptions] =
     useState(false);
@@ -37,23 +73,10 @@ const ExpensesScreen = ({ navigation }) => {
   // useState for Current User
   const [userEmail, setUserEmail] = useState("testingUID");
 
-  // useState for Expense Data
-  const [expensesData, setExpensesData] = useState([]);
-
-  const [groceriesExpense, setGroceriesExpense] = useState(0);
-  const [foodExpense, setFoodExpense] = useState(0);
-  const [fuelExpense, setFuelExpense] = useState(0);
-  const [transportationExpense, setTransportationExpense] = useState(0);
-  const [entertainmentExpense, setEntertainmentExpense] = useState(0);
-  const [housingExpense, setHousingExpense] = useState(0);
-  const [clothingExpense, setClothingExpense] = useState(0);
-  const [healthExpense, setHealthExpense] = useState(0);
-  const [othersExpense, setOthersExpense] = useState(0);
-
+  // useState for Expenses Data
   const [totalExpenses, setTotalExpenses] = useState(0);
 
   // useState for Budget
-  const [budget, setBudget] = useState(1000);
   const [budgetPopUp, setBudgetPopUp] = useState(false);
 
   // Bottom Sheet Setting
@@ -74,78 +97,10 @@ const ExpensesScreen = ({ navigation }) => {
 
   // Get the expenses of each categories and the monthly budget from Firestore
   useEffect(() => {
-    getBudgetAndExpensesFromFirestore();
-  }, [userEmail, budget, openInputExpensesOptions]);
-
-  const getBudgetAndExpensesFromFirestore = async () => {
-    const docRef = doc(db, "users", userEmail);
-    const docSnap = await getDoc(docRef);
-
-    if (docSnap.exists()) {
-      console.log("Document data:", docSnap.data());
-      const { budget, allExpenses } = docSnap.data();
-
-      if (budget) {
-        setBudget(budget);
-      }
-
-      if (allExpenses) {
-        if (allExpenses["Groceries"]) {
-          setGroceriesExpense(calculateMonthExpense(allExpenses["Groceries"]));
-        }
-        if (allExpenses["Food"]) {
-          setFoodExpense(calculateMonthExpense(allExpenses["Food"]));
-        }
-        if (allExpenses["Fuel"]) {
-          setFuelExpense(calculateMonthExpense(allExpenses["Fuel"]));
-        }
-        if (allExpenses["Transportation"]) {
-          setTransportationExpense(
-            calculateMonthExpense(allExpenses["Transportation"])
-          );
-        }
-        if (allExpenses["Entertainment"]) {
-          setEntertainmentExpense(
-            calculateMonthExpense(allExpenses["Entertainment"])
-          );
-        }
-        if (allExpenses["Housing"]) {
-          setHousingExpense(calculateMonthExpense(allExpenses["Housing"]));
-        }
-        if (allExpenses["Clothing"]) {
-          setClothingExpense(calculateMonthExpense(allExpenses["Clothing"]));
-        }
-        if (allExpenses["Health"]) {
-          setHealthExpense(calculateMonthExpense(allExpenses["Health"]));
-        }
-        if (allExpenses["Others"]) {
-          setOthersExpense(calculateMonthExpense(allExpenses["Others"]));
-        }
-      }
-    } else {
-      // doc.data() will be undefined in this case
-      console.log("No such document!");
-    }
-  };
-
-  // Get the sum of the expense in current month
-  const calculateMonthExpense = (expenseOfCategory) => {
-    const date = new Date();
-    if (expenseOfCategory[date.getFullYear()]) {
-      if (expenseOfCategory[date.getFullYear()][date.getMonth() + 1]) {
-        const tempMonthExpense =
-          expenseOfCategory[date.getFullYear()][date.getMonth() + 1];
-        let total = 0;
-
-        for (const [key, value] of Object.entries(tempMonthExpense)) {
-          const dateExpense = value.reduce((acc, item) => acc + item, 0);
-          total = total + dateExpense;
-        }
-        return total;
-      }
-    }
-    return 0;
-  };
+    if (!userEmail) return
+    // getBudgetAndExpensesFromFirestore();
+    fetchExpenses(userEmail);
+  }, [userEmail, budget]);
 
   // Get the total expense
   useEffect(() => {
@@ -157,85 +112,17 @@ const ExpensesScreen = ({ navigation }) => {
   }, [expensesData]);
 
   useEffect(() => {
-    setExpensesData([
-      {
-        id: "0",
-        category: "Groceries",
-        imagePath: require(`../assets/expenses/groceries-icon.png`),
-        expense: groceriesExpense,
-      },
-      {
-        id: "1",
-        category: "Food",
-        imagePath: require(`../assets/expenses/food-icon.png`),
-        expense: foodExpense,
-      },
-      {
-        id: "2",
-        category: "Fuel",
-        imagePath: require(`../assets/expenses/fuel-icon.png`),
-        expense: fuelExpense,
-      },
-      {
-        id: "3",
-        category: "Transportation",
-        imagePath: require(`../assets/expenses/transportation-icon.png`),
-        expense: transportationExpense,
-      },
-      {
-        id: "4",
-        category: "Entertainment",
-        imagePath: require(`../assets/expenses/entertainment-icon.png`),
-        expense: entertainmentExpense,
-      },
-      {
-        id: "5",
-        category: "Housing",
-        imagePath: require(`../assets/expenses/housing-icon.png`),
-        expense: housingExpense,
-      },
-      {
-        id: "6",
-        category: "Clothing",
-        imagePath: require(`../assets/expenses/clothing-icon.png`),
-        expense: clothingExpense,
-      },
-      {
-        id: "7",
-        category: "Health",
-        imagePath: require(`../assets/expenses/health-icon.png`),
-        expense: healthExpense,
-      },
-      {
-        id: "8",
-        category: "Others",
-        imagePath: require(`../assets/expenses/others-icon.png`),
-        expense: othersExpense,
-      },
-    ]);
-  }, [
-    groceriesExpense,
-    foodExpense,
-    fuelExpense,
-    transportationExpense,
-    entertainmentExpense,
-    housingExpense,
-    clothingExpense,
-    healthExpense,
-    othersExpense,
-  ]);
-
-  useEffect(() => {
     setPlusVisible(true);
   }, [openInputExpensesOptions]);
 
   //Edit Budget
   const editBudget = (value) => {
     value = parseFloat(value).toFixed(2);
-    setBudget(parseFloat(value));
     setBudgetPopUp(false);
 
     saveBudgetToFirestore(parseFloat(value));
+
+    fetchExpenses(userEmail);
   };
 
   const saveBudgetToFirestore = async (value) => {

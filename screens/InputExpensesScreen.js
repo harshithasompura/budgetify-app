@@ -12,6 +12,7 @@ import {
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Divider } from "@rneui/themed";
 import BottomSheet, { BottomSheetFlatList } from "@gorhom/bottom-sheet";
+import useExpenses from './hook/useExpenses'
 
 // Firebase
 import { db } from "../FirebaseApp";
@@ -26,6 +27,10 @@ import {
 const InputExpensesScreen = ({ route }) => {
   // url parameters
   const { userEmail } = route.params;
+
+
+  // redux state
+  const { fetchExpenses } = useExpenses();
 
   // useState for Expenses
   const [expenses, setExpenses] = useState({});
@@ -55,7 +60,7 @@ const InputExpensesScreen = ({ route }) => {
   // Fetch all the expenses from firestore
   useEffect(() => {
     getAllExpensesFromFirestore();
-  }, [])
+  }, []);
 
   const getAllExpensesFromFirestore = async () => {
     const docRef = doc(db, "users", userEmail);
@@ -66,8 +71,7 @@ const InputExpensesScreen = ({ route }) => {
 
       if (allExpenses) {
         setExpenses(allExpenses);
-      }
-      else {
+      } else {
         console.log("No data in allExpenses");
       }
     } else {
@@ -183,7 +187,12 @@ const InputExpensesScreen = ({ route }) => {
       Alert.alert("Please select a category");
       return;
     }
-    if (curValue === "0" || curValue === "0." || curValue === "0.0" || curValue === "0.00") {
+    if (
+      curValue === "0" ||
+      curValue === "0." ||
+      curValue === "0.0" ||
+      curValue === "0.00"
+    ) {
       Alert.alert("Please enter a number");
       return;
     }
@@ -204,7 +213,11 @@ const InputExpensesScreen = ({ route }) => {
     setCurValue(temp);
     setOperator(null);
 
-    Alert.alert("Expense Saved");
+    // fetchExpenses(userEmail)
+
+    Alert.alert("Expense Saved", "", [
+      { text: "OK", onPress: () => fetchExpenses(userEmail) },
+    ]);
   };
 
   // Save the expense to firestore
@@ -216,18 +229,34 @@ const InputExpensesScreen = ({ route }) => {
     if (!tempAllExpenses[category][`${date.getFullYear()}`]) {
       tempAllExpenses[category][`${date.getFullYear()}`] = {};
     }
-    if (!tempAllExpenses[category][`${date.getFullYear()}`][`${date.getMonth() + 1}`]) {
-      tempAllExpenses[category][`${date.getFullYear()}`][`${date.getMonth() + 1}`] = {};
+    if (
+      !tempAllExpenses[category][`${date.getFullYear()}`][
+        `${date.getMonth() + 1}`
+      ]
+    ) {
+      tempAllExpenses[category][`${date.getFullYear()}`][
+        `${date.getMonth() + 1}`
+      ] = {};
     }
-    if (!tempAllExpenses[category][`${date.getFullYear()}`][`${date.getMonth() + 1}`][`${date.getDate()}`]) {
-      tempAllExpenses[category][`${date.getFullYear()}`][`${date.getMonth() + 1}`][`${date.getDate()}`] = [];
+    if (
+      !tempAllExpenses[category][`${date.getFullYear()}`][
+        `${date.getMonth() + 1}`
+      ][`${date.getDate()}`]
+    ) {
+      tempAllExpenses[category][`${date.getFullYear()}`][
+        `${date.getMonth() + 1}`
+      ][`${date.getDate()}`] = [];
     }
-    tempAllExpenses[category][`${date.getFullYear()}`][`${date.getMonth() + 1}`][`${date.getDate()}`].push(parseFloat(tempExpense));
+    tempAllExpenses[category][`${date.getFullYear()}`][
+      `${date.getMonth() + 1}`
+    ][`${date.getDate()}`].push(parseFloat(tempExpense));
 
-    await updateDoc(doc(db, "users", userEmail), {allExpenses: tempAllExpenses});
+    await updateDoc(doc(db, "users", userEmail), {
+      allExpenses: tempAllExpenses,
+    });
 
     setExpenses(tempAllExpenses);
-  }
+  };
 
   // For Category Bottom Sheet
   const categoriesArray = [

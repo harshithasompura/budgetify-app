@@ -21,6 +21,10 @@ import ExpensesScreen from "./screens/ExpensesScreen";
 import TabController from "./screens/TabController";
 import ForgotPasswordScreen from "./screens/ForgotPasswordScreen";
 
+// Redux
+import { Provider as ReduxProvider } from 'react-redux';
+import store from './screens/store';
+
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -44,6 +48,7 @@ export default function App() {
 
   // ------------------------ View Template -----------------------
   return (
+    <ReduxProvider store={store}>
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Splash">
         <Stack.Screen
@@ -122,6 +127,7 @@ export default function App() {
         />
         <Stack.Screen name="Expenses" component={ExpensesScreen} />
       </Stack.Navigator>
-    </NavigationContainer>
+      </NavigationContainer>
+      </ReduxProvider>
   );
 }
