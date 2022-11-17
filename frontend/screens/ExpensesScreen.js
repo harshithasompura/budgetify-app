@@ -7,13 +7,12 @@ import {
   Pressable,
   Image,
   FlatList,
-  TouchableOpacity,
-  Alert,
 } from "react-native";
 import * as Progress from "react-native-progress";
 import { Divider } from "@rneui/themed";
 import DialogInput from "react-native-dialog-input";
 import BottomSheet, { BottomSheetFlatList } from "@gorhom/bottom-sheet";
+import useExpenses from './hook/useExpenses'
 
 // Firebase
 import { auth, db } from "../FirebaseApp";
@@ -32,30 +31,55 @@ import {
 import Icon from "react-native-vector-icons/FontAwesome";
 
 const ExpensesScreen = ({ navigation }) => {
+
+  // redux state
+  const {
+    // state for budget
+    budget,
+
+    // state for expenses data
+    groceriesExpense,
+    foodExpense,
+    fuelExpense,
+    transportationExpense,
+    entertainmentExpense,
+    housingExpense,
+    clothingExpense,
+    healthExpense,
+    othersExpense,
+    expensesData,
+    
+    // state for budget
+    setBudget,
+
+    // state for expenses data
+    setGroceriesExpense,
+    setFoodExpense,
+    setFuelExpense,
+    setTransportationExpense,
+    setEntertainmentExpense,
+    setHousingExpense,
+    setClothingExpense,
+    setHealthExpense,
+    setOthersExpense,
+    setExpensesData,
+    fetchExpenses
+  } = useExpenses();
+  
   const [plusVisible, setPlusVisible] = useState(true);
   const [openInputExpensesOptions, setOpenInputExpensesOptions] =
     useState(false);
 
-  // Current User
-  const [uid, setUid] = useState("testingUID");
+  // useState for Current User
+  const [userEmail, setUserEmail] = useState("testingUID");
 
-  // Expense Data
-  const [expensesData, setExpensesData] = useState([]);
-  // const [groceriesExpense, setGroceriesExpense] = useState("150.49");
-  // const [foodExpense, setFoodExpense] = useState("120.00");
-  // const [fuelExpense, setFuelExpense] = useState("60.44");
-  // const [housingExpense, setHousingExpense] = useState("500.00");
-  const [groceriesExpense, setGroceriesExpense] = useState(0);
-  const [foodExpense, setFoodExpense] = useState(0);
-  const [fuelExpense, setFuelExpense] = useState(0);
-  const [housingExpense, setHousingExpense] = useState(0);
-
+  // useState for Expenses Data
   const [totalExpenses, setTotalExpenses] = useState(0);
 
-  // Budget
-  const [budget, setBudget] = useState(0);
+  // useState for Budget
   const [budgetPopUp, setBudgetPopUp] = useState(false);
 
+  // Bottom Sheet Setting
   const sheetRef = useRef(null);
   const snapPoints = ["25%"];
 
@@ -63,7 +87,8 @@ const ExpensesScreen = ({ navigation }) => {
   useEffect(() => {
     const unsubscribeOnAuth = onAuthStateChanged(auth, (user) => {
       if (user) {
-        setUid(user.email);
+        setUserEmail(user.email);
+        console.log(userEmail);
       } else {
         console.log("no signed-in user");
       }
@@ -72,67 +97,19 @@ const ExpensesScreen = ({ navigation }) => {
 
   // Get the expenses of each categories and the monthly budget from Firestore
   useEffect(() => {
-    setGroceriesExpense(150.49);
-    setFoodExpense(120);
-    setFuelExpense(60.44);
-    setHousingExpense(500);
-
-    getBudgetAndExpensesFromFirestore();
-  }, [uid, budget, openInputExpensesOptions]);
-
-  const getBudgetAndExpensesFromFirestore = async () => {
-    const docRef = doc(db, "users", uid);
-    const docSnap = await getDoc(docRef);
-
-    if (docSnap.exists()) {
-      console.log("Document data:", docSnap.data());
-
-      if (docSnap.data().budget) {
-        const { budget } = docSnap.data();
-        setBudget(budget);
-      }
-    } else {
-      // doc.data() will be undefined in this case
-      console.log("No such document!");
-    }
-  };
+    if (!userEmail) return
+    // getBudgetAndExpensesFromFirestore();
+    fetchExpenses(userEmail);
+  }, [userEmail, budget]);
 
   // Get the total expense
   useEffect(() => {
-    const totalExpensesNumber =
-      groceriesExpense + foodExpense + fuelExpense + housingExpense;
-
+    const totalExpensesNumber = expensesData.reduce(
+      (total, currElement) => total + currElement.expense,
+      0
+    );
     setTotalExpenses(totalExpensesNumber);
   }, [expensesData]);
-
-  useEffect(() => {
-    setExpensesData([
-      {
-        id: "1",
-        category: "Groceries",
-        imagePath: require(`../assets/expenses/groceries-icon.png`),
-        expense: groceriesExpense,
-      },
-      {
-        id: "2",
-        category: "Food",
-        imagePath: require(`../assets/expenses/food-icon.png`),
-        expense: foodExpense,
-      },
-      {
-        id: "3",
-        category: "Fuel",
-        imagePath: require(`../assets/expenses/fuel-icon.png`),
-        expense: fuelExpense,
-      },
-      {
-        id: "4",
-        category: "Housing",
-        imagePath: require(`../assets/expenses/housing-icon.png`),
-        expense: housingExpense,
-      },
-    ]);
-  }, [groceriesExpense, foodExpense, fuelExpense, housingExpense]);
 
   useEffect(() => {
     setPlusVisible(true);
@@ -141,14 +118,15 @@ const ExpensesScreen = ({ navigation }) => {
   //Edit Budget
   const editBudget = (value) => {
     value = parseFloat(value).toFixed(2);
-    setBudget(parseFloat(value));
     setBudgetPopUp(false);
 
     saveBudgetToFirestore(parseFloat(value));
+
+    fetchExpenses(userEmail);
   };
 
   const saveBudgetToFirestore = async (value) => {
-    const userRef = doc(db, "users", uid);
+    const userRef = doc(db, "users", userEmail);
     await updateDoc(userRef, {
       budget: value,
     });
@@ -197,7 +175,7 @@ const ExpensesScreen = ({ navigation }) => {
 
   const bottomSheetOptionSelected = (screenName) => {
     // navigate to corresponding screen
-    navigation.navigate(screenName);
+    navigation.navigate(screenName, { userEmail: userEmail });
     setOpenInputExpensesOptions(false);
     setPlusVisible(true);
     return;
@@ -392,7 +370,7 @@ const ExpensesScreen = ({ navigation }) => {
           />
 
           <FlatList
-            data={expensesData}
+            data={expensesData.filter((element) => element.expense !== 0)}
             keyExtractor={(item) => {
               return item.id;
             }}
@@ -493,7 +471,7 @@ const styles = StyleSheet.create({
     marginLeft: 5,
   },
   flatList: {
-    marginTop: 50,
+    marginTop: 30,
     alignSelf: "center",
     width: "80%",
   },
@@ -504,6 +482,7 @@ const styles = StyleSheet.create({
   },
   flatListCategoryView: {
     flexDirection: "row",
+    alignItems: "center",
   },
   flatListCategoryIcon: {
     height: 25,

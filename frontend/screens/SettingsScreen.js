@@ -7,48 +7,41 @@ import {
   Pressable,
   Image,
   Platform,
-  Alert,
+  Alert
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { useEffect, useState } from "react";
 import { auth } from "../FirebaseApp";
+import { db } from "../FirebaseApp";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
+import { doc, updateDoc, getDoc } from "firebase/firestore";
 
 const SettingsScreen = ({ navigation, route }) => {
   const [loggedInUser, setLoggedInUser] = useState("");
   const [image, setImage] = useState(null);
 
-  const uploadImageToCloud = async (imageUri) => {
-    const response = await fetch(imageUri);
-    const file = await response.blob();
-    const filename = imageUri.substring(imageUri.lastIndexOf("/") + 1);
-    const storage = getStorage();
-    const imgRef = ref(storage, `userAvatars/${filename}`);
-
-    try {
-      await uploadBytes(imgRef, file);
-      const url = await getDownloadURL(imgRef);
-      alert("file Uploaded and get the link");
-      console.log(url);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
   useEffect(() => {
     checkForCameraRollPermission();
-    const listener = onAuthStateChanged(auth, (userFromFirebaseAuth) => {
+    const listener = onAuthStateChanged(auth, async (userFromFirebaseAuth) => {
       if (userFromFirebaseAuth) {
-        console.log(userFromFirebaseAuth.email);
+        // console.log(userFromFirebaseAuth.email);
         setLoggedInUser(userFromFirebaseAuth.email);
+        const docRef = doc(db, "users", userFromFirebaseAuth.email);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setImage(docSnap.data().icon)
+        } 
       } else {
         setLoggedInUser(null);
         console.log("No user signed in");
       }
     });
+
+
+
     return listener;
   }, []);
 
@@ -84,16 +77,40 @@ const SettingsScreen = ({ navigation, route }) => {
     console.log(`Delete Account Pressed!`);
   };
 
+  const uploadImageToCloud = async (imageUri, userId) => {
+    const response = await fetch(imageUri);
+    const file = await response.blob();    
+    const storage = getStorage();
+    const filename = userId;
+    const imgRef = ref(storage, `userAvatars/${filename}`);
+
+    try {
+      await uploadBytes(imgRef, file);
+      const avatarUrl = await getDownloadURL(imgRef);
+  
+      const userRef = doc(db, "users", userId);
+      await updateDoc(userRef, {
+        icon: avatarUrl
+      });
+
+      alert(
+        "Updated Avatar"
+      );
+    } catch(err) {
+      console.log(err);
+    }
+  };
+
   const addImage = async () => {
     let _image = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
-      quality: 0,
+      quality: 0
     });
     console.log(JSON.stringify(_image));
     if (!_image.cancelled) {
       setImage(_image.uri);
-      uploadImageToCloud(_image.uri);
+      uploadImageToCloud(_image.uri, loggedInUser);
     }
   };
 

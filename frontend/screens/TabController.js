@@ -170,7 +170,9 @@ const TabController = () => {
 
   const getTabBarVisibility = (route) => {
     const routeName = getFocusedRouteNameFromRoute(route) ?? "";
-    return routeName === "Chat Room" ? "none" : "flex";
+    return routeName === "Chats List" || routeName === "Chat Room"
+      ? "none"
+      : "flex";
   };
 
   return (
