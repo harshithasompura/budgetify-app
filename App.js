@@ -24,10 +24,6 @@ import ForgotPasswordScreen from "./screens/ForgotPasswordScreen";
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
-// Push notifs imports
-import * as Device from 'expo-device';
-import * as Notifications from 'expo-notifications';
-
 export default function App() {
   // ------------------------ State Variables -----------------------
   // state variable to track if there is a logged in user
@@ -35,9 +31,6 @@ export default function App() {
 
   // ------------------------ Lifecycle Hooks ---------------------------
   useEffect(() => {
-    // Push notifs
-    registerForPushNotification().then(token=>console.log(token));
-
     // code to check if there is a logged in user
     onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -47,23 +40,7 @@ export default function App() {
         setUserLoggedIn(false); //log out
       }
     });
-
   }, []);
-
-  // Helpers/methods
-  async function registerForPushNotification(){
-    const {status} = await  Notifications.getPermissionsAsync();
-    if (status != 'granted') {
-      const { status } = await  Notifications.getPermissionsAsync();
-      // finalStatus = status;
-    }
-    if (status !== 'granted') {
-      alert('Failed to get push token for push notification!');
-      return;
-    }
-    token = (await Notifications.getExpoPushTokenAsync()).data;
-    return token
-  }
 
   // ------------------------ View Template -----------------------
   return (
