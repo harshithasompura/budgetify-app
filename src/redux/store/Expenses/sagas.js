@@ -3,7 +3,7 @@ import actions from "./actions";
 import { ExpensesActionType } from "./types";
 
 // firebase
-import { db } from "../../../FirebaseApp";
+import { db } from "../../../../FirebaseApp";
 import { doc, getDoc } from "firebase/firestore";
 
 // Get the sum of the expense in current month

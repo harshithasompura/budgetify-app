@@ -23,7 +23,7 @@ import ChatsListScreen from "./ChatsListScreen";
 import Icon from "react-native-vector-icons/FontAwesome";
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import CameraScreen from "./components/Camera";
+import CameraScreen from "../components/Camera";
 import ManageCategoriesScreen from "./ManageCategoriesScreen";
 import ChangePasswordScreen from "./ChangePasswordScreen";
 import ManageCurrenciesScreen from "./ManageCurrenciesScreen";

@@ -41,7 +41,7 @@ const SplashScreen = ({ navigation }) => {
     // ------------------------ View Template -----------------------
     return (
       <SafeAreaView style={styles.container}>
-        <Image source={require(`../assets/budget-image.png`)} />
+        <Image source={require(`../../assets/budget-image.png`)} />
         <Text style={[styles.appHeader, { fontFamily: "IBMPlexMono_700Bold" }]}>
           Budget your goals!
         </Text>

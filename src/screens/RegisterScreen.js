@@ -16,8 +16,8 @@ import {
   IBMPlexMono_700Bold,
 } from "@expo-google-fonts/ibm-plex-mono";
 // Firebase imports
-import { auth } from "../FirebaseApp";
-import { db } from "./../FirebaseApp";
+import { auth } from "../../FirebaseApp";
+import { db } from "../../FirebaseApp";
 import { collection, setDoc, doc, addDoc } from "firebase/firestore";
 // get the functions from the Firebase Auth library
 import { createUserWithEmailAndPassword } from "firebase/auth";

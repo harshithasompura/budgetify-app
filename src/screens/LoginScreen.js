@@ -8,7 +8,7 @@ import {
   Pressable,
 } from "react-native";
 // Firebase imports
-import { auth } from "../FirebaseApp";
+import { auth } from "../../FirebaseApp";
 // get the functions from the Firebase Auth library
 import { signInWithEmailAndPassword } from "firebase/auth";
 
