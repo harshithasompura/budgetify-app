@@ -10,7 +10,8 @@ import {
   Dimensions
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import expensesSelectors from "./store/Expenses/selectors";
+import expensesSelectors from "../redux/store/Expenses/selectors";
+
 import {
   PieChart,
   ProgressChart

@@ -9,10 +9,10 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Icon from "react-native-vector-icons/FontAwesome";
-import Post from "./components/Post.js";
+import Post from "../components/Post.js";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
-import { db } from "../FirebaseApp";
-import { auth } from "../FirebaseApp";
+import { db } from "../../FirebaseApp";
+import { auth } from "../../FirebaseApp";
 import { onAuthStateChanged } from "firebase/auth";
 import {
   collection,

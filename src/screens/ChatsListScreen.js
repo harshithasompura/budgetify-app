@@ -8,7 +8,7 @@ import {
   Image,
   useWindowDimensions,
 } from "react-native";
-import AddUsersSheet from "./components/AddUsersSheet";
+import AddUsersSheet from "../components/AddUsersSheet";
 import { useState, useEffect, useRef, useCallback } from "react";
 import BottomSheet, {
   BottomSheetView,
@@ -16,8 +16,8 @@ import BottomSheet, {
 } from "@gorhom/bottom-sheet";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
-import { db } from "../FirebaseApp";
-import { auth } from "../FirebaseApp";
+import { db } from "../../FirebaseApp";
+import { auth } from "../../FirebaseApp";
 import { onAuthStateChanged } from "firebase/auth";
 import {
   collection,

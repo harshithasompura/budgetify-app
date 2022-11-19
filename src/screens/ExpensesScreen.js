@@ -12,10 +12,10 @@ import * as Progress from "react-native-progress";
 import { Divider } from "@rneui/themed";
 import DialogInput from "react-native-dialog-input";
 import BottomSheet, { BottomSheetFlatList } from "@gorhom/bottom-sheet";
-import useExpenses from './hook/useExpenses'
+import useExpenses from '../redux/hook/useExpenses'
 
 // Firebase
-import { auth, db } from "../FirebaseApp";
+import { auth, db } from "../../FirebaseApp";
 import { onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 

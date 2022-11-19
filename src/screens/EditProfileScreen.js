@@ -11,9 +11,9 @@ import {
 import React, { useState } from "react";
 import { useEffect } from "react";
 
-import { auth } from "../FirebaseApp";
+import { auth } from "../../FirebaseApp";
 import { onAuthStateChanged } from "firebase/auth";
-import { db } from "../FirebaseApp";
+import { db } from "../../FirebaseApp";
 import { collection, addDoc, updateDoc, doc } from "firebase/firestore";
 
 const EditProfileScreen = ({ navigation }) => {

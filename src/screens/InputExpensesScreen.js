@@ -12,10 +12,10 @@ import {
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Divider } from "@rneui/themed";
 import BottomSheet, { BottomSheetFlatList } from "@gorhom/bottom-sheet";
-import useExpenses from './hook/useExpenses'
+import useExpenses from '../redux/hook/useExpenses'
 
 // Firebase
-import { db } from "../FirebaseApp";
+import { db } from "../../FirebaseApp";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 
 // Importing fonts
@@ -263,47 +263,47 @@ const InputExpensesScreen = ({ route }) => {
     {
       id: "0",
       title: "Groceries",
-      imagePath: require(`../assets/expenses/groceries-icon.png`),
+      imagePath: require(`../../assets/expenses/groceries-icon.png`),
     },
     {
       id: "1",
       title: "Food",
-      imagePath: require(`../assets/expenses/food-icon.png`),
+      imagePath: require(`../../assets/expenses/food-icon.png`),
     },
     {
       id: "2",
       title: "Fuel",
-      imagePath: require(`../assets/expenses/fuel-icon.png`),
+      imagePath: require(`../../assets/expenses/fuel-icon.png`),
     },
     {
       id: "3",
       title: "Transportation",
-      imagePath: require(`../assets/expenses/transportation-icon.png`),
+      imagePath: require(`../../assets/expenses/transportation-icon.png`),
     },
     {
       id: "4",
       title: "Entertainment",
-      imagePath: require(`../assets/expenses/entertainment-icon.png`),
+      imagePath: require(`../../assets/expenses/entertainment-icon.png`),
     },
     {
       id: "5",
       title: "Housing",
-      imagePath: require(`../assets/expenses/housing-icon.png`),
+      imagePath: require(`../../assets/expenses/housing-icon.png`),
     },
     {
       id: "6",
       title: "Clothing",
-      imagePath: require(`../assets/expenses/clothing-icon.png`),
+      imagePath: require(`../../assets/expenses/clothing-icon.png`),
     },
     {
       id: "7",
       title: "Health",
-      imagePath: require(`../assets/expenses/health-icon.png`),
+      imagePath: require(`../../assets/expenses/health-icon.png`),
     },
     {
       id: "8",
       title: "Others",
-      imagePath: require(`../assets/expenses/others-icon.png`),
+      imagePath: require(`../../assets/expenses/others-icon.png`),
     },
   ];
 
@@ -325,7 +325,7 @@ const InputExpensesScreen = ({ route }) => {
         {category === title && (
           <Image
             style={{ height: 40, width: 40 }}
-            source={require(`../assets/expenses/check-icon.png`)}
+            source={require(`../../assets/expenses/check-icon.png`)}
           />
         )}
       </View>
@@ -348,7 +348,7 @@ const InputExpensesScreen = ({ route }) => {
           >
             <Image
               style={styles.checkIcon}
-              source={require(`../assets/expenses/check-icon.png`)}
+              source={require(`../../assets/expenses/check-icon.png`)}
             />
           </Pressable>
         </View>

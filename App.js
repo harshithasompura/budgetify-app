@@ -13,17 +13,17 @@ import { signOut } from "firebase/auth";
 import { onAuthStateChanged } from "firebase/auth";
 
 //Screen Imports
-import HomeScreen from "./screens/HomeScreen";
-import LoginScreen from "./screens/LoginScreen";
-import SplashScreen from "./screens/SplashScreen";
-import RegisterScreen from "./screens/RegisterScreen";
-import ExpensesScreen from "./screens/ExpensesScreen";
-import TabController from "./screens/TabController";
-import ForgotPasswordScreen from "./screens/ForgotPasswordScreen";
+import HomeScreen from "./src/screens/HomeScreen"
+import LoginScreen from "./src/screens/LoginScreen"
+import SplashScreen from "./src/screens/SplashScreen";
+import RegisterScreen from "./src/screens/RegisterScreen";
+import ExpensesScreen from "./src/screens/ExpensesScreen";
+import TabController from "./src/screens/TabController";
+import ForgotPasswordScreen from "./src/screens/ForgotPasswordScreen";
 
 // Redux
 import { Provider as ReduxProvider } from 'react-redux';
-import store from './screens/store';
+import store from './src/redux/store';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();

@@ -2,7 +2,7 @@ import { Text, TextInput, StyleSheet, Pressable, View } from "react-native";
 import { useState } from "react";
 
 // Firebase imports
-import { auth } from "../FirebaseApp";
+import { auth } from "../../FirebaseApp";
 import { sendPasswordResetEmail } from "firebase/auth";
 // get the functions from the Firebase Auth library
 //import { sendPasswordResetEmail } from "firebase/auth";

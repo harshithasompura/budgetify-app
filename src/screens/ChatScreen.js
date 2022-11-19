@@ -2,7 +2,7 @@ import { StyleSheet, Text, View, Pressable, Image } from "react-native";
 import React, { useState, useCallback, useEffect, useRef } from "react";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import { GiftedChat, Bubble } from "react-native-gifted-chat";
-import { db } from "../FirebaseApp";
+import { db } from "../../FirebaseApp";
 import {
   collection,
   addDoc,
@@ -13,7 +13,7 @@ import {
   doc,
   setDoc,
 } from "firebase/firestore";
-import { auth } from "../FirebaseApp";
+import { auth } from "../../FirebaseApp";
 import { onAuthStateChanged } from "firebase/auth";
 import { getBottomSpace } from "react-native-iphone-x-helper";
 
