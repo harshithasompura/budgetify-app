@@ -1,5 +1,5 @@
 // 1. import the firebase project keys
-import { firebaseConfig } from "./config/firebase-keys";
+import firebaseConfig from "./config/firebase-keys";
 
 // other imports from firebase libraries
 import { initializeApp } from "firebase/app";
