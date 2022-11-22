@@ -145,7 +145,7 @@ const ExpensesScreen = ({ navigation }) => {
   };
 
   const saveBudgetToFirestore = async (value) => {
-    const userRef = doc(db, "users", userEmail);
+    const userRef = doc(db, "expenses", userEmail);
     await updateDoc(userRef, {
       budget: value,
     });

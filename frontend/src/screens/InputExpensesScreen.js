@@ -63,7 +63,7 @@ const InputExpensesScreen = ({ route }) => {
   }, []);
 
   const getAllExpensesFromFirestore = async () => {
-    const docRef = doc(db,"expenses", userEmail);
+    const docRef = doc(db, "expenses", userEmail);
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
