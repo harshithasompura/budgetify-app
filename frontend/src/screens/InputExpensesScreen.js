@@ -63,7 +63,7 @@ const InputExpensesScreen = ({ route }) => {
   }, []);
 
   const getAllExpensesFromFirestore = async () => {
-    const docRef = doc(db, "users", userEmail);
+    const docRef = doc(db, "expenses", userEmail);
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
@@ -251,7 +251,7 @@ const InputExpensesScreen = ({ route }) => {
       `${date.getMonth() + 1}`
     ][`${date.getDate()}`].push(parseFloat(tempExpense));
 
-    await updateDoc(doc(db, "users", userEmail), {
+    await updateDoc(doc(db, "expenses", userEmail), {
       allExpenses: tempAllExpenses,
     });
 

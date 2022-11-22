@@ -30,7 +30,7 @@ export function* fetchExpenses({ payload }) {
   try {
     console.log('call')
     const { email } = payload;
-    const docRef = doc(db, "users", email);
+    const docRef = doc(db, "expenses", email);
     console.log("payload", payload);
     const docSnap = yield getDoc(docRef);
 

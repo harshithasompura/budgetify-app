@@ -112,6 +112,11 @@ const RegisterScreen = ({ navigation }) => {
         name: email.split("@")[0],
         icon: blankAvatar,
       });
+      await setDoc(doc(db, "expenses", email.toLowerCase()), {
+        budget: 1000,
+        // name: email.split("@")[0],
+        // icon: blankAvatar,
+      });
       // - Navigate to home
       navigation.navigate("Tab");
     } catch (err) {
