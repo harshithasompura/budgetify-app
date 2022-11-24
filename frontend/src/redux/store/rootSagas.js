@@ -1,6 +1,6 @@
-import { all } from 'redux-saga/effects';
+import { all } from "redux-saga/effects";
 
-import expensesSagas from './Expenses/sagas';
+import expensesSagas from "./Expenses/sagas";
 
 function* rootSagas() {
   yield all([...expensesSagas]);

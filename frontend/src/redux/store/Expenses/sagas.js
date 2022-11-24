@@ -29,7 +29,7 @@ const calculateMonthExpense = (summary, category) => {
 
 export function* fetchExpenses({ payload }) {
   try {
-    console.log('call')
+    console.log("call");
     const { email } = payload;
     const docRef = doc(db, "users", email, "expenses", email);
     console.log("payload", payload);
@@ -41,7 +41,7 @@ export function* fetchExpenses({ payload }) {
 
     if (budget) {
       yield put(actions.setBudget(budget));
-      console.log("BudGet",budget);
+      console.log("BudGet", budget);
     }
 
     if (!summary) return;
@@ -87,7 +87,6 @@ export function* fetchExpenses({ payload }) {
     yield put(
       actions.setOthersExpense(calculateMonthExpense(summary, "Others"))
     );
-
 
     yield put(
       actions.setExpensesData([
@@ -147,7 +146,6 @@ export function* fetchExpenses({ payload }) {
         },
       ])
     );
-    
   } catch (err) {
     console.log(err);
   }

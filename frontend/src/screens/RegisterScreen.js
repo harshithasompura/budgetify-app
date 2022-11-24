@@ -7,14 +7,6 @@ import {
   View,
   Pressable,
 } from "react-native";
-// Importing fonts
-import {
-  useFonts,
-  IBMPlexMono_400Regular,
-  IBMPlexMono_500Medium,
-  IBMPlexMono_600SemiBold,
-  IBMPlexMono_700Bold,
-} from "@expo-google-fonts/ibm-plex-mono";
 // Firebase imports
 import { auth } from "../../FirebaseApp";
 import { db } from "../../FirebaseApp";
@@ -127,20 +119,25 @@ const RegisterScreen = ({ navigation }) => {
     // Navigate to Login
     navigation.navigate("Login");
   };
-  let [fontsLoaded] = useFonts({
-    IBMPlexMono_400Regular,
-    IBMPlexMono_500Medium,
-    IBMPlexMono_600SemiBold,
-    IBMPlexMono_700Bold,
-  });
-  if (!fontsLoaded) {
-    return <Text>Fonts are loading...</Text>;
-  } else {
-    // ------------------------ View Template -----------------------
-    return (
-      <SafeAreaView style={[styles.container]}>
+  // ------------------------ View Template -----------------------
+  return (
+    <SafeAreaView
+      style={[styles.container, { fontFamily: "Montserrat_400Regular" }]}
+    >
+      {/* Title */}
+      <Text
+        style={{
+          fontFamily: "Montserrat_600SemiBold",
+          fontSize: 18,
+          opacity: 0.7,
+          marginTop: 20,
+        }}
+      >
+        💬 Budget your goals!
+      </Text>
+      <View style={styles.signupContainer}>
         <Text
-          style={[styles.screenHeading, { fontFamily: "IBMPlexMono_700Bold" }]}
+          style={[styles.screenHeading, { fontFamily: "Montserrat_700Bold" }]}
         >
           Sign Up
         </Text>
@@ -150,7 +147,7 @@ const RegisterScreen = ({ navigation }) => {
             style={[
               styles.formLabel,
               ,
-              { fontFamily: "IBMPlexMono_600SemiBold" },
+              { fontFamily: "Montserrat_600SemiBold" },
             ]}
           >
             Email{" "}
@@ -166,10 +163,7 @@ const RegisterScreen = ({ navigation }) => {
             <Text style={styles.textDanger}>{emailErrorMsg}</Text>
           )}
           <Text
-            style={[
-              styles.formLabel,
-              { fontFamily: "IBMPlexMono_600SemiBold" },
-            ]}
+            style={[styles.formLabel, { fontFamily: "Montserrat_600SemiBold" }]}
           >
             Password{" "}
           </Text>
@@ -185,10 +179,7 @@ const RegisterScreen = ({ navigation }) => {
             <Text style={styles.textDanger}>{passwordErrorMsg}</Text>
           )}
           <Text
-            style={[
-              styles.formLabel,
-              { fontFamily: "IBMPlexMono_600SemiBold" },
-            ]}
+            style={[styles.formLabel, { fontFamily: "Montserrat_600SemiBold" }]}
           >
             Confirm Password{" "}
           </Text>
@@ -212,36 +203,47 @@ const RegisterScreen = ({ navigation }) => {
         ) : null}
         <Pressable style={styles.loginButton} onPress={formValidation}>
           <Text
-            style={[styles.buttonText, { fontFamily: "IBMPlexMono_700Bold" }]}
+            style={[styles.buttonText, { fontFamily: "Montserrat_700Bold" }]}
           >
             Register
           </Text>
         </Pressable>
         <Pressable style={styles.signUpButton} onPress={loginPressed}>
           <Text
-            style={[styles.signUpText, { fontFamily: "IBMPlexMono_700Bold" }]}
+            style={[styles.signUpText, { fontFamily: "Montserrat_700Bold" }]}
           >
-            Already have an account? Login.
+            Already have an account?{" "}
+            <Text style={{ textDecorationLine: "underline", color: "#B17BFF" }}>
+              Login.
+            </Text>
           </Text>
         </Pressable>
-      </SafeAreaView>
-    );
-  }
+      </View>
+    </SafeAreaView>
+  );
 };
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#C5F277",
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    backgroundColor: "#62D2B3",
+  },
+  signupContainer: {
+    backgroundColor: "white",
+    paddingVertical: 30,
+    paddingHorizontal: 28,
+    marginTop: 64,
+    borderRadius: 20,
+    alignItems: "center",
   },
   screenHeading: {
-    fontSize: 30,
-    fontWeight: "400",
+    fontSize: 24,
+    marginBottom: 40,
+    marginTop: 10,
   },
   formContainer: {
     alignSelf: "stretch",
-    marginHorizontal: 20,
     marginTop: 10,
     marginBottom: 30,
   },
@@ -257,18 +259,21 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   loginButton: {
-    backgroundColor: "#001C00",
+    backgroundColor: "#C5F277",
     alignSelf: "stretch",
     padding: 16,
-    marginHorizontal: 20,
     alignItems: "center",
     marginBottom: 30,
+    marginTop: 20,
     borderRadius: 10,
+    shadowColor: "black",
+    shadowOffset: { width: -2, height: 3 },
+    shadowOpacity: 0.16,
+    shadowRadius: 4,
   },
   buttonText: {
-    color: "#C5F277",
+    color: "#001c00",
     fontSize: 18,
-    fontWeight: "bold",
   },
   signUpButton: {
     alignSelf: "stretch",
@@ -278,8 +283,9 @@ const styles = StyleSheet.create({
   },
   signUpText: {
     color: "#001C00",
-    fontSize: 18,
-    fontWeight: "bold",
+    fontSize: 15,
+    marginTop: 20,
+    marginBottom: 12,
   },
   errors: {
     alignSelf: "stretch",

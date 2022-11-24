@@ -10,6 +10,7 @@ import {
 // Navigation imports
 import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+
 // Screen Imports
 import HomeScreen from "./HomeScreen";
 import ExpensesScreen from "./ExpensesScreen";
@@ -20,6 +21,7 @@ import CommunityScreen from "./CommunityScreen";
 import EditProfileScreen from "./EditProfileScreen";
 import ChatScreen from "./ChatScreen";
 import ChatsListScreen from "./ChatsListScreen";
+import EditExpensesScreen from "./EditExpensesScreen";
 // Vector Icons
 import Icon from "react-native-vector-icons/FontAwesome";
 
@@ -117,7 +119,6 @@ const ExpensesStackScreen = () => {
       ></ExpensesStack.Screen>
       {/* add those screens that should be navigated inside Expenses Tab in here */}
       <ExpensesStack.Group screenOptions={{ presentation: "modal" }}>
-        <ExpensesStack.Screen name="Camera" component={CameraScreen} />
         <ExpensesStack.Screen
           options={{
             headerTitle: "",
@@ -135,6 +136,20 @@ const ExpensesStackScreen = () => {
           component={ExpensesDetailScreen}
         />
       </ExpensesStack.Group>
+      <ExpensesStack.Screen
+        name="Camera"
+        options={{
+          headerShown: false,
+        }}
+        component={CameraScreen}
+      />
+      <ExpensesStack.Screen
+        name="Edit Expenses"
+        options={{
+          headerShown: false,
+        }}
+        component={EditExpensesScreen}
+      />
     </ExpensesStack.Navigator>
   );
 };
@@ -179,7 +194,11 @@ const TabController = () => {
 
   const getTabBarVisibility = (route) => {
     const routeName = getFocusedRouteNameFromRoute(route) ?? "";
-    return routeName === "Chats List" || routeName === "Chat Room"
+    return routeName === "Chats List" ||
+      routeName === "Chat Room" ||
+      routeName === "Camera" ||
+      routeName === "Edit Expenses" ||
+      routeName === "Add Expense"
       ? "none"
       : "flex";
   };
@@ -192,7 +211,7 @@ const TabController = () => {
         tabBarInactiveTintColor: "gray",
       }}
     >
-      <Tab.Screen
+      {/* <Tab.Screen
         component={HomeScreen}
         name="Home"
         options={{
@@ -201,16 +220,17 @@ const TabController = () => {
           ),
           headerShown: false,
         }}
-      />
+      /> */}
       <Tab.Screen
         name="Expenses"
         component={ExpensesStackScreen}
-        options={{
+        options={({ route }) => ({
+          tabBarStyle: { display: getTabBarVisibility(route) },
           tabBarIcon: ({ color, size }) => (
-            <Icon name="money" color={color} size={size} />
+            <Icon name="star" color={color} size={size} />
           ),
           headerShown: false,
-        }}
+        })}
       />
       <Tab.Screen
         name="Community"

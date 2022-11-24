@@ -1,6 +1,6 @@
-import { combineReducers } from 'redux';
+import { combineReducers } from "redux";
 
-import ExpensesReducer from '../store/Expenses/reducer';
+import ExpensesReducer from "../store/Expenses/reducer";
 
 const reducers = combineReducers({
   Expenses: ExpensesReducer,
