@@ -14,6 +14,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import HomeScreen from "./HomeScreen";
 import ExpensesScreen from "./ExpensesScreen";
 import InputExpensesScreen from "./InputExpensesScreen";
+import ExpensesDetailScreen from "./ExpensesDetailScreen";
 import SettingsScreen from "./SettingsScreen";
 import CommunityScreen from "./CommunityScreen";
 import EditProfileScreen from "./EditProfileScreen";
@@ -124,6 +125,14 @@ const ExpensesStackScreen = () => {
           }}
           name="Add Expense"
           component={InputExpensesScreen}
+        />
+        <ExpensesStack.Screen
+          options={{
+            headerTitle: "",
+            headerStyle: { backgroundColor: "rgba(219, 219, 219,0.9)" },
+          }}
+          name="Expense Detail"
+          component={ExpensesDetailScreen}
         />
       </ExpensesStack.Group>
     </ExpensesStack.Navigator>

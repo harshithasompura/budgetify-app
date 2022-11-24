@@ -251,6 +251,9 @@ const InputExpensesScreen = ({ route }) => {
       `${date.getMonth() + 1}`
     ][`${date.getDate()}`].push(parseFloat(tempExpense));
 
+    // await updateDoc(doc(db, "users", userEmail, "expenses", userEmail), {
+    //   summary: tempAllExpenses,
+    // });
     await updateDoc(doc(db, "expenses", userEmail), {
       allExpenses: tempAllExpenses,
     });
