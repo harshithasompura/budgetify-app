@@ -69,7 +69,7 @@ export default function App() {
       <ReduxProvider store={store}>
         <NavigationContainer>
           <Stack.Navigator initialRouteName="Login">
-              {
+            {
               //User is not logged in - display Login Screen
               !userLoggedIn && (
                 <Stack.Screen
