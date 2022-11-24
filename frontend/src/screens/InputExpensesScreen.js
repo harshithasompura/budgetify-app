@@ -12,7 +12,7 @@ import {
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Divider } from "@rneui/themed";
 import BottomSheet, { BottomSheetFlatList } from "@gorhom/bottom-sheet";
-import useExpenses from '../redux/hook/useExpenses'
+import useExpenses from "../redux/hook/useExpenses";
 
 // Firebase
 import { db } from "../../FirebaseApp";
@@ -27,7 +27,6 @@ import {
 const InputExpensesScreen = ({ route }) => {
   // url parameters
   const { userEmail } = route.params;
-
 
   // redux state
   const { fetchExpenses } = useExpenses();

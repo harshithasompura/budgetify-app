@@ -7,7 +7,8 @@ const getBudget = (state) => _getData(state).budget;
 const getGroceriesExpense = (state) => _getData(state).groceriesExpense;
 const getFoodExpense = (state) => _getData(state).foodExpense;
 const getFuelExpense = (state) => _getData(state).fuelExpense;
-const getTransportationExpense = (state) => _getData(state).transportationExpense;
+const getTransportationExpense = (state) =>
+  _getData(state).transportationExpense;
 const getEntertainmentExpense = (state) => _getData(state).entertainmentExpense;
 const getHousingExpense = (state) => _getData(state).housingExpense;
 const getClothingExpense = (state) => _getData(state).clothingExpense;

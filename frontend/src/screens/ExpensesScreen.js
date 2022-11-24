@@ -12,7 +12,7 @@ import * as Progress from "react-native-progress";
 import { Divider } from "@rneui/themed";
 import DialogInput from "react-native-dialog-input";
 import BottomSheet, { BottomSheetFlatList } from "@gorhom/bottom-sheet";
-import useExpenses from '../redux/hook/useExpenses'
+import useExpenses from "../redux/hook/useExpenses";
 
 // Firebase
 import { auth, db } from "../../FirebaseApp";
@@ -31,7 +31,6 @@ import {
 import Icon from "react-native-vector-icons/FontAwesome";
 
 const ExpensesScreen = ({ navigation }) => {
-
   // redux state
   const {
     // state for budget
@@ -48,7 +47,7 @@ const ExpensesScreen = ({ navigation }) => {
     healthExpense,
     othersExpense,
     expensesData,
-    
+
     // state for budget
     setBudget,
 
@@ -63,9 +62,9 @@ const ExpensesScreen = ({ navigation }) => {
     setHealthExpense,
     setOthersExpense,
     setExpensesData,
-    fetchExpenses
+    fetchExpenses,
   } = useExpenses();
-  
+
   const [plusVisible, setPlusVisible] = useState(true);
   const [openInputExpensesOptions, setOpenInputExpensesOptions] =
     useState(false);
@@ -97,7 +96,7 @@ const ExpensesScreen = ({ navigation }) => {
 
   // Get the expenses of each categories and the monthly budget from Firestore
   useEffect(() => {
-    if (!userEmail) return
+    if (!userEmail) return;
     // getBudgetAndExpensesFromFirestore();
     fetchExpenses(userEmail);
   }, [userEmail, budget]);
