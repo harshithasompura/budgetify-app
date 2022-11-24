@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import * as FileSystem from 'expo-file-system';
 // Vector Icons
 import Icon from "react-native-vector-icons/FontAwesome";
 import {
@@ -10,24 +11,30 @@ import {
   Image,
   Pressable,
   Touchable,
+  ActivityIndicator
 } from "react-native";
-import { Camera, CameraType } from "expo-camera";
+import { Camera } from "expo-camera";
 import * as MediaLibrary from "expo-media-library";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import { async } from "@firebase/util";
-// import storage from '@react-native-firebase/storage';r
-import { db } from "../../FirebaseApp";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { FontAwesome, Ionicons } from "@expo/vector-icons";
+import { manipulateAsync, FlipType, SaveFormat } from 'expo-image-manipulator';
 
-const CameraScreen = ({ navigation }) => {
+const CameraScreen = ({ navigation, route }) => {
+
   // - State Variables
   //1. Camera Permissions
   const [isCameraVisible, setCameraVisible] = useState(false);
   const [hasCameraPermissions, setCameraPermissions] = useState(false);
   const [closeCamera, setCloseCamera] = useState(false);
   const [image, setImage] = useState(null);
+  const [cancel, setCancel] = useState(null);
+  const [confirm, setConfirm] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
   const cameraRef = useRef(null);
+
+  const [loading, setLoading] = useState(false);
+
+  const localBase = 'http://localhost:3000/binary-upload/';
+  const remoteBase = 'https://node-scan.onrender.com/binary-upload/';
 
   // - Event Listeners
   const onCameraButtonPressed = () => {
@@ -41,34 +48,76 @@ const CameraScreen = ({ navigation }) => {
     setCloseCamera(false);
   };
 
+  const scanReceipt = async (imageUri, endpointNum) => {
+    console.log('Processing...');
+    //send image to web api hosted on Render for text recognition
+    const endpointLink = remoteBase + endpointNum;
+
+    const response = await FileSystem.uploadAsync(endpointLink, imageUri, {
+      fieldName: 'file',
+      httpMethod: 'PATCH',
+      uploadType: FileSystem.FileSystemUploadType.BINARY_CONTENT,
+    });
+
+    //data parsed from image
+    return JSON.parse(response.body);
+  };
+
   const takePicture = async () => {
     if (cameraRef) {
       try {
-        const data = await cameraRef.current.takePictureAsync();
-        console.log(data);
-        setImage(data.uri);
-        await addDoc(collection(db, "receipts"), {
-          receiptURL: data.uri,
-          createdAt: serverTimestamp(),
+        const data = await cameraRef.current.takePictureAsync({
+          quality: 0
         });
+
+        const manipResult = await manipulateAsync(
+          data.uri, [],
+          { compress: 0 }
+        );
+
+        console.log(manipResult);
+        setImage(manipResult.uri);
       } catch (error) {
         console.log(error);
       }
     }
   };
 
-  const savePictureToStorage = async () => {
-    console.log(`Saving to Firestore`);
-    const reference = storage().ref("receipt-001.png");
-    const task = reference.putFile(image);
-    task.on("state_changed", (taskSnapshot) => {
-      console.log(`${taskSnapshot.bytesTransferred} transferred 
-        out of ${taskSnapshot.totalBytes}`);
-    });
-    task.then(() => {
-      console.log("Image uploaded to the bucket!");
-    });
+  //this func is used to simulate an imageScan process
+  const startLoading = () => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      navigation.navigate("Edit Expenses", {
+        imageUri: image
+      });
+    }, 3000);
   };
+
+  //a real image scan function
+  const confirmBtnPressed = async () => {
+    setLoading(true);
+    for (let i = 1; i <= 4; i++) {
+      let jsonObject = await scanReceipt(image, i);
+      if (jsonObject['success']) { 
+        //data parsed from image
+        console.log(jsonObject);
+
+        const receipt = jsonObject['receipts'][0]
+        setLoading(false);
+        navigation.navigate("Edit Expenses", {
+          imageUri: image,
+          merchant: receipt['merchant_name'],
+          total: receipt['total'],
+          receiptDate: receipt['date']
+        });
+        return;
+      }
+      console.log('endpoint ' + i + 'failed...');
+    }
+    console.log('All endpoints failed!');
+    setLoading(false);
+  }
 
   // - Lifecycle Hooks
   useEffect(() => {
@@ -87,23 +136,44 @@ const CameraScreen = ({ navigation }) => {
   // ------------------------ View Template -----------------------
   return (
     <SafeAreaView style={styles.container}>
-      {/* <Text>Camera</Text> */}
-      {closeCamera && (
-        <Pressable
-          onPress={onCameraClosePressed}
-          style={{ marginHorizontal: 20 }}
-        >
-          <Icon name="close" size={20} />
-        </Pressable>
-      )}
       {image !== null ? (
-        <Image source={{ uri: image }} style={{ flex: 1 }} />
+        <View style={{ backgroundColor: 'green', flex: 1}}>
+          <Image source={{ uri: image }} style={{ flex: 1 }} ></Image>
+          { loading && <View style={styles.indicator}>
+            <ActivityIndicator  size="large" 
+                                color="#000000" 
+                                animating={loading}
+                                style={{alignSelf: 'center', marginLeft: 3, marginTop: 2}}
+            />
+          </View> }
+          { !loading && <Pressable style={styles.cancelButton} onPress={() => {
+              setImage(null);
+          }}> 
+            {/* <Text style={{color:"#C5F277"}}>Save</Text> */}
+            <Icon name="times-circle" color={"#C5F277"} size={30} />
+          </Pressable> }
+
+          { !loading && <Pressable style={styles.confirmButton} onPress={startLoading}>
+            {/* <Text style={{color:"#C5F277"}}>Save</Text> */}
+            <Icon name="check" color={"#C5F277"} size={30} />
+          </Pressable> }
+        </View>
+        
       ) : (
-        <Camera style={styles.actualCamera} type={type} ref={cameraRef}>
+        <Camera style={styles.actualCamera} type={type} ref={cameraRef} >
           {/* <Text>[CAPTURE]</Text> */}
           <Pressable style={styles.saveButton} onPress={takePicture}>
             {/* <Text style={{color:"#C5F277"}}>Save</Text> */}
             <Icon name="camera" color={"#C5F277"} size={20} />
+          </Pressable>
+          <Pressable
+            style={styles.backButton}
+            onPress={() => {
+
+              navigation.popToTop();
+            }}
+          >
+            <Ionicons name="arrow-back-sharp" size={40} color="#C5F277" />
           </Pressable>
         </Camera>
       )}
@@ -117,9 +187,10 @@ const styles = StyleSheet.create({
     display: "flex",
   },
   actualCamera: {
-    borderRadius: 10,
+    // borderRadius: 10,
     flex: 1,
-    flexDirection: "column",
+    // flexDirection: "column",
+    position: 'relative'
   },
   saveButton: {
     margin: 20,
@@ -131,10 +202,50 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  backButton: {
+    margin: 20,
+    width: 70,
+    height: 70,
+    alignSelf: "flex-start",
+    alignItems: "center",
+    justifyContent: "center",
+    position: 'absolute',
+  },
+  cancelButton: {
+    margin: 20,
+    width: 70,
+    height: 70,
+    borderRadius: 40,
+    backgroundColor: "#001c00",
+    alignItems: "center",
+    justifyContent: "center",
+    position: 'absolute',
+    top: 0
+  },
+  confirmButton: {
+    margin: 20,
+    width: 70,
+    height: 70,
+    borderRadius: 40,
+    backgroundColor: "#001c00",
+    alignItems: "center",
+    justifyContent: "center",
+    position: 'absolute',
+    top: 0,
+    right: 0 
+  },
   capturedImage: {
     height: "100%",
     width: "100%",
   },
+  indicator: {
+    position: 'absolute', 
+    alignSelf: 'center', 
+    marginVertical: 350,
+    backgroundColor: "#C5F277",
+    borderRadius: 40,
+    padding: 10,
+  }
 });
 
 export default CameraScreen;
