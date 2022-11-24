@@ -69,6 +69,18 @@ export default function App() {
       <ReduxProvider store={store}>
         <NavigationContainer>
           <Stack.Navigator initialRouteName="Login">
+              {
+              //User is not logged in - display Login Screen
+              !userLoggedIn && (
+                <Stack.Screen
+                  name="Login"
+                  options={{
+                    headerShown: false, // change this to `false`
+                  }}
+                  component={LoginScreen}
+                />
+              )
+            }
             <Stack.Screen
               name="Tab"
               component={TabController}
@@ -109,13 +121,6 @@ export default function App() {
               }}
               name="Register"
               component={RegisterScreen}
-            />
-            <Stack.Screen
-              name="Login"
-              options={{
-                headerShown: false, // change this to `false`
-              }}
-              component={LoginScreen}
             />
             <Stack.Screen
               name="ForgotPassword"

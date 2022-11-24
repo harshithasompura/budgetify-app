@@ -115,16 +115,17 @@ const HomeScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.screenHeading}>Analytics</Text>
-      <View>
+      <Text style={[styles.screenHeading,  { fontFamily: "Montserrat_600SemiBold" }]}>Analytics</Text>
+      <View style={styles.pieChartContainer}>
         <PieChart
           data={pieChartData}
-          width={width}
+          width={width*1.75}
           height={300}
           chartConfig={chartConfig}
           accessor={"expense"}
           backgroundColor={"transparent"}
           paddingLeft={"20"}
+          hasLegend={false}
         />
         {/* <ProgressChart
                 data={progressChartData}
@@ -144,10 +145,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   screenHeading: {
-    textAlign: "center",
-    fontSize: 30,
-    fontWeight: "400",
+    fontSize: 22,
+    marginVertical:20,
   },
+  pieChartContainer:{
+    marginHorizontal:20,
+    margin:20,
+    width:"100%"
+  }
 });
 
 export default HomeScreen;
