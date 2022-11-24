@@ -7,7 +7,7 @@ import {
   Pressable,
 } from "react-native";
 import React, { useCallback, useRef, useState, useEffect } from "react";
-import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
+import BottomSheet, { BottomSheetView, BottomSheetTextInput, BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { db } from "../../FirebaseApp";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { auth } from "../../FirebaseApp";
@@ -54,63 +54,102 @@ const Post = (props) => {
   };
 
   return (
-    <View style={styles.container}>
+    <BottomSheetView>
       <View
         style={{
-          display: "flex",
           flexDirection: "row",
-          marginVertical: 10,
-          alignItems: "center",
+          marginVertical: 8,
+          position: 'relative'
         }}
       >
-        {/* Header */}
-        <Text style={{ fontSize: 19, fontWeight: "bold", flex: 1 }}>
-          Create a Post
-        </Text>
-        <Pressable style={styles.postButton} onPress={addComment}>
-          <Text style={{ color: "white" }}>Post</Text>
-        </Pressable>
-      </View>
-      <View style={{ display: "flex", flexDirection: "row", marginTop: 10 }}>
-        {/* Post */}
-        <Image
-          style={styles.logo}
-          source={{
-            uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBGwlAahaapmmJ7Riv_L_ZujOcfWSUJnm71g&usqp=CAU",
-          }}
-        />
-        <TextInput
-          style={styles.inputBox}
-          placeholder="Post a question"
-          onChangeText={setComment}
-        />
-      </View>
+      <Text style={styles.bsTitle}>Create a Post</Text>
+      <Pressable style={styles.postButton} onPress={addComment}>
+        <Text style={{ color: "black", fontSize: 19 }}>Post</Text>
+      </Pressable>
     </View>
+    <View style={{ display: "flex", flexDirection: "row", marginTop: 10 }}>
+      <BottomSheetTextInput
+        style={styles.titleInputBox}
+        placeholder="Enter a title"
+        onChangeText={setComment}
+        placeholderTextColor={'#B17BFF'}
+        color={'#C5F277'}
+      />
+    </View>
+    <View style={styles.descriptionInputBoxContainer}>
+      <BottomSheetTextInput
+        style={styles.descriptionInputBox}
+        placeholder="Enter a descrition"
+        onChangeText={setComment}
+        multiline={true}
+        placeholderTextColor={'#B17BFF'}
+        color={'#C5F277'}
+      />
+    </View>
+    </BottomSheetView>
   );
 };
 const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    height: "100%",
-    padding: 20,
-    margin: 10,
-  },
-  logo: {
-    width: 66,
-    height: 58,
-  },
-  inputBox: {
-    borderWidth: 1,
-    borderColor: "#ddd",
+  titleInputBox: {
+    marginHorizontal: 10,
+    marginTop: 10,
+    padding: 15,
     flex: 1,
+    paddingLeft: 15,
+    backgroundColor: "black",
+    borderRadius: 15,
+    fontSize: 16,
+
+    shadowOffset:{width:0, height:5},  
+    shadowColor:'#171717',  
+    shadowOpacity:0.2,  
+    shadowRadius:2,  
+  },
+  descriptionInputBoxContainer: {
+    backgroundColor: "black",
+    borderRadius: 15,
+    height: 320,
+    marginTop: 10,
     margin: 10,
-    padding: 5,
+
+    shadowOffset:{width:0, height:5},  
+    shadowColor:'#171717',  
+    shadowOpacity:0.2,  
+    shadowRadius:2, 
+
+  },
+  descriptionInputBox: {
+    borderColor: "#ddd",
+    // flex: 1,
+    margin: 8,
+    padding: 8,
+    flex: 1,
+    // paddingLeft: 15,
+    backgroundColor: "black",
+    fontSize: 16
+    // width: '
+    // marginRight: 10
+    
   },
   postButton: {
-    backgroundColor: "#001c00",
-    paddingVertical: 10,
-    paddingHorizontal: 30,
+    backgroundColor: "#C5F277",
+    paddingVertical: 8,
+    paddingHorizontal: 25,
     borderRadius: 20,
+    position: 'absolute',
+    right: 15,
+
+    shadowOffset:{width:0, height:2},  
+    shadowColor:'#171717',  
+    shadowOpacity:0.2,  
+    shadowRadius:2, 
+  },
+  bsTitle: {
+    // backgroundColor: 'green',
+    fontSize: 30,
+    padding: 2,
+    marginLeft: 18,
+    fontWeight: "bold",
   },
 });
 

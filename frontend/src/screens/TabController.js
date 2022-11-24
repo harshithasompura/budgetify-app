@@ -21,6 +21,8 @@ import EditProfileScreen from "./EditProfileScreen";
 import ChatScreen from "./ChatScreen";
 import ChatsListScreen from "./ChatsListScreen";
 import EditExpensesScreen from "./EditExpensesScreen";
+import PostDetailScreen from "./PostDetailScreen";
+
 // Vector Icons
 import Icon from "react-native-vector-icons/FontAwesome";
 
@@ -174,6 +176,15 @@ const CommunityStackScreen = () => {
         name="Chat Room"
         component={ChatScreen}
       ></CommunityStack.Screen>
+
+      <CommunityStack.Screen
+        options={{
+          headerShown: false,
+        }}
+        name="Post Detail"
+        component={PostDetailScreen}
+      ></CommunityStack.Screen>
+
     </CommunityStack.Navigator>
   );
 };
@@ -187,7 +198,8 @@ const TabController = () => {
            routeName === "Chat Room" ||
            routeName === "Camera" ||
            routeName === "Edit Expenses" ||
-           routeName === "Add Expense"
+           routeName === "Add Expense" ||
+           routeName === "Post Detail"
       ? "none"
       : "flex";
   };
@@ -200,7 +212,7 @@ const TabController = () => {
         tabBarInactiveTintColor: "gray",
       }}
     >
-      {/* <Tab.Screen
+      <Tab.Screen
         component={HomeScreen}
         name="Home"
         options={{
@@ -209,14 +221,14 @@ const TabController = () => {
           ),
           headerShown: false,
         }}
-      /> */}
+      />
       <Tab.Screen
         name="Expenses"
         component={ExpensesStackScreen}
         options={({ route }) => ({
           tabBarStyle: { display: getTabBarVisibility(route) },
           tabBarIcon: ({ color, size }) => (
-            <Icon name="star" color={color} size={size} />
+            <Icon name="money" color={color} size={size} />
           ),
           headerShown: false,
         })}
