@@ -122,11 +122,11 @@ export default function App() {
             <Stack.Screen
               name="ForgotPassword"
               options={{
-                headerTintColor: "#B17BFF",
+                headerTintColor: "#fff",
                 headerTitle: "",
                 headerShadowVisible: false, // applied here
                 headerStyle: {
-                  backgroundColor: "#F2F3F4",
+                  backgroundColor: "#62D2B3",
                 },
               }}
               component={ForgotPasswordScreen}

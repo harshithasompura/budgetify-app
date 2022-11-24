@@ -27,7 +27,9 @@ const ForgotPasswordScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <View style={styles.formContainer}>
-        <Text style={styles.formLabel}>
+        <Text
+          style={[styles.formLabel, { fontFamily: "Montserrat_600SemiBold" }]}
+        >
           {"Please enter your account email to reset your password:"}
         </Text>
         <TextInput
@@ -46,7 +48,11 @@ const ForgotPasswordScreen = ({ navigation }) => {
         ) : null}
         <Pressable onPress={() => doUserPasswordReset()}>
           <View style={styles.button}>
-            <Text style={styles.buttonText}>{"Request Password Reset"}</Text>
+            <Text
+              style={[styles.buttonText, { fontFamily: "Montserrat_700Bold" }]}
+            >
+              {"Request Password Reset"}
+            </Text>
           </View>
         </Pressable>
       </View>
@@ -59,6 +65,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    backgroundColor: "#62D2B3",
   },
   screenHeading: {
     fontSize: 30,
@@ -69,31 +76,39 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     marginTop: 10,
     marginBottom: 30,
+    backgroundColor: "white",
+    paddingHorizontal: 24,
+    paddingVertical: 50,
+    borderRadius: 20,
   },
   formLabel: {
-    fontWeight: "bold",
+    marginHorizontal: 4,
+    marginBottom: 16,
   },
   inputStyle: {
-    marginVertical: 15,
     height: 48,
     padding: 15,
     borderColor: "#888",
     borderRadius: 10,
     borderWidth: 1,
+    marginTop: 10,
   },
   button: {
-    backgroundColor: "#001C00",
+    backgroundColor: "#C5F277",
     alignSelf: "stretch",
     padding: 16,
-    marginHorizontal: 20,
     alignItems: "center",
-    marginBottom: 30,
+    marginBottom: 12,
+    marginTop: 64,
     borderRadius: 10,
+    shadowColor: "black",
+    shadowOffset: { width: -2, height: 3 },
+    shadowOpacity: 0.16,
+    shadowRadius: 4,
   },
   buttonText: {
-    color: "#C5F277",
-    fontSize: 18,
-    fontWeight: "bold",
+    color: "#001c00",
+    fontSize: 15,
   },
   signUpButton: {
     alignSelf: "stretch",
@@ -109,7 +124,7 @@ const styles = StyleSheet.create({
   errors: {
     alignSelf: "stretch",
     padding: 10,
-    marginHorizontal: 20,
+    marginVertical: 20,
     backgroundColor: "#C63461",
     marginBottom: 20,
   },
