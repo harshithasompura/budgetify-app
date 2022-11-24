@@ -202,7 +202,7 @@ const TabController = () => {
         tabBarInactiveTintColor: "gray",
       }}
     >
-      {/* <Tab.Screen
+      <Tab.Screen
         component={HomeScreen}
         name="Home"
         options={{
@@ -211,7 +211,7 @@ const TabController = () => {
           ),
           headerShown: false,
         }}
-      /> */}
+      />
       <Tab.Screen
         name="Expenses"
         component={ExpensesStackScreen}
