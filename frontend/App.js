@@ -15,7 +15,6 @@ import { onAuthStateChanged } from "firebase/auth";
 //Screen Imports
 import HomeScreen from "./src/screens/HomeScreen"
 import LoginScreen from "./src/screens/LoginScreen"
-import SplashScreen from "./src/screens/SplashScreen";
 import RegisterScreen from "./src/screens/RegisterScreen";
 import ExpensesScreen from "./src/screens/ExpensesScreen";
 import TabController from "./src/screens/TabController";
@@ -50,7 +49,7 @@ export default function App() {
   return (
     <ReduxProvider store={store}>
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Splash">
+      <Stack.Navigator initialRouteName="Login">
         <Stack.Screen
           name="Tab"
           component={TabController}
@@ -87,18 +86,6 @@ export default function App() {
             ),
           })}
         />
-        {
-          //User is not logged in - display Splash/Initial Screen
-          !userLoggedIn && (
-            <Stack.Screen
-              name="Splash"
-              options={{
-                headerShown: false, // change this to `false`
-              }}
-              component={SplashScreen}
-            />
-          )
-        }
         <Stack.Screen
           options={{
             headerShown: false, // change this to `false`
