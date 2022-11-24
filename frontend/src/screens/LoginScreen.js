@@ -93,12 +93,12 @@ const LoginScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView
-      style={[styles.container, { fontFamily: "IBMPlexMono_400Regular" }]}
+      style={[styles.container, { fontFamily: "Montserrat_400Regular" }]}
     >
       {/* Title */}
       <Text
         style={{
-          fontFamily: "IBMPlexMono_700Bold",
+          fontFamily: "Montserrat_600SemiBold",
           fontSize: 18,
           opacity: 0.8,
         }}
@@ -107,7 +107,7 @@ const LoginScreen = ({ navigation }) => {
       </Text>
       <View style={styles.loginContainer}>
         <Text
-          style={[styles.screenHeading, { fontFamily: "IBMPlexMono_700Bold" }]}
+          style={[styles.screenHeading, { fontFamily: "Montserrat_700Bold" }]}
         >
           Log in
         </Text>
@@ -117,7 +117,7 @@ const LoginScreen = ({ navigation }) => {
             style={[
               styles.formLabel,
               ,
-              { fontFamily: "IBMPlexMono_600SemiBold" },
+              { fontFamily: "Montserrat_600SemiBold" },
             ]}
           >
             Email{" "}
@@ -135,7 +135,7 @@ const LoginScreen = ({ navigation }) => {
           <Text
             style={[
               styles.formLabel,
-              { fontFamily: "IBMPlexMono_600SemiBold", marginTop: 6 },
+              { fontFamily: "Montserrat_600SemiBold", marginTop: 6 },
             ]}
           >
             Password{" "}
@@ -156,7 +156,7 @@ const LoginScreen = ({ navigation }) => {
             <Text
               style={[
                 styles.forgotPassword,
-                { fontFamily: "IBMPlexMono_600SemiBold" },
+                { fontFamily: "Montserrat_600SemiBold" },
               ]}
             >
               Forgot Password?
@@ -171,14 +171,14 @@ const LoginScreen = ({ navigation }) => {
         ) : null}
         <Pressable style={styles.loginButton} onPress={formValidation}>
           <Text
-            style={[styles.buttonText, { fontFamily: "IBMPlexMono_700Bold" }]}
+            style={[styles.buttonText, { fontFamily: "Montserrat_700Bold" }]}
           >
             Login
           </Text>
         </Pressable>
         <Pressable style={styles.signUpButton} onPress={signupPressed}>
           <Text
-            style={[styles.signUpText, { fontFamily: "IBMPlexMono_700Bold" }]}
+            style={[styles.signUpText, { fontFamily: "Montserrat_700Bold" }]}
           >
             Don't have an account?{" "}
             <Text style={{ textDecorationLine: "underline" }}>Register.</Text>
@@ -199,7 +199,7 @@ const styles = StyleSheet.create({
   loginContainer: {
     backgroundColor: "white",
     paddingVertical: 30,
-    paddingHorizontal: 18,
+    paddingHorizontal: 28,
     marginTop: 88,
     borderRadius: 20,
     alignItems: "center",
@@ -212,7 +212,7 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     alignSelf: "stretch",
-    marginHorizontal: 18,
+    paddingHorizontal: 4,
     marginBottom: 30,
   },
   formLabel: {
@@ -250,6 +250,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 16,
     marginTop: 20,
+    marginBottom: 12,
   },
   signUpText: {
     color: "#001C00",

@@ -8,11 +8,10 @@ import { Button } from "react-native";
 // Importing fonts
 import {
   useFonts,
-  IBMPlexMono_400Regular,
-  IBMPlexMono_500Medium,
-  IBMPlexMono_600SemiBold,
-  IBMPlexMono_700Bold,
-} from "@expo-google-fonts/ibm-plex-mono";
+  Montserrat_400Regular,
+  Montserrat_600SemiBold,
+  Montserrat_700Bold,
+} from "@expo-google-fonts/montserrat";
 // Vector Icons
 import Icon from "react-native-vector-icons/FontAwesome";
 //Firebase Imports
@@ -55,10 +54,9 @@ export default function App() {
   }, []);
 
   let [fontsLoaded] = useFonts({
-    IBMPlexMono_400Regular,
-    IBMPlexMono_500Medium,
-    IBMPlexMono_600SemiBold,
-    IBMPlexMono_700Bold,
+    Montserrat_400Regular,
+    Montserrat_600SemiBold,
+    Montserrat_700Bold,
   });
   if (!fontsLoaded) {
     return;
