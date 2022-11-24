@@ -10,6 +10,7 @@ import {
   View,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import moment from 'moment';
 import { Divider } from "@rneui/themed";
 import BottomSheet, { BottomSheetFlatList } from "@gorhom/bottom-sheet";
 import useExpenses from "../redux/hook/useExpenses";
@@ -62,16 +63,16 @@ const InputExpensesScreen = ({ route }) => {
   }, []);
 
   const getAllExpensesFromFirestore = async () => {
-    const docRef = doc(db, "users", userEmail);
+    const docRef = doc(db, "users", userEmail, "expenses", userEmail);
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
-      const { allExpenses } = docSnap.data();
+      const { summary } = docSnap.data();
 
-      if (allExpenses) {
-        setExpenses(allExpenses);
+      if (summary) {
+        setExpenses(summary);
       } else {
-        console.log("No data in allExpenses");
+        console.log("No data in summary");
       }
     } else {
       // doc.data() will be undefined in this case
@@ -221,37 +222,44 @@ const InputExpensesScreen = ({ route }) => {
 
   // Save the expense to firestore
   const saveExpenseToFireStore = async (tempExpense) => {
+
     let tempAllExpenses = expenses;
-    if (!tempAllExpenses[category]) {
-      tempAllExpenses[category] = {};
+
+    const tempObject = {
+      category: category,
+      date: moment(date).format("YYYY MMM DD"),
+      total: parseFloat(tempExpense),
     }
-    if (!tempAllExpenses[category][`${date.getFullYear()}`]) {
-      tempAllExpenses[category][`${date.getFullYear()}`] = {};
+
+    console.log(tempObject["date"]);
+
+    if (!tempAllExpenses[`${date.getFullYear()}`]) {
+      tempAllExpenses[`${date.getFullYear()}`] = {};
     }
     if (
-      !tempAllExpenses[category][`${date.getFullYear()}`][
+      !tempAllExpenses[`${date.getFullYear()}`][
         `${date.getMonth() + 1}`
       ]
     ) {
-      tempAllExpenses[category][`${date.getFullYear()}`][
+      tempAllExpenses[`${date.getFullYear()}`][
         `${date.getMonth() + 1}`
       ] = {};
     }
     if (
-      !tempAllExpenses[category][`${date.getFullYear()}`][
+      !tempAllExpenses[`${date.getFullYear()}`][
         `${date.getMonth() + 1}`
       ][`${date.getDate()}`]
     ) {
-      tempAllExpenses[category][`${date.getFullYear()}`][
+      tempAllExpenses[`${date.getFullYear()}`][
         `${date.getMonth() + 1}`
       ][`${date.getDate()}`] = [];
     }
-    tempAllExpenses[category][`${date.getFullYear()}`][
+    tempAllExpenses[`${date.getFullYear()}`][
       `${date.getMonth() + 1}`
-    ][`${date.getDate()}`].push(parseFloat(tempExpense));
+    ][`${date.getDate()}`].push(tempObject);
 
-    await updateDoc(doc(db, "users", userEmail), {
-      allExpenses: tempAllExpenses,
+    await updateDoc(doc(db, "users", userEmail, "expenses", userEmail), {
+      summary: tempAllExpenses,
     });
 
     setExpenses(tempAllExpenses);

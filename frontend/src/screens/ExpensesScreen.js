@@ -37,37 +37,11 @@ const ExpensesScreen = ({ navigation }) => {
     budget,
 
     // state for expenses data
-    groceriesExpense,
-    foodExpense,
-    fuelExpense,
-    transportationExpense,
-    entertainmentExpense,
-    housingExpense,
-    clothingExpense,
-    healthExpense,
-    othersExpense,
     expensesData,
 
-    // state for budget
-    setBudget,
-
-    // state for expenses data
-    setGroceriesExpense,
-    setFoodExpense,
-    setFuelExpense,
-    setTransportationExpense,
-    setEntertainmentExpense,
-    setHousingExpense,
-    setClothingExpense,
-    setHealthExpense,
-    setOthersExpense,
-    setExpensesData,
+    // state for fetching data
     fetchExpenses,
   } = useExpenses();
-
-  const [plusVisible, setPlusVisible] = useState(true);
-  const [openInputExpensesOptions, setOpenInputExpensesOptions] =
-    useState(false);
 
   // useState for Current User
   const [userEmail, setUserEmail] = useState("testingUID");
@@ -77,6 +51,11 @@ const ExpensesScreen = ({ navigation }) => {
 
   // useState for Budget
   const [budgetPopUp, setBudgetPopUp] = useState(false);
+
+  // useState for Open Bottom Sheet
+  const [openInputExpensesOptions, setOpenInputExpensesOptions] =
+    useState(false);
+  
 
   // Bottom Sheet Setting
   const sheetRef = useRef(null);
@@ -97,28 +76,8 @@ const ExpensesScreen = ({ navigation }) => {
   // Get the expenses of each categories and the monthly budget from Firestore
   useEffect(() => {
     if (!userEmail) return;
-    // getBudgetAndExpensesFromFirestore();
     fetchExpenses(userEmail);
   }, [userEmail, budget]);
-
-  // Get the sum of the expense in current month
-  const calculateMonthExpense = (expenseOfCategory) => {
-    const date = new Date();
-    if (expenseOfCategory[date.getFullYear()]) {
-      if (expenseOfCategory[date.getFullYear()][date.getMonth() + 1]) {
-        const tempMonthExpense =
-          expenseOfCategory[date.getFullYear()][date.getMonth() + 1];
-        let total = 0;
-
-        for (const [key, value] of Object.entries(tempMonthExpense)) {
-          const dateExpense = value.reduce((acc, item) => acc + item, 0);
-          total = total + dateExpense;
-        }
-        return total;
-      }
-    }
-    return 0;
-  };
 
   // Get the total expense
   useEffect(() => {
@@ -128,10 +87,6 @@ const ExpensesScreen = ({ navigation }) => {
     );
     setTotalExpenses(totalExpensesNumber);
   }, [expensesData]);
-
-  useEffect(() => {
-    setPlusVisible(true);
-  }, [openInputExpensesOptions]);
 
   //Edit Budget
   const editBudget = (value) => {
@@ -144,7 +99,7 @@ const ExpensesScreen = ({ navigation }) => {
   };
 
   const saveBudgetToFirestore = async (value) => {
-    const userRef = doc(db, "users", userEmail);
+    const userRef = doc(db, "users", userEmail, "expenses", userEmail);
     await updateDoc(userRef, {
       budget: value,
     });
@@ -152,7 +107,14 @@ const ExpensesScreen = ({ navigation }) => {
 
   // render the expenses flatList
   const renderFlatListItem = ({ item: { category, imagePath, expense } }) => (
-    <Pressable>
+    <Pressable
+      onPress={() =>
+        navigation.navigate("Expense Detail", {
+          category: category,
+          userEmail: userEmail,
+        })
+      }
+    >
       <View style={styles.flatListRow}>
         <View style={styles.flatListCategoryView}>
           <Image style={styles.flatListCategoryIcon} source={imagePath} />
@@ -195,7 +157,6 @@ const ExpensesScreen = ({ navigation }) => {
     // navigate to corresponding screen
     navigation.navigate(screenName, { userEmail: userEmail });
     setOpenInputExpensesOptions(false);
-    setPlusVisible(true);
     return;
   };
 
@@ -252,17 +213,15 @@ const ExpensesScreen = ({ navigation }) => {
               Expenses
             </Text>
 
-            {plusVisible && (
-              <Pressable
-                style={styles.plus}
-                onPress={() => {
-                  // Open the bottom sheet
-                  setOpenInputExpensesOptions(true);
-                }}
-              >
-                <Icon name="plus" size={25} />
-              </Pressable>
-            )}
+            <Pressable
+              style={styles.plus}
+              onPress={() => {
+                // Open the bottom sheet
+                setOpenInputExpensesOptions(true);
+              }}
+            >
+              <Icon name="plus" size={25} />
+            </Pressable>
           </View>
 
           <View
@@ -375,6 +334,10 @@ const ExpensesScreen = ({ navigation }) => {
             message={`Your current budget is $${parseFloat(budget).toFixed(2)}`}
             hintInput={"enter your budget here"}
             submitInput={(value) => {
+              if (!value) {
+                setBudgetPopUp(false);
+                return;
+              }
               editBudget(value);
             }}
             closeDialog={() => setBudgetPopUp(false)}

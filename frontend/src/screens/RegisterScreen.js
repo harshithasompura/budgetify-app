@@ -104,6 +104,9 @@ const RegisterScreen = ({ navigation }) => {
         name: email.split("@")[0],
         icon: blankAvatar,
       });
+      await setDoc(doc(db, "users", email, "expenses", email), {
+        budget: 1000,
+      });
       // - Navigate to home
       navigation.navigate("Tab");
     } catch (err) {
