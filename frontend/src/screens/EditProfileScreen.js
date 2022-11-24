@@ -36,16 +36,14 @@ const EditProfileScreen = ({ navigation }) => {
     if (!loggedInUser) {
       console.log("no user logged in");
       return;
-    } 
+    }
 
     const userRef = doc(db, "users", loggedInUser);
     await updateDoc(userRef, {
-      name: newUsername
+      name: newUsername,
     });
     navigation.goBack();
-    alert(
-      "Updated Username"
-    );
+    alert("Updated Username");
   };
   return (
     <SafeAreaView style={styles.container}>
@@ -81,11 +79,12 @@ const EditProfileScreen = ({ navigation }) => {
       /> */}
 
       <TouchableOpacity>
-        <Text 
-          style={styles.addInfoPress} 
+        <Text
+          style={styles.addInfoPress}
           onPress={() => {
             updateUserInfo(studentNameFromUser);
-          }}>
+          }}
+        >
           Add Student Information
         </Text>
       </TouchableOpacity>

@@ -28,7 +28,7 @@ const calculateMonthExpense = (expenseOfCategory) => {
 
 export function* fetchExpenses({ payload }) {
   try {
-    console.log('call')
+    console.log("call");
     const { email } = payload;
     const docRef = doc(db, "users", email);
     console.log("payload", payload);
@@ -40,62 +40,67 @@ export function* fetchExpenses({ payload }) {
 
     if (budget) {
       yield put(actions.setBudget(budget));
-      console.log("BudGet",budget);
+      console.log("BudGet", budget);
     }
 
     if (!allExpenses) return;
 
     yield put(
-        actions.setGroceriesExpense(
-          calculateMonthExpense(allExpenses["Groceries"])
-        )
-    )
-    console.log("Groceries",calculateMonthExpense(allExpenses["Groceries"]));
-    
+      actions.setGroceriesExpense(
+        calculateMonthExpense(allExpenses["Groceries"])
+      )
+    );
+    console.log("Groceries", calculateMonthExpense(allExpenses["Groceries"]));
+
     yield put(
       actions.setFoodExpense(calculateMonthExpense(allExpenses["Food"]))
     );
-    console.log("Food",calculateMonthExpense(allExpenses["Food"]));
+    console.log("Food", calculateMonthExpense(allExpenses["Food"]));
 
     yield put(
       actions.setFuelExpense(calculateMonthExpense(allExpenses["Fuel"]))
     );
-    console.log("Fuel",calculateMonthExpense(allExpenses["Fuel"]));
+    console.log("Fuel", calculateMonthExpense(allExpenses["Fuel"]));
 
     yield put(
       actions.setTransportationExpense(
         calculateMonthExpense(allExpenses["Transportation"])
       )
     );
-    console.log("Transportation",calculateMonthExpense(allExpenses["Transportation"]));
+    console.log(
+      "Transportation",
+      calculateMonthExpense(allExpenses["Transportation"])
+    );
 
     yield put(
       actions.setEntertainmentExpense(
         calculateMonthExpense(allExpenses["Entertainment"])
       )
     );
-    console.log("Entertainment",calculateMonthExpense(allExpenses["Entertainment"]));
+    console.log(
+      "Entertainment",
+      calculateMonthExpense(allExpenses["Entertainment"])
+    );
 
     yield put(
       actions.setHousingExpense(calculateMonthExpense(allExpenses["Housing"]))
     );
-    console.log("Housing",calculateMonthExpense(allExpenses["Housing"]));
+    console.log("Housing", calculateMonthExpense(allExpenses["Housing"]));
 
     yield put(
       actions.setClothingExpense(calculateMonthExpense(allExpenses["Clothing"]))
     );
-    console.log("Clothing",calculateMonthExpense(allExpenses["Clothing"]));
+    console.log("Clothing", calculateMonthExpense(allExpenses["Clothing"]));
 
     yield put(
       actions.setHealthExpense(calculateMonthExpense(allExpenses["Health"]))
     );
-    console.log("Health",calculateMonthExpense(allExpenses["Health"]));
+    console.log("Health", calculateMonthExpense(allExpenses["Health"]));
 
     yield put(
       actions.setOthersExpense(calculateMonthExpense(allExpenses["Others"]))
     );
-    console.log("Others",calculateMonthExpense(allExpenses["Others"]));
-
+    console.log("Others", calculateMonthExpense(allExpenses["Others"]));
 
     yield put(
       actions.setExpensesData([
@@ -155,7 +160,6 @@ export function* fetchExpenses({ payload }) {
         },
       ])
     );
-    
   } catch (err) {
     console.log(err);
   }

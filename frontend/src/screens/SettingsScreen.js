@@ -7,7 +7,7 @@ import {
   Pressable,
   Image,
   Platform,
-  Alert
+  Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
@@ -32,15 +32,13 @@ const SettingsScreen = ({ navigation, route }) => {
         const docRef = doc(db, "users", userFromFirebaseAuth.email);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
-          setImage(docSnap.data().icon)
-        } 
+          setImage(docSnap.data().icon);
+        }
       } else {
         setLoggedInUser(null);
         console.log("No user signed in");
       }
     });
-
-
 
     return listener;
   }, []);
@@ -79,7 +77,7 @@ const SettingsScreen = ({ navigation, route }) => {
 
   const uploadImageToCloud = async (imageUri, userId) => {
     const response = await fetch(imageUri);
-    const file = await response.blob();    
+    const file = await response.blob();
     const storage = getStorage();
     const filename = userId;
     const imgRef = ref(storage, `userAvatars/${filename}`);
@@ -87,16 +85,14 @@ const SettingsScreen = ({ navigation, route }) => {
     try {
       await uploadBytes(imgRef, file);
       const avatarUrl = await getDownloadURL(imgRef);
-  
+
       const userRef = doc(db, "users", userId);
       await updateDoc(userRef, {
-        icon: avatarUrl
+        icon: avatarUrl,
       });
 
-      alert(
-        "Updated Avatar"
-      );
-    } catch(err) {
+      alert("Updated Avatar");
+    } catch (err) {
       console.log(err);
     }
   };
@@ -105,7 +101,7 @@ const SettingsScreen = ({ navigation, route }) => {
     let _image = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
-      quality: 0
+      quality: 0,
     });
     console.log(JSON.stringify(_image));
     if (!_image.cancelled) {
