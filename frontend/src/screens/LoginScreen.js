@@ -230,7 +230,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#C5F277",
     alignSelf: "stretch",
     padding: 16,
-    marginHorizontal: 20,
     alignItems: "center",
     marginBottom: 30,
     marginTop: 20,
