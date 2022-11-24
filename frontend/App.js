@@ -73,11 +73,9 @@ export default function App() {
               name="Tab"
               component={TabController}
               options={({ navigation }) => ({
+                title: "",
                 headerStyle: {
-                  backgroundColor: "#001C00",
-                },
-                headerTitleStyle: {
-                  fontWeight: "bold",
+                  backgroundColor: "#fff",
                 },
                 headerBackVisible: false,
                 headerLeft: () => null,
@@ -100,7 +98,7 @@ export default function App() {
                       }
                     }}
                     title="Sign out"
-                    color="#C5F277"
+                    color="#B17BFF"
                   />
                 ),
               })}

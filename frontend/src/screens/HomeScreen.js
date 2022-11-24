@@ -139,9 +139,9 @@ const HomeScreen = () => {
 };
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: "white",
     flex: 1,
     alignItems: "center",
-    marginVertical: 20,
   },
   screenHeading: {
     textAlign: "center",
