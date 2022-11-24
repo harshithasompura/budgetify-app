@@ -79,25 +79,6 @@ const ExpensesScreen = ({ navigation }) => {
     fetchExpenses(userEmail);
   }, [userEmail, budget]);
 
-  // Get the sum of the expense in current month
-  const calculateMonthExpense = (expenseOfCategory) => {
-    const date = new Date();
-    if (expenseOfCategory[date.getFullYear()]) {
-      if (expenseOfCategory[date.getFullYear()][date.getMonth() + 1]) {
-        const tempMonthExpense =
-          expenseOfCategory[date.getFullYear()][date.getMonth() + 1];
-        let total = 0;
-
-        for (const [key, value] of Object.entries(tempMonthExpense)) {
-          const dateExpense = value.reduce((acc, item) => acc + item, 0);
-          total = total + dateExpense;
-        }
-        return total;
-      }
-    }
-    return 0;
-  };
-
   // Get the total expense
   useEffect(() => {
     const totalExpensesNumber = expensesData.reduce(

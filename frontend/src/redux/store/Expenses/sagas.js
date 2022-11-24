@@ -87,7 +87,6 @@ export function* fetchExpenses({ payload }) {
     yield put(
       actions.setOthersExpense(calculateMonthExpense(summary, "Others"))
     );
-    console.log("Others",calculateMonthExpense(allExpenses["Others"]));
 
 
     yield put(
