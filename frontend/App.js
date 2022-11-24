@@ -69,15 +69,25 @@ export default function App() {
       <ReduxProvider store={store}>
         <NavigationContainer>
           <Stack.Navigator initialRouteName="Login">
+            {
+              //User is not logged in - display Login Screen
+              !userLoggedIn && (
+                <Stack.Screen
+                  name="Login"
+                  options={{
+                    headerShown: false, // change this to `false`
+                  }}
+                  component={LoginScreen}
+                />
+              )
+            }
             <Stack.Screen
               name="Tab"
               component={TabController}
               options={({ navigation }) => ({
+                title: "",
                 headerStyle: {
-                  backgroundColor: "#001C00",
-                },
-                headerTitleStyle: {
-                  fontWeight: "bold",
+                  backgroundColor: "#fff",
                 },
                 headerBackVisible: false,
                 headerLeft: () => null,
@@ -100,7 +110,7 @@ export default function App() {
                       }
                     }}
                     title="Sign out"
-                    color="#C5F277"
+                    color="#B17BFF"
                   />
                 ),
               })}
@@ -111,13 +121,6 @@ export default function App() {
               }}
               name="Register"
               component={RegisterScreen}
-            />
-            <Stack.Screen
-              name="Login"
-              options={{
-                headerShown: false, // change this to `false`
-              }}
-              component={LoginScreen}
             />
             <Stack.Screen
               name="ForgotPassword"

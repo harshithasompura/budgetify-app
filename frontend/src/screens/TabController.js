@@ -155,8 +155,17 @@ const ExpensesStackScreen = () => {
 };
 
 const HomeStackScreen = () => {
-  // return (
-  // );
+  return (
+    <HomeStack.Navigator>
+      <HomeStack.Screen
+        name="Home Analytics"
+        options={{
+          headerShown: false,
+        }}
+        component={HomeScreen}
+      />
+    </HomeStack.Navigator>
+  );
 };
 
 const CommunityStackScreen = () => {
@@ -206,13 +215,13 @@ const TabController = () => {
   return (
     <Tab.Navigator
       screenOptions={{
-        tabBarActiveBackgroundColor: "#001C00",
-        tabBarActiveTintColor: "#C5F277",
+        tabBarActiveTintColor: "#62D2B3",
         tabBarInactiveTintColor: "gray",
+        tabBarShowLabel: false,
       }}
     >
-      {/* <Tab.Screen
-        component={HomeScreen}
+      <Tab.Screen
+        component={HomeStackScreen}
         name="Home"
         options={{
           tabBarIcon: ({ color, size }) => (
@@ -220,14 +229,14 @@ const TabController = () => {
           ),
           headerShown: false,
         }}
-      /> */}
+      />
       <Tab.Screen
         name="Expenses"
         component={ExpensesStackScreen}
         options={({ route }) => ({
           tabBarStyle: { display: getTabBarVisibility(route) },
           tabBarIcon: ({ color, size }) => (
-            <Icon name="star" color={color} size={size} />
+            <Icon name="money" color={color} size={size} />
           ),
           headerShown: false,
         })}
