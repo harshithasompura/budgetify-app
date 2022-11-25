@@ -64,6 +64,10 @@ const actions = {
     type: ExpensesActionType.FETCH_EXPENSES,
   }),
 
+  clearExpenses: () => ({
+    type: ExpensesActionType.CLEAR_EXPENSES,
+  }),
+
   clearState: () => ({
     type: ExpensesActionType.CLEAR,
   }),
