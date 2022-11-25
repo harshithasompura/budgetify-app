@@ -9,11 +9,38 @@ import {
   ScrollView,
   Dimensions,
 } from "react-native";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import expensesSelectors from "../redux/store/Expenses/selectors";
+import useExpenses from "../redux/hook/useExpenses";
+
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../../FirebaseApp";
+
 import * as Progress from "react-native-progress";
 import { PieChart, ProgressChart } from "react-native-chart-kit";
+
+
+
 const HomeScreen = () => {
+
+  const {
+    // state for fetching data
+    fetchExpenses,
+  } = useExpenses();
+
+  useEffect(() => {
+    const unsubscribeOnAuth = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        console.log(user.email);
+        fetchExpenses(user.email);
+      } else {
+        console.log("no signed-in user");
+      }
+    });
+  }, [])
+  
+
   const width = Dimensions.get("window").width;
   const height = 220;
   const progressChartData = [0.4, 0.6, 0.8];
