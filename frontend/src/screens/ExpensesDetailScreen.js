@@ -15,24 +15,37 @@ import {
 const ExpensesDetailScreen = ({ route }) => {
   const { category, userEmail } = route.params;
 
-  const [expLookup, setExpLookup] = useState({});
+  const [expensesData, setExpensesData] = useState([]);
 
   useEffect(() => {
     getExpensesFromFirestore();
+    console.log(`Length of Array: ${expensesData.length}`);
+    // console.log(`testing`,expensesData);
   }, []);
 
   const getExpensesFromFirestore = async () => {
-    const docRef = doc(db, "expenses", userEmail);
+    const docRef = doc(db, "users", userEmail, "expenses", userEmail);
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
-      const { allExpenses } = docSnap.data();
+      const { summary } = docSnap.data();
 
       const date = new Date();
-      const expLookup =
-        allExpenses[category][date.getFullYear()][date.getMonth() + 1];
-      // console.log(expLookup[3]);
-      setExpLookup(expLookup);
+
+      const tempMonthExpenses =
+        summary[date.getFullYear()][date.getMonth() + 1];
+
+      const temp = []
+      Object.entries(tempMonthExpenses)
+        .forEach((item) => {
+          item[1]
+            .forEach(innerItem => {
+              if (innerItem.category === category)
+                temp.push(innerItem);
+          })
+        })      
+      setExpensesData(temp);
+      
     } else {
       // doc.data() will be undefined in this case
       console.log("No such document!");
@@ -42,12 +55,8 @@ const ExpensesDetailScreen = ({ route }) => {
   const renderFlatListItem = ({ item }) => {
     return (
       <Pressable style={styles.flatListCell}>
-        <Text style={styles.flatListDate}>{item[0]}</Text>
-        <View style={styles.flatListExpensesView}>
-          {expLookup[item[0]].map((item, index) => (
-            <Text key={index} style={styles.flatListExpenses}>{`$${item}`}</Text>
-          ))}
-        </View>
+        <Text style={styles.flatListDate}>{item["date"]}</Text>
+        <Text>{item["total"]}</Text>
       </Pressable>
     );
   };
@@ -57,10 +66,9 @@ const ExpensesDetailScreen = ({ route }) => {
       <Text style={styles.header}>{category}</Text>
 
       <FlatList
-        // data={expLookup ? Object.entries(expLookup) : []}
-        data={Object.entries(expLookup)}
+        data={expensesData}
         keyExtractor={(item) => {
-          return item[0];
+          return expensesData.indexOf(item);
         }}
         renderItem={renderFlatListItem}
         style={styles.flatList}
