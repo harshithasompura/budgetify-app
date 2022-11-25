@@ -198,8 +198,8 @@ const TabController = () => {
            routeName === "Chat Room" ||
            routeName === "Camera" ||
            routeName === "Edit Expenses" ||
-           routeName === "Add Expense" ||
-           routeName === "Post Detail"
+           routeName === "Add Expense"
+          //  routeName === "Post Detail"
       ? "none"
       : "flex";
   };

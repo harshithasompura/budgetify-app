@@ -10,9 +10,8 @@ import {
   SafeAreaView,
   ScrollView
 } from "react-native";
-import { EvilIcons } from '@expo/vector-icons';
+import { EvilIcons, AntDesign, Ionicons } from '@expo/vector-icons';
 import Icon from "react-native-vector-icons/FontAwesome";
-import { Ionicons } from "@expo/vector-icons";
 import Post from "../components/Post.js";
 import BottomSheet, { BottomSheetView, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 import { db } from "../../FirebaseApp";
@@ -27,50 +26,63 @@ import {
   doc,
 } from "firebase/firestore";
 import { FloatingAction } from "react-native-floating-action";
+import Comment from "../components/Comment.js";
 
 const PostDetailScreen = ({navigation, route}) => {
-    const [likesNum, setLikesNum] = useState(68);
-    const [commentsNum, setCommentsNum] = useState(1);
+    const [postInfo] = useState(route.params.item);
+    const [isOpen, setOpen] = useState(false);
+    const sheetRef = useRef(null);
+    const snapPoints = ["58%"];
+    const [likeButton, setLikeButton] = useState("like2");
+    const [likesNum, setLikesNum] = useState(0);
+    const [commentsNum, setCommentsNum] = useState(5);
     const [comments, setComments] = useState([
         {
-            title: 'This is a title',
-            username: 'morris',
+            username: 'Peter',
             userPhoto: 
-            'https://firebasestorage.googleapis.com/v0/b/budgetapp-14956.appspot.com/o/userAvatars%2Fpeter%40email.com?alt=media&token=db5a98b0-dfa7-41ea-b358-bcc2dfbdc7e0',
-            createdAt: 'tempDate',
-            review: 'My name is barry Allen, and I am the fastest man alive! To the outside world, I just an ordinary person.'
+            'https://firebasestorage.googleapis.com/v0/b/budgetapp-14956.appspot.com/o/userAvatars%2Fpeter%40email.com?alt=media&token=3630d778-97b4-42ca-b767-633f557a0e8f',
+            review: 'If you’re trying to stick to a low-carb diet, just looking at numbers of calories on a menu won’t be that useful.'
         },
         {
-            title: 'This is a title',
-            username: 'morris',
+            username: 'Peter',
             userPhoto: 
-            'https://firebasestorage.googleapis.com/v0/b/budgetapp-14956.appspot.com/o/userAvatars%2Fpeter%40email.com?alt=media&token=db5a98b0-dfa7-41ea-b358-bcc2dfbdc7e0',
-            createdAt: 'tempDate',
-            review: 'My name is barry Allen, '
+            'https://firebasestorage.googleapis.com/v0/b/budgetapp-14956.appspot.com/o/userAvatars%2Fpeter%40email.com?alt=media&token=3630d778-97b4-42ca-b767-633f557a0e8f',
+            review: 'If you’re trying to stick to a low-carb diet, just looking at numbers of calories on a menu won’t be that useful.'
         },
         {
-            title: 'This is a title',
-            username: 'morris',
+            username: 'Peter',
             userPhoto: 
-            'https://firebasestorage.googleapis.com/v0/b/budgetapp-14956.appspot.com/o/userAvatars%2Fpeter%40email.com?alt=media&token=db5a98b0-dfa7-41ea-b358-bcc2dfbdc7e0',
-            createdAt: 'tempDate',
-            review: 'My name is barry Allen, '
+            'https://firebasestorage.googleapis.com/v0/b/budgetapp-14956.appspot.com/o/userAvatars%2Fpeter%40email.com?alt=media&token=3630d778-97b4-42ca-b767-633f557a0e8f',
+            review: 'If you’re trying to stick to a low-carb diet, just looking at numbers of calories on a menu won’t be that useful.'
         },
-
+        {
+            username: 'Peter',
+            userPhoto: 
+            'https://firebasestorage.googleapis.com/v0/b/budgetapp-14956.appspot.com/o/userAvatars%2Fpeter%40email.com?alt=media&token=3630d778-97b4-42ca-b767-633f557a0e8f',
+            review: 'If you’re trying to stick to a low-carb diet, just looking at numbers of calories on a menu won’t be that useful.'
+        },
+        {
+            username: 'Peter',
+            userPhoto: 
+            'https://firebasestorage.googleapis.com/v0/b/budgetapp-14956.appspot.com/o/userAvatars%2Fpeter%40email.com?alt=media&token=3630d778-97b4-42ca-b767-633f557a0e8f',
+            review: 'If you’re trying to stick to a low-carb diet, just looking at numbers of calories on a menu won’t be that useful.'
+        },
     ]);
-
-    const [item, setItem] = useState({
-        title: 'This is a title',
-        comment: "A law in the UK came into force in April 2022 that requires large businesses such as restaurants, takeaways, and cafes to display the calorie information of non-pre-packed food and soft drinks on their menus. It’s a strategy aimed to tackle obesity and give people a more informed choice of what goes down their gullets. According to the NHS (National Health Service), generally, the recommended daily intake of calories for male adults is 2,500 per day, while female adults should consume 2,000 to maintain their weight levels. For those of us who wish to drop a few pounds, experts advise us to consume fewer calories than the recommended daily number, eat a balanced diet, and increase our levels of physical activity. Being able to count calories and know how much we can eat is a great way to try and stay on track with our diet.",
-        username: 'morris',
-        userPhoto: 
-        'https://firebasestorage.googleapis.com/v0/b/budgetapp-14956.appspot.com/o/userAvatars%2Fpeter%40email.com?alt=media&token=db5a98b0-dfa7-41ea-b358-bcc2dfbdc7e0',
-        createdAt: 'tempDate',
-        review: 'My name is barry Allen, and I am the fastest man alive! To the outside world, I just an ordinary person.'
-    });
+ 
+    const renderBackdrop = useCallback(
+        (props) => (
+          <BottomSheetBackdrop
+            {...props}
+            disappearsOnIndex={-1}
+            appearsOnIndex={0}
+            opacity={0.75}
+          />
+        ),
+        []
+      );
 
     return (
-        <SafeAreaView>
+        <SafeAreaView style={{flex: 1}}>
             <View style={{ flexDirection: "row", position: "relative"}}>
                 <Pressable
                     style={styles.backArrow}
@@ -82,16 +94,16 @@ const PostDetailScreen = ({navigation, route}) => {
                 </Pressable>
                 <Text style={styles.title}>Edit Receipt</Text>
             </View>
-        <ScrollView style={{marginBottom: 50}}>
+        <ScrollView style={{ borderRadius: 25, margin: 10, marginTop: 0}} showsVerticalScrollIndicator={false}>
             <View style={[styles.postContainer]}>
                 <View style={styles.postHeader}>
                 {/* Post header */}
-                <Image style={styles.userAvatar} source={{ url: item.userPhoto }} />
+                <Image style={styles.userAvatar} source={{ url: postInfo.userAvatar }} />
                 <View>
                     <Text style={[{marginLeft: 8, color: '#C5F277', fontSize: 20, fontWeight: 'bold' }]}>
-                    {item.username}
+                    {postInfo.username}
                     </Text>
-                    <Text style={[{marginLeft: 8, color: '#B17BFF', fontSize: 16}]}>{item.createdAt}</Text>
+                    <Text style={[{marginLeft: 8, color: '#B17BFF', fontSize: 16}]}>{postInfo.createdAt}</Text>
                 </View>
                 </View>
                 <Text
@@ -108,7 +120,7 @@ const PostDetailScreen = ({navigation, route}) => {
                 ]}
                 numberOfLines={2}
                 >
-                {item.title}
+                {postInfo.title}
                 </Text>
                 <View style={
                     { 
@@ -126,12 +138,21 @@ const PostDetailScreen = ({navigation, route}) => {
                         },
                         ]}
                     > 
-                        {item.comment}
+                        {postInfo.description}
                     </Text>
                 </View>
                     <View style={styles.likeCommentContainer}>
                         <View style={styles.likeContainer}>
-                            <EvilIcons name="like" size={35} color="#B17BFF" />
+                            <Pressable
+                                activeOpacity={0.7}
+                                onPress={() => {
+                                    likeButton === 'like2' ?
+                                    setLikeButton('like1') :
+                                    setLikeButton('like2');
+                                }}
+                            >
+                                <AntDesign name={likeButton} size={25} color="#B17BFF" />
+                            </Pressable>
                             <Text style={styles.likeCommentNum}>{likesNum}</Text>
                         </View>
                         <View style={styles.commentContainer}>
@@ -141,7 +162,7 @@ const PostDetailScreen = ({navigation, route}) => {
 
                                 }}
                             >
-                                <EvilIcons name="comment" size={35} color="#B17BFF" />
+                                <AntDesign name="message1" size={25} color="#B17BFF" />
                             </TouchableOpacity>
                             <Text style={styles.likeCommentNum}>{commentsNum}</Text>
                         </View>
@@ -150,7 +171,7 @@ const PostDetailScreen = ({navigation, route}) => {
                         <Text 
                             style={[styles.likeCommentNum, {fontSize: 15, position: 'absolute', right: 15, bottom: 10 }]}
                             onPress={() => {
-
+                                setOpen(true);
                             }}
                             >Add a comment</Text>
                     </TouchableOpacity>
@@ -182,6 +203,19 @@ const PostDetailScreen = ({navigation, route}) => {
             </View>
 
         </ScrollView>
+        {isOpen ? (
+          <BottomSheet
+            ref={sheetRef}
+            snapPoints={snapPoints}
+            enablePanDownToClose={true}
+            onClose={() => setOpen(false)}
+            backdropComponent={renderBackdrop}
+          >
+            <BottomSheetView>
+              <Comment/>
+            </BottomSheetView>
+          </BottomSheet>
+        ) : null}
         </SafeAreaView>
     );
 };
@@ -216,7 +250,7 @@ const styles = StyleSheet.create({
     postContainer: {
       borderRadius: 25,
       backgroundColor: 'black', 
-      margin: 10,
+    //   margin: 10,
   
       shadowOffset:{width:0, height:5},  
       shadowColor:'#171717',  
@@ -241,7 +275,7 @@ const styles = StyleSheet.create({
       // backgroundColor: 'green',
       position: 'absolute',
       bottom: 10,
-      left: 10,
+      left: 15,
     },
     likeContainer: {
       flexDirection: 'row',
@@ -258,7 +292,8 @@ const styles = StyleSheet.create({
     likeCommentNum: {
       fontSize: 20,
       lineHeight: 28,
-      color: '#B17BFF'
+      color: '#B17BFF',
+      marginLeft: 5
     },
     backArrow: {
         // backgroundColor: 'green',
@@ -275,8 +310,8 @@ const styles = StyleSheet.create({
     commentsContainer: {
         borderRadius: 25,
         backgroundColor: 'black', 
-        margin: 10,
-        marginTop: -2,
+        // margin: 10,
+        marginTop: 5,
         shadowOffset:{width:0, height:5},  
         shadowColor:'#171717',  
         shadowOpacity:0.2,  

@@ -8,9 +8,8 @@ import {
   Image,
   Pressable,
 } from "react-native";
-import { EvilIcons } from '@expo/vector-icons';
+import { EvilIcons, AntDesign, Ionicons } from '@expo/vector-icons';
 import Icon from "react-native-vector-icons/FontAwesome";
-import { Ionicons } from "@expo/vector-icons";
 import Post from "../components/Post.js";
 import BottomSheet, { BottomSheetView, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 import { db } from "../../FirebaseApp";
@@ -34,8 +33,8 @@ const CommunityScreen = ({ navigation, route }) => {
   const [postsList, setPostsList] = useState([]);
   const [likeButton, setLikeButton] = useState("heart-outline");
   const [postBtnVisible, setPostBtnVisible] = useState(true);
-  const [likesNum, setLikesNum] = useState(68);
-  const [commentsNum, setCommentsNum] = useState(1);
+  const [likesNum, setLikesNum] = useState(0);
+  const [commentsNum, setCommentsNum] = useState(5);
 
   const renderBackdrop = useCallback(
     (props) => (
@@ -50,37 +49,22 @@ const CommunityScreen = ({ navigation, route }) => {
   );
 
   const renderItem = ({ item }) => {
-    const date = item.createdAt;
-    var minutes;
-    if (date === "") {
-      minutes = "";
-    } else {
-      minutes =
-        date.getDate() +
-        "-" +
-        (date.getMonth() + 1) +
-        "-" +
-        date.getFullYear() +
-        " " +
-        date.getHours() +
-        ":" +
-        date.getMinutes();
-    }
+
     return (
       <Pressable
         style={[styles.postContainer]}
         onPress={() => {
-          navigation.navigate("Post Detail");
+          navigation.navigate("Post Detail", {item: item});
         }}
       >
         <View style={styles.postHeader}>
           {/* Post header */}
-          <Image style={styles.userAvatar} source={{ url: item.userPhoto }} />
+          <Image style={styles.userAvatar} source={{ url: item.userAvatar }} />
           <View>
             <Text style={[{marginLeft: 8, color: '#C5F277', fontSize: 20 }]}>
               {item.username}
             </Text>
-            <Text style={[{marginLeft: 8, color: '#B17BFF', fontSize: 16}]}>{minutes}</Text>
+            <Text style={[{marginLeft: 8, color: '#B17BFF', fontSize: 16}]}>{item.createdAt}</Text>
           </View>
         </View>
         <Text
@@ -90,14 +74,14 @@ const CommunityScreen = ({ navigation, route }) => {
               // fontFamily: "IBMPlexMono_700Bold",
               fontSize: 20,
               marginHorizontal: 13,
-              paddingBottom: 20,
+              paddingBottom: 10,
               // backgroundColor: 'blue',
-              height: 35,
-              lineHeight: 35,
+              // height: 35,
+              // lineHeight: 35,
               fontWeight: 'bold'
             },
           ]}
-          numberOfLines={1}
+          numberOfLines={2}
         >
           {item.title}
         </Text>
@@ -122,16 +106,16 @@ const CommunityScreen = ({ navigation, route }) => {
             ]}
             numberOfLines={3}
           > 
-            {item.comment}
+            {item.description}
           </Text>
         </View>
         <View style={styles.likeCommentContainer}>
           <View style={styles.likeContainer}>
-            <EvilIcons style={styles.likeComment} name="like" size={35} color="#B17BFF" />
+            <AntDesign style={styles.likeComment} name="like2" size={25} color="#B17BFF" />
             <Text style={styles.likeCommentNum}>{likesNum}</Text>
           </View>
           <View style={styles.commentContainer}>
-            <EvilIcons style={styles.likeComment} name="comment" size={35} color="#B17BFF" />
+            <AntDesign style={styles.likeComment} name="message1" size={25} color="#B17BFF" />
             <Text style={styles.likeCommentNum}>{commentsNum}</Text>
           </View>
         </View>
@@ -144,17 +128,39 @@ const CommunityScreen = ({ navigation, route }) => {
       collection(db, "post"),
       orderBy("createdAt", "desc")
     );
-    const unsubscribePosts = onSnapshot(postQuery, (querySnapshot) => {
-      const postsFromFirebase = querySnapshot.docs.map((doc) => ({
-        title: doc.data().title,
-        comment: doc.data().comment,
-        username: doc.data().username,
-        userPhoto: doc.data().userAvatar,
-        createdAt:
-          doc.data().createdAt === null ? "" : doc.data().createdAt.toDate(),
-        // name: doc.data().name,
-        // isGroup: doc.data().isGroup,
-      }));
+    const unsubscribePosts = onSnapshot(postQuery, async (querySnapshot) => {
+      const postsPromises = querySnapshot.docs.map(async (post) => {
+        const docRef = doc(db, "users", post.data().userEmail);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          var minutes = "";
+          if (post.data().createdAt) {
+            const date = post.data().createdAt.toDate();
+            minutes =
+              date.getDate() +
+              "-" +
+              (date.getMonth() + 1) +
+              "-" +
+              date.getFullYear() +
+              " " +
+              date.getHours() +
+              ":" +
+              date.getMinutes();
+          }
+
+          return {
+            userAvatar: docSnap.data().icon,
+            username: docSnap.data().name,
+            title: post.data().title,
+            description: post.data().description,
+            createdAt: minutes
+          }
+        } else {
+          console.log("No such document!");
+        }
+      });
+      const postsFromFirebase = await Promise.all(postsPromises);
       setPostsList(postsFromFirebase);
     });
     return () => {
@@ -205,6 +211,9 @@ const CommunityScreen = ({ navigation, route }) => {
                   renderItem={renderItem} 
                   onScrollEndDrag={() => setPostBtnVisible(true)}
                   onScrollBeginDrag={() => setPostBtnVisible(false)}
+                  showsVerticalScrollIndicator={false}
+                  ItemSeparatorComponent={() => <View style={{height: 10}} />}
+                  style={{ borderRadius: 25, margin: 10, marginTop: 0}}
                   />
         <View style={{position: 'absolute', right: -10, bottom: -10}}>
           <FloatingAction
@@ -272,8 +281,7 @@ const styles = StyleSheet.create({
   },
   postContainer: {
     borderRadius: 25,
-    backgroundColor: 'black', 
-    margin: 10,
+    backgroundColor: 'black',
     height: 235,
 
     shadowOffset:{width:0, height:5},  
@@ -301,7 +309,7 @@ const styles = StyleSheet.create({
     // backgroundColor: 'green',
     position: 'absolute',
     bottom: 10,
-    left: 10
+    left: 15
   },
   likeContainer: {
     flexDirection: 'row',
@@ -321,7 +329,8 @@ const styles = StyleSheet.create({
   likeCommentNum: {
     fontSize: 20,
     lineHeight: 28,
-    color: '#B17BFF'
+    color: '#B17BFF',
+    marginLeft: 5
   }
 });
 

@@ -14,16 +14,15 @@ import { auth } from "../../FirebaseApp";
 import { onAuthStateChanged } from "firebase/auth";
 const Post = (props) => {
   const [comment, setComment] = useState("");
-  const [uid, setUid] = useState();
-  const [username, setUsername] = useState();
+  const [userEmail, setUserEmail] = useState();
+  const [title, setTitle] = useState("");
   const blankAvatar = `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBGwlAahaapmmJ7Riv_L_ZujOcfWSUJnm71g&usqp=CAU`;
 
   useEffect(() => {
     const unsubscribeOnAuth = onAuthStateChanged(auth, (user) => {
       if (user) {
-        setUid(user.uid);
-        setUsername(() => {
-          return user.email.split("@")[0];
+        setUserEmail(() => {
+          return user.email;
         });
       } else {
         console.log("no signed-in user");
@@ -37,14 +36,19 @@ const Post = (props) => {
   //Handlers
   const addComment = async () => {
     try {
+      // const usersRef = collection(db, "users");
+      // const q = query(usersRef, where("__name__", "==", userEmail));
+      // const querySnapshot = await getDocs(q);
+      // let userIcon, username;
+      // querySnapshot.forEach((doc) => {
+      //   userIcon = doc.data().icon;
+      // });
+
       await addDoc(collection(db, "post"), {
-        username,
-        userAvatar: blankAvatar,
-        uid,
-        createdAt: serverTimestamp(),
-        comment,
-        likesCount: 0,
-        replyComment: [],
+        userEmail: userEmail,
+        title: title,
+        description: comment,
+        createdAt: serverTimestamp()
       });
       // Post is successful
       props.postResult(true);
@@ -71,7 +75,7 @@ const Post = (props) => {
       <BottomSheetTextInput
         style={styles.titleInputBox}
         placeholder="Enter a title"
-        onChangeText={setComment}
+        onChangeText={setTitle}
         placeholderTextColor={'#B17BFF'}
         color={'#C5F277'}
       />
