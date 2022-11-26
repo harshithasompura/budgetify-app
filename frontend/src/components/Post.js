@@ -9,15 +9,13 @@ import {
 import React, { useCallback, useRef, useState, useEffect } from "react";
 import BottomSheet, { BottomSheetView, BottomSheetTextInput, BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { db } from "../../FirebaseApp";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { collection, addDoc, Timestamp } from "firebase/firestore";
 import { auth } from "../../FirebaseApp";
 import { onAuthStateChanged } from "firebase/auth";
 const Post = (props) => {
   const [title, setTitle] = useState("");
   const [comment, setComment] = useState("");
   const [userEmail, setUserEmail] = useState();
-
-  const blankAvatar = `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBGwlAahaapmmJ7Riv_L_ZujOcfWSUJnm71g&usqp=CAU`;
 
   useEffect(() => {
     const unsubscribeOnAuth = onAuthStateChanged(auth, (user) => {
@@ -41,7 +39,7 @@ const Post = (props) => {
         userEmail: userEmail,
         title: title,
         description: comment,
-        createdAt: serverTimestamp(),
+        createdAt: Timestamp.now(),
         comments: [],
         likes: []
       });
