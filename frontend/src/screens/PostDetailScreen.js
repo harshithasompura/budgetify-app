@@ -23,10 +23,12 @@ import {
   doc,
   arrayRemove,
   arrayUnion,
-  updateDoc
+  updateDoc,
+  Timestamp
 } from "firebase/firestore";
 import { FloatingAction } from "react-native-floating-action";
 import Comment from "../components/Comment.js";
+import { calculateDateDiff } from "../../funcHelper.js";
 
 const PostDetailScreen = ({navigation, route}) => {
     const [postInfo] = useState(route.params.item);
@@ -80,24 +82,17 @@ const PostDetailScreen = ({navigation, route}) => {
           const userRef = doc(db, "users", comment.userEmail);
           const user = await getDoc(userRef);
 
-          var minutes = "";
+          let createdAt;
           if (comment.createdAt) {
-            const date = comment.createdAt.toDate();
-            minutes =
-              date.getDate() +
-              "-" +
-              (date.getMonth() + 1) +
-              "-" +
-              date.getFullYear() +
-              " " +
-              date.getHours() +
-              ":" +
-              date.getMinutes();
+            createdAt = calculateDateDiff(
+              comment.createdAt.toDate(),
+              Timestamp.now().toDate()
+            );
           }
 
           return {
             comment: comment.comment,
-            createdAt: minutes,
+            createdAt: createdAt,
             userAvatar: user.data().icon,
             username: user.data().name
           }
@@ -215,7 +210,7 @@ const PostDetailScreen = ({navigation, route}) => {
                             <Image style={styles.userAvatar} source={{ url: item.userAvatar }} />
                             <View style={styles.textsContainer}>
                                 <Text style={{color: '#C5F277', fontWeight: 'bold'}}>{item.username}</Text>
-                                <Text style={{color: '#B17BFF'}}>15 min ago</Text>
+                                <Text style={{color: '#B17BFF'}}>{item.createdAt}</Text>
                                 <Text style={{color: "#C5F277", marginTop: 10}}>{item.comment}</Text>
                                 {
                                     (index !== comments.length - 1) &&

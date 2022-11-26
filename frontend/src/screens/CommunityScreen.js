@@ -22,9 +22,11 @@ import {
   orderBy,
   getDocs,
   doc,
-  getDoc
+  getDoc,
+  Timestamp
 } from "firebase/firestore";
 import { FloatingAction } from "react-native-floating-action";
+import { calculateDateDiff } from "../../funcHelper.js";
 
 const CommunityScreen = ({ navigation, route }) => {
   // State Variables
@@ -63,27 +65,21 @@ const CommunityScreen = ({ navigation, route }) => {
       const userRef = doc(db, "users", post.data().userEmail);
       const user = await getDoc(userRef);
       if (user.exists()) {
-        var minutes = "";
-        if (post.data().createdAt) {
-          const date = post.data().createdAt.toDate();
-          minutes =
-            date.getDate() +
-            "-" +
-            (date.getMonth() + 1) +
-            "-" +
-            date.getFullYear() +
-            " " +
-            date.getHours() +
-            ":" +
-            date.getMinutes();
-        }
 
+        let createdAt;
+        if (post.data().createdAt) {
+          createdAt = calculateDateDiff(
+            post.data().createdAt.toDate(),
+            Timestamp.now().toDate()
+          );
+        }
+        
         return {
           userAvatar: user.data().icon,
           username: user.data().name,
           title: post.data().title,
           description: post.data().description,
-          createdAt: minutes,
+          createdAt: createdAt,
           postID: post.id,
           commentsNum: post.data().comments.length,
           likesNum: post.data().likes.length,
