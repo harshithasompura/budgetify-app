@@ -13,9 +13,10 @@ import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { auth } from "../../FirebaseApp";
 import { onAuthStateChanged } from "firebase/auth";
 const Post = (props) => {
+  const [title, setTitle] = useState("");
   const [comment, setComment] = useState("");
   const [userEmail, setUserEmail] = useState();
-  const [title, setTitle] = useState("");
+
   const blankAvatar = `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBGwlAahaapmmJ7Riv_L_ZujOcfWSUJnm71g&usqp=CAU`;
 
   useEffect(() => {
@@ -34,23 +35,19 @@ const Post = (props) => {
   }, []);
 
   //Handlers
-  const addComment = async () => {
+  const addPost = async () => {
     try {
-      // const usersRef = collection(db, "users");
-      // const q = query(usersRef, where("__name__", "==", userEmail));
-      // const querySnapshot = await getDocs(q);
-      // let userIcon, username;
-      // querySnapshot.forEach((doc) => {
-      //   userIcon = doc.data().icon;
-      // });
-
       await addDoc(collection(db, "post"), {
         userEmail: userEmail,
         title: title,
         description: comment,
-        createdAt: serverTimestamp()
+        createdAt: serverTimestamp(),
+        comments: [],
+        likes: []
       });
       // Post is successful
+      setComment("");
+      setTitle("");
       props.postResult(true);
     } catch (err) {
       console.log(err);
@@ -67,7 +64,7 @@ const Post = (props) => {
         }}
       >
       <Text style={styles.bsTitle}>Create a Post</Text>
-      <Pressable style={styles.postButton} onPress={addComment}>
+      <Pressable style={styles.postButton} onPress={addPost}>
         <Text style={{ color: "black", fontSize: 19 }}>Post</Text>
       </Pressable>
     </View>
@@ -75,6 +72,7 @@ const Post = (props) => {
       <BottomSheetTextInput
         style={styles.titleInputBox}
         placeholder="Enter a title"
+        value={title}
         onChangeText={setTitle}
         placeholderTextColor={'#B17BFF'}
         color={'#C5F277'}
@@ -84,7 +82,9 @@ const Post = (props) => {
       <BottomSheetTextInput
         style={styles.descriptionInputBox}
         placeholder="Enter a descrition"
+        value={comment}
         onChangeText={setComment}
+        onSubmitEditing
         multiline={true}
         placeholderTextColor={'#B17BFF'}
         color={'#C5F277'}

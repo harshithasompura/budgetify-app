@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useFocusEffect } from '@react-navigation/native';
 import {
   StyleSheet,
   TouchableOpacity,
@@ -7,6 +8,7 @@ import {
   FlatList,
   Image,
   Pressable,
+  RefreshControl
 } from "react-native";
 import { EvilIcons, AntDesign, Ionicons } from '@expo/vector-icons';
 import Icon from "react-native-vector-icons/FontAwesome";
@@ -14,27 +16,26 @@ import Post from "../components/Post.js";
 import BottomSheet, { BottomSheetView, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 import { db } from "../../FirebaseApp";
 import { auth } from "../../FirebaseApp";
-import { onAuthStateChanged } from "firebase/auth";
 import {
   collection,
-  onSnapshot,
   query,
   orderBy,
-  getDoc,
+  getDocs,
   doc,
+  getDoc
 } from "firebase/firestore";
 import { FloatingAction } from "react-native-floating-action";
 
 const CommunityScreen = ({ navigation, route }) => {
   // State Variables
-  const [isOpen, setOpen] = useState(false);
   const sheetRef = useRef(null);
   const snapPoints = ["75%", "100%"];
   const [postsList, setPostsList] = useState([]);
-  const [likeButton, setLikeButton] = useState("heart-outline");
   const [postBtnVisible, setPostBtnVisible] = useState(true);
-  const [likesNum, setLikesNum] = useState(0);
-  const [commentsNum, setCommentsNum] = useState(5);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const handleClosePress = () => sheetRef.current.close();
+  const handleOpenPress = () => sheetRef.current.snapToIndex(0);
 
   const renderBackdrop = useCallback(
     (props) => (
@@ -47,6 +48,55 @@ const CommunityScreen = ({ navigation, route }) => {
     ),
     []
   );
+
+  const startRefreshing = () => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 3000);
+  };
+
+  const fetchPosts = async () => {
+    const postQuery = query(collection(db, "post"), orderBy("createdAt", "desc"));
+    const querySnapshot = await getDocs(postQuery);
+    const postsPromises = querySnapshot.docs.map(async (post) => {
+      const userRef = doc(db, "users", post.data().userEmail);
+      const user = await getDoc(userRef);
+      if (user.exists()) {
+        var minutes = "";
+        if (post.data().createdAt) {
+          const date = post.data().createdAt.toDate();
+          minutes =
+            date.getDate() +
+            "-" +
+            (date.getMonth() + 1) +
+            "-" +
+            date.getFullYear() +
+            " " +
+            date.getHours() +
+            ":" +
+            date.getMinutes();
+        }
+
+        return {
+          userAvatar: user.data().icon,
+          username: user.data().name,
+          title: post.data().title,
+          description: post.data().description,
+          createdAt: minutes,
+          postID: post.id,
+          commentsNum: post.data().comments.length,
+          likesNum: post.data().likes.length,
+          didCurrUserLike: 
+            post.data().likes.includes(auth.currentUser.email)
+        }
+      } else {
+        console.log("No such document!");
+      }
+    });
+    const postsFromFirebase = await Promise.all(postsPromises);
+    setPostsList(postsFromFirebase);
+  }
 
   const renderItem = ({ item }) => {
 
@@ -71,13 +121,9 @@ const CommunityScreen = ({ navigation, route }) => {
           style={[
             {
               color: "#C5F277",
-              // fontFamily: "IBMPlexMono_700Bold",
               fontSize: 20,
               marginHorizontal: 13,
               paddingBottom: 10,
-              // backgroundColor: 'blue',
-              // height: 35,
-              // lineHeight: 35,
               fontWeight: 'bold'
             },
           ]}
@@ -96,12 +142,10 @@ const CommunityScreen = ({ navigation, route }) => {
             style={[
               {
                 color: "#C5F277",
-                // fontFamily: "IBMPlexMono_400Regular",
                 fontSize: 20,
                 marginHorizontal: 8,
                 height: 82,
                 lineHeight: 22,
-                // backgroundColor: 'green'
               },
             ]}
             numberOfLines={3}
@@ -111,62 +155,32 @@ const CommunityScreen = ({ navigation, route }) => {
         </View>
         <View style={styles.likeCommentContainer}>
           <View style={styles.likeContainer}>
-            <AntDesign style={styles.likeComment} name="like2" size={25} color="#B17BFF" />
-            <Text style={styles.likeCommentNum}>{likesNum}</Text>
+            <AntDesign 
+              style={styles.likeComment} 
+              name={item.didCurrUserLike ? 'like1' : 'like2'}
+              size={25} 
+              color="#B17BFF" />
+            <Text style={styles.likeCommentNum}>{item.likesNum}</Text>
           </View>
           <View style={styles.commentContainer}>
             <AntDesign style={styles.likeComment} name="message1" size={25} color="#B17BFF" />
-            <Text style={styles.likeCommentNum}>{commentsNum}</Text>
+            <Text style={styles.likeCommentNum}>{item.commentsNum}</Text>
           </View>
         </View>
       </Pressable>
     );
   };
 
-  useEffect(() => {
-    const postQuery = query(
-      collection(db, "post"),
-      orderBy("createdAt", "desc")
-    );
-    const unsubscribePosts = onSnapshot(postQuery, async (querySnapshot) => {
-      const postsPromises = querySnapshot.docs.map(async (post) => {
-        const docRef = doc(db, "users", post.data().userEmail);
-        const docSnap = await getDoc(docRef);
-
-        if (docSnap.exists()) {
-          var minutes = "";
-          if (post.data().createdAt) {
-            const date = post.data().createdAt.toDate();
-            minutes =
-              date.getDate() +
-              "-" +
-              (date.getMonth() + 1) +
-              "-" +
-              date.getFullYear() +
-              " " +
-              date.getHours() +
-              ":" +
-              date.getMinutes();
-          }
-
-          return {
-            userAvatar: docSnap.data().icon,
-            username: docSnap.data().name,
-            title: post.data().title,
-            description: post.data().description,
-            createdAt: minutes
-          }
-        } else {
-          console.log("No such document!");
-        }
-      });
-      const postsFromFirebase = await Promise.all(postsPromises);
-      setPostsList(postsFromFirebase);
-    });
-    return () => {
-      unsubscribePosts();
-    };
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      console.log("fetchPost called");
+      try {
+        fetchPosts();
+      } catch (err) {
+        console.log(err);
+      }
+    }, []) 
+  );
 
   const actions = [
     {
@@ -214,40 +228,43 @@ const CommunityScreen = ({ navigation, route }) => {
                   showsVerticalScrollIndicator={false}
                   ItemSeparatorComponent={() => <View style={{height: 10}} />}
                   style={{ borderRadius: 25, margin: 10, marginTop: 0}}
+                  refreshControl={
+                    <RefreshControl
+                      refreshing={refreshing}
+                      onRefresh={fetchPosts}
+                    />
+                  }
                   />
         <View style={{position: 'absolute', right: -10, bottom: -10}}>
           <FloatingAction
-            // buttonSize={50}
             visible={postBtnVisible}
             actions={actions}
             overrideWithAction={true}
             color={'#C5F277'}
-            onPressItem={() => {
-              setOpen(true);
-            }}
+            onPressItem={handleOpenPress}
           />
         </View>
       </View>
 
-      {isOpen ? (
-          <BottomSheet
-            ref={sheetRef}
-            snapPoints={snapPoints}
-            enablePanDownToClose={true}
-            onClose={() => setOpen(false)}
-            backdropComponent={renderBackdrop}
-          >
-            <BottomSheetView>
-              <Post
-                postResult={(data) => {
-                  if (data === true) {
-                    setOpen(false);
-                  }
-                }}
-              />
-            </BottomSheetView>
-          </BottomSheet>
-        ) : null}
+      <BottomSheet
+        ref={sheetRef}
+        index={-1}
+        snapPoints={snapPoints}
+        enablePanDownToClose={true}
+        backdropComponent={renderBackdrop}        
+      >
+        <BottomSheetView>
+          <Post
+            postResult={(data) => {
+              if (data === true) {
+                fetchPosts();
+                handleClosePress();
+              }
+            }}
+          />
+        </BottomSheetView>
+      </BottomSheet>
+
     </View>
   );
 };

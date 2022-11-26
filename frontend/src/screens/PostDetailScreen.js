@@ -10,13 +10,10 @@ import {
   SafeAreaView,
   ScrollView
 } from "react-native";
-import { EvilIcons, AntDesign, Ionicons } from '@expo/vector-icons';
-import Icon from "react-native-vector-icons/FontAwesome";
-import Post from "../components/Post.js";
+import { AntDesign, Ionicons } from '@expo/vector-icons';
 import BottomSheet, { BottomSheetView, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 import { db } from "../../FirebaseApp";
 import { auth } from "../../FirebaseApp";
-import { onAuthStateChanged } from "firebase/auth";
 import {
   collection,
   onSnapshot,
@@ -24,51 +21,34 @@ import {
   orderBy,
   getDoc,
   doc,
+  arrayRemove,
+  arrayUnion,
+  updateDoc
 } from "firebase/firestore";
 import { FloatingAction } from "react-native-floating-action";
 import Comment from "../components/Comment.js";
 
 const PostDetailScreen = ({navigation, route}) => {
     const [postInfo] = useState(route.params.item);
-    const [isOpen, setOpen] = useState(false);
+    const [likeButton, setLikeButton] = 
+      postInfo.didCurrUserLike ? 
+        useState('like1') : 
+        useState('like2');
+    const [likesNum, setLikesNum] = useState(postInfo.likesNum);
+    const [commentsNum, setCommentsNum] = useState(postInfo.commentsNum);
+    const [comments, setComments] = useState([]);
+
     const sheetRef = useRef(null);
-    const snapPoints = ["58%"];
-    const [likeButton, setLikeButton] = useState("like2");
-    const [likesNum, setLikesNum] = useState(0);
-    const [commentsNum, setCommentsNum] = useState(5);
-    const [comments, setComments] = useState([
-        {
-            username: 'Peter',
-            userPhoto: 
-            'https://firebasestorage.googleapis.com/v0/b/budgetapp-14956.appspot.com/o/userAvatars%2Fpeter%40email.com?alt=media&token=3630d778-97b4-42ca-b767-633f557a0e8f',
-            review: 'If you’re trying to stick to a low-carb diet, just looking at numbers of calories on a menu won’t be that useful.'
-        },
-        {
-            username: 'Peter',
-            userPhoto: 
-            'https://firebasestorage.googleapis.com/v0/b/budgetapp-14956.appspot.com/o/userAvatars%2Fpeter%40email.com?alt=media&token=3630d778-97b4-42ca-b767-633f557a0e8f',
-            review: 'If you’re trying to stick to a low-carb diet, just looking at numbers of calories on a menu won’t be that useful.'
-        },
-        {
-            username: 'Peter',
-            userPhoto: 
-            'https://firebasestorage.googleapis.com/v0/b/budgetapp-14956.appspot.com/o/userAvatars%2Fpeter%40email.com?alt=media&token=3630d778-97b4-42ca-b767-633f557a0e8f',
-            review: 'If you’re trying to stick to a low-carb diet, just looking at numbers of calories on a menu won’t be that useful.'
-        },
-        {
-            username: 'Peter',
-            userPhoto: 
-            'https://firebasestorage.googleapis.com/v0/b/budgetapp-14956.appspot.com/o/userAvatars%2Fpeter%40email.com?alt=media&token=3630d778-97b4-42ca-b767-633f557a0e8f',
-            review: 'If you’re trying to stick to a low-carb diet, just looking at numbers of calories on a menu won’t be that useful.'
-        },
-        {
-            username: 'Peter',
-            userPhoto: 
-            'https://firebasestorage.googleapis.com/v0/b/budgetapp-14956.appspot.com/o/userAvatars%2Fpeter%40email.com?alt=media&token=3630d778-97b4-42ca-b767-633f557a0e8f',
-            review: 'If you’re trying to stick to a low-carb diet, just looking at numbers of calories on a menu won’t be that useful.'
-        },
-    ]);
- 
+    const snapPoints = ["58%", "75%"];
+    const handleClosePress = () => sheetRef.current.close();
+    const handleOpenPress = () => sheetRef.current.snapToIndex(0);
+
+    const postRef = doc(db, 'post', postInfo.postID);
+
+    useEffect(() => {
+      fetchComments();
+    }, []);
+
     const renderBackdrop = useCallback(
         (props) => (
           <BottomSheetBackdrop
@@ -77,9 +57,60 @@ const PostDetailScreen = ({navigation, route}) => {
             appearsOnIndex={0}
             opacity={0.75}
           />
-        ),
-        []
-      );
+        ), []);
+
+    const likeBtnPressed = async (didLike) => {
+      try {
+        await updateDoc(postRef, {
+          likes: didLike ? 
+                 arrayUnion(auth.currentUser.email) :
+                 arrayRemove(auth.currentUser.email)
+        });
+        didLike ? setLikesNum(likesNum + 1) :
+                  setLikesNum(likesNum - 1)
+      } catch (err) {
+        console.log(err);
+      }
+    }
+
+    const fetchComments = async () => {
+      try {
+        const post = await getDoc(postRef);
+        const commentsPromises = post.data().comments.map(async (comment) => {
+          const userRef = doc(db, "users", comment.userEmail);
+          const user = await getDoc(userRef);
+
+          var minutes = "";
+          if (comment.createdAt) {
+            const date = comment.createdAt.toDate();
+            minutes =
+              date.getDate() +
+              "-" +
+              (date.getMonth() + 1) +
+              "-" +
+              date.getFullYear() +
+              " " +
+              date.getHours() +
+              ":" +
+              date.getMinutes();
+          }
+
+          return {
+            comment: comment.comment,
+            createdAt: minutes,
+            userAvatar: user.data().icon,
+            username: user.data().name
+          }
+        });
+
+        const commentsFromFirebase = await Promise.all(commentsPromises);
+        setComments(commentsFromFirebase);
+        setCommentsNum(commentsFromFirebase.length);
+      } catch (err) {
+        console.log(err);
+      }
+      
+    };
 
     return (
         <SafeAreaView style={{flex: 1}}>
@@ -92,7 +123,7 @@ const PostDetailScreen = ({navigation, route}) => {
                 >
                     <Ionicons name="arrow-back-sharp" size={40} color="black" />
                 </Pressable>
-                <Text style={styles.title}>Edit Receipt</Text>
+                <Text style={styles.title}>Post Detail</Text>
             </View>
         <ScrollView style={{ borderRadius: 25, margin: 10, marginTop: 0}} showsVerticalScrollIndicator={false}>
             <View style={[styles.postContainer]}>
@@ -146,9 +177,13 @@ const PostDetailScreen = ({navigation, route}) => {
                             <Pressable
                                 activeOpacity={0.7}
                                 onPress={() => {
-                                    likeButton === 'like2' ?
-                                    setLikeButton('like1') :
+                                  if (likeButton === 'like2') {
+                                    setLikeButton('like1');
+                                    likeBtnPressed(true);
+                                  } else {
                                     setLikeButton('like2');
+                                    likeBtnPressed(false); 
+                                  }
                                 }}
                             >
                                 <AntDesign name={likeButton} size={25} color="#B17BFF" />
@@ -158,9 +193,7 @@ const PostDetailScreen = ({navigation, route}) => {
                         <View style={styles.commentContainer}>
                             <TouchableOpacity
                                 activeOpacity={0.7}
-                                onPress={() => {
-
-                                }}
+                                onPress={fetchComments}
                             >
                                 <AntDesign name="message1" size={25} color="#B17BFF" />
                             </TouchableOpacity>
@@ -170,22 +203,20 @@ const PostDetailScreen = ({navigation, route}) => {
                     <TouchableOpacity>
                         <Text 
                             style={[styles.likeCommentNum, {fontSize: 15, position: 'absolute', right: 15, bottom: 10 }]}
-                            onPress={() => {
-                                setOpen(true);
-                            }}
+                            onPress={handleOpenPress}
                             >Add a comment</Text>
                     </TouchableOpacity>
             </View>
             <View style={[styles.commentsContainer]}>
                 <Text style={{color: '#C5F277', margin: 15, fontSize: 20}}>Comments</Text>
                 {
-                    comments.map((item, index) => (
+                    comments && comments.map((item, index) => (
                         <View style={{flexDirection: 'row', marginHorizontal: 10 }} key={index}>
-                            <Image style={styles.userAvatar} source={{ url: item.userPhoto }} />
+                            <Image style={styles.userAvatar} source={{ url: item.userAvatar }} />
                             <View style={styles.textsContainer}>
                                 <Text style={{color: '#C5F277', fontWeight: 'bold'}}>{item.username}</Text>
                                 <Text style={{color: '#B17BFF'}}>15 min ago</Text>
-                                <Text style={{color: "#C5F277", marginTop: 10}}>{item.review}</Text>
+                                <Text style={{color: "#C5F277", marginTop: 10}}>{item.comment}</Text>
                                 {
                                     (index !== comments.length - 1) &&
                                     <View
@@ -203,19 +234,23 @@ const PostDetailScreen = ({navigation, route}) => {
             </View>
 
         </ScrollView>
-        {isOpen ? (
           <BottomSheet
             ref={sheetRef}
             snapPoints={snapPoints}
+            index={-1}
             enablePanDownToClose={true}
-            onClose={() => setOpen(false)}
             backdropComponent={renderBackdrop}
           >
             <BottomSheetView>
-              <Comment/>
+              <Comment 
+                postID={postInfo.postID}
+                callBack={() => {
+                  fetchComments();
+                  handleClosePress();
+                }}
+              />
             </BottomSheetView>
           </BottomSheet>
-        ) : null}
         </SafeAreaView>
     );
 };

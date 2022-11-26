@@ -5,16 +5,34 @@ import {
     Pressable,
   } from "react-native";
   import React, { useCallback, useRef, useState, useEffect } from "react";
-  import BottomSheet, { BottomSheetView, BottomSheetTextInput, BottomSheetScrollView } from "@gorhom/bottom-sheet";
+  import BottomSheet, { BottomSheetView, BottomSheetTextInput, BottomSheetScrollView} from "@gorhom/bottom-sheet";
   import { db } from "../../FirebaseApp";
-  import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+  import { collection, addDoc, serverTimestamp, doc, updateDoc, arrayUnion, Timestamp } from "firebase/firestore";
   import { auth } from "../../FirebaseApp";
-  import { onAuthStateChanged } from "firebase/auth";
+
   const Comment = (props) => {
     const [comment, setComment] = useState("");
     const [uid, setUid] = useState();
     const [username, setUsername] = useState();
-    const blankAvatar = `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBGwlAahaapmmJ7Riv_L_ZujOcfWSUJnm71g&usqp=CAU`;
+
+    const addComment = async () => {
+      const commentToBeAdded = {
+        comment: comment,
+        createdAt: Timestamp.now(),
+        userEmail: auth.currentUser.email
+      };
+  
+      try {
+        const docRef = doc(db, "post", props.postID);
+        await updateDoc(docRef, {
+          comments: arrayUnion(commentToBeAdded),
+        });
+        setComment("");
+        props.callBack();
+      } catch (err) {
+        console.log(err);
+      }
+    }
     
     return (
       <BottomSheetView>
@@ -26,7 +44,7 @@ import {
           }}
         >
         <Text style={styles.bsTitle}>Create a Comment</Text>
-        <Pressable style={styles.postButton} onPress={() => {}}>
+        <Pressable style={styles.postButton} onPress={addComment}>
           <Text style={{ color: "black", fontSize: 19 }}>Add</Text>
         </Pressable>
       </View>
@@ -34,6 +52,7 @@ import {
         <BottomSheetTextInput
           style={styles.descriptionInputBox}
           placeholder="Write a comment"
+          value={comment}
           onChangeText={setComment}
           multiline={true}
           placeholderTextColor={'#B17BFF'}
