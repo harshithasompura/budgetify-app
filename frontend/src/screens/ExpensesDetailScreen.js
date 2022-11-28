@@ -3,36 +3,41 @@ import { useEffect, useState } from "react";
 
 // Firebase
 import { db } from "../../FirebaseApp";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc, query, orderBy } from "firebase/firestore";
+// import { Icon } from "@rneui/base";
+// Vector Icons
+import Icon from "react-native-vector-icons/FontAwesome";
 
-// Importing fonts
-import {
-  IBMPlexMono_400Regular,
-  IBMPlexMono_500Medium,
-  IBMPlexMono_700Bold,
-} from "@expo-google-fonts/ibm-plex-mono";
-
-const ExpensesDetailScreen = ({ route }) => {
+const ExpensesDetailScreen = ({ route, navigation }) => {
   const { category, userEmail } = route.params;
 
-  const [expLookup, setExpLookup] = useState({});
+  const [expensesData, setExpensesData] = useState([]);
 
   useEffect(() => {
     getExpensesFromFirestore();
+    console.log(`Length of Array: ${expensesData.length}`);
+    // console.log(`testing`,expensesData);
   }, []);
 
   const getExpensesFromFirestore = async () => {
-    const docRef = doc(db, "expenses", userEmail);
+    const docRef = doc(db, "users", userEmail, "expenses", userEmail);
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
-      const { allExpenses } = docSnap.data();
+      const { summary } = docSnap.data();
 
       const date = new Date();
-      const expLookup =
-        allExpenses[category][date.getFullYear()][date.getMonth() + 1];
-      // console.log(expLookup[3]);
-      setExpLookup(expLookup);
+
+      const tempMonthExpenses =
+        summary[date.getFullYear()][date.getMonth() + 1];
+
+      const temp = [];
+      Object.entries(tempMonthExpenses).forEach((item) => {
+        item[1].forEach((innerItem) => {
+          if (innerItem.category === category) temp.push(innerItem);
+        });
+      });
+      setExpensesData(temp);
     } else {
       // doc.data() will be undefined in this case
       console.log("No such document!");
@@ -42,25 +47,34 @@ const ExpensesDetailScreen = ({ route }) => {
   const renderFlatListItem = ({ item }) => {
     return (
       <Pressable style={styles.flatListCell}>
-        <Text style={styles.flatListDate}>{item[0]}</Text>
-        <View style={styles.flatListExpensesView}>
-          {expLookup[item[0]].map((item, index) => (
-            <Text key={index} style={styles.flatListExpenses}>{`$${item}`}</Text>
-          ))}
-        </View>
+        <Text style={styles.flatListDate}>Date: {item["date"]}</Text>
+        <Text style={styles.flatListExpenses}>
+          $ {parseFloat(item["total"])}
+        </Text>
       </Pressable>
     );
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>{category}</Text>
+      <View
+        style={{ flexDirection: "row", alignItems: "center", marginTop: 8 }}
+      >
+        <Pressable
+          style={{ marginLeft: 20 }}
+          onPress={() => {
+            navigation.navigate("Expenses Screen");
+          }}
+        >
+          <Icon name="chevron-left" size={20} color={"#38434A"} />
+        </Pressable>
+        <Text style={styles.header}> {category} Expenses</Text>
+      </View>
 
       <FlatList
-        // data={expLookup ? Object.entries(expLookup) : []}
-        data={Object.entries(expLookup)}
+        data={expensesData}
         keyExtractor={(item) => {
-          return item[0];
+          return expensesData.indexOf(item);
         }}
         renderItem={renderFlatListItem}
         style={styles.flatList}
@@ -72,34 +86,45 @@ const ExpensesDetailScreen = ({ route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingVertical: 10,
+    backgroundColor: "white",
   },
   header: {
-    fontSize: 25,
-    fontFamily: "IBMPlexMono_400Regular",
-    textDecorationLine: "underline",
+    flex: 1,
+    marginHorizontal: "auto",
+    textAlign: "center",
+    fontSize: 20,
+    fontFamily: "Montserrat_600SemiBold",
+    marginVertical: 10,
     alignSelf: "center",
+    color: "#38434A",
   },
   flatList: {
     marginTop: 30,
     alignSelf: "center",
     width: "90%",
+    padding: 10,
   },
   flatListCell: {
     borderWidth: 1,
     borderColor: "#fff",
-    borderBottomColor: "red",
+    borderBottomColor: "gray",
   },
   flatListDate: {
-    fontSize: 30,
-    fontFamily: "IBMPlexMono_500Medium",
+    fontSize: 16,
+    margin: 4,
+    color: "#8B999C",
+    fontFamily: "Montserrat_600SemiBold",
   },
   flatListExpensesView: {
     display: "flex",
     flexDirection: "column",
   },
   flatListExpenses: {
-    fontSize: 15,
+    fontSize: 20,
+    margin: 2,
+    fontFamily: "Montserrat_700Bold",
+    marginBottom: 20,
+    color: "#62D2B3",
   },
 });
 

@@ -17,6 +17,7 @@ export const ExpensesActionType = {
   SET_EXPENSES_DATA: "Expenses@SET_EXPENSES_DATA",
 
   FETCH_EXPENSES: "Expenses@FETCH_EXPENSES",
+  CLEAR_EXPENSES: "Expenses@CLEAR_EXPENSES",
 
   SET_ERROR: "Expenses@SET_ERROR",
   CLEAR: "Expenses@CLEAR",
