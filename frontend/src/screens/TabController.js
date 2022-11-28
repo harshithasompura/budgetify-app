@@ -127,15 +127,18 @@ const ExpensesStackScreen = () => {
           name="Add Expense"
           component={InputExpensesScreen}
         />
-        <ExpensesStack.Screen
-          options={{
-            headerTitle: "",
-            headerStyle: { backgroundColor: "rgba(219, 219, 219,0.9)" },
-          }}
-          name="Expense Detail"
-          component={ExpensesDetailScreen}
-        />
       </ExpensesStack.Group>
+      <ExpensesStack.Screen
+        options={{
+          headerTitle: "",
+          headerShadowVisible: false,
+          headerShown: false,
+          headerStyle: { backgroundColor: "white" },
+          headerTintColor: "#001c00",
+        }}
+        name="Expense Detail"
+        component={ExpensesDetailScreen}
+      />
       <ExpensesStack.Screen
         name="Camera"
         options={{

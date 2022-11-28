@@ -47,7 +47,6 @@ const ExpensesScreen = ({ navigation }) => {
   // useState for Open Bottom Sheet
   const [openInputExpensesOptions, setOpenInputExpensesOptions] =
     useState(false);
-  
 
   // Bottom Sheet Setting
   const sheetRef = useRef(null);
@@ -173,194 +172,181 @@ const ExpensesScreen = ({ navigation }) => {
     </Pressable>
   );
 
-    // ------------------------ View Template -----------------------
-    return (
-      <SafeAreaView style={styles.container}>
+  // ------------------------ View Template -----------------------
+  return (
+    <SafeAreaView style={styles.container}>
+      <View
+        style={[
+          styles.contentContainer,
+          {
+            backgroundColor: openInputExpensesOptions
+              ? "rgba(0,0,0,.6)"
+              : "white",
+          },
+        ]}
+      >
+        <View style={styles.screenHeadingView}>
+          <Text
+            style={[
+              styles.screenHeading,
+              { fontFamily: "Montserrat_600SemiBold" },
+            ]}
+          >
+            Expenses
+          </Text>
+
+          <Pressable
+            style={styles.plus}
+            onPress={() => {
+              // Open the bottom sheet
+              setOpenInputExpensesOptions(true);
+            }}
+          >
+            <Icon name="plus" size={22} />
+          </Pressable>
+        </View>
+
         <View
           style={[
-            styles.contentContainer,
+            styles.summary,
             {
               backgroundColor: openInputExpensesOptions
                 ? "rgba(0,0,0,.6)"
-                : "white",
+                : "#62D2B3",
             },
           ]}
         >
-          <View style={styles.screenHeadingView}>
-            <Text
-              style={[
-                styles.screenHeading,
-                { fontFamily: "Montserrat_600SemiBold" },
-              ]}
-            >
-              Expenses
-            </Text>
-
-            <Pressable
-              style={styles.plus}
-              onPress={() => {
-                // Open the bottom sheet
-                setOpenInputExpensesOptions(true);
-              }}
-            >
-              <Icon name="plus" size={22} />
-            </Pressable>
-          </View>
-
-          <View
+          <Text
             style={[
-              styles.summary,
+              styles.summaryTitle,
               {
-                backgroundColor: openInputExpensesOptions
-                  ? "rgba(0,0,0,.6)"
-                  : "#62D2B3",
+                color: openInputExpensesOptions ? "rgba(0, 0, 0,.6)" : "#fef",
               },
             ]}
           >
+            Your expenses
+          </Text>
+          <Text
+            style={[
+              styles.summaryExpense,
+              {
+                color: openInputExpensesOptions ? "rgba(0, 0, 0,.6)" : "white",
+              },
+            ]}
+          >
+            ${totalExpenses.toFixed(2)}
+          </Text>
+
+          <View style={styles.summaryRemainingView}>
             <Text
               style={[
-                styles.summaryTitle,
+                styles.summaryRemaining,
                 {
-                  color: openInputExpensesOptions
-                    ? "rgba(0, 0, 0,.6)"
-                    : "#fef",
+                  color: openInputExpensesOptions ? "rgba(0, 0, 0,.6)" : "#fef",
                 },
               ]}
             >
-              Your expenses
+              Budget
             </Text>
             <Text
               style={[
-                styles.summaryExpense,
+                styles.summaryRemaining,
                 {
-                  color: openInputExpensesOptions
-                    ? "rgba(0, 0, 0,.6)"
-                    : "white",
+                  color: openInputExpensesOptions ? "rgba(0, 0, 0,.6)" : "#fef",
                 },
               ]}
             >
-              ${totalExpenses.toFixed(2)}
+              ${`${(budget - parseFloat(totalExpenses)).toFixed(2)}`} remaining
             </Text>
-
-            <View style={styles.summaryRemainingView}>
-              <Text
-                style={[
-                  styles.summaryRemaining,
-                  {
-                    color: openInputExpensesOptions
-                      ? "rgba(0, 0, 0,.6)"
-                      : "#fef",
-                  },
-                ]}
-              >
-                Budget
-              </Text>
-              <Text
-                style={[
-                  styles.summaryRemaining,
-                  {
-                    color: openInputExpensesOptions
-                      ? "rgba(0, 0, 0,.6)"
-                      : "#fef",
-                  },
-                ]}
-              >
-                ${`${(budget - parseFloat(totalExpenses)).toFixed(2)}`}{" "}
-                remaining
-              </Text>
-            </View>
-
-            <Progress.Bar
-              progress={(budget - parseFloat(totalExpenses)) / budget}
-              width={null}
-              height={8}
-              color={
-                openInputExpensesOptions ? "rgba(0, 0, 0,.6)" : "#B17BFF"
-              }
-              unfilledColor={
-                openInputExpensesOptions ? "rgba(0, 0, 0,.6)" : "#fff"
-              }
-              borderRadius={20}
-              style={styles.summaryProgressBar}
-            />
-            <Pressable
-              style={styles.summaryEditBudgetView}
-              onPress={() => setBudgetPopUp(true)}
-            >
-              <Icon
-                name="pencil"
-                size={15}
-                color={
-                  openInputExpensesOptions
-                    ? "rgba(202, 170, 250,.6)"
-                    : "#B17BFF"
-                }
-              />
-              <Text
-                style={[
-                  styles.summaryEditBudget,
-                  {
-                    color: openInputExpensesOptions
-                      ? "rgba(202, 170, 250,.6)"
-                      : "#B17BFF",
-                  },
-                ]}
-              >
-                Edit Budget
-              </Text>
-            </Pressable>
           </View>
 
-          <DialogInput
-            isDialogVisible={budgetPopUp}
-            title={"Enter Monthly Budget"}
-            message={`Your current budget is $${parseFloat(budget).toFixed(2)}`}
-            hintInput={"enter your budget here"}
-            submitInput={(value) => {
-              if (!value) {
-                setBudgetPopUp(false);
-                return;
+          <Progress.Bar
+            progress={(budget - parseFloat(totalExpenses)) / budget}
+            width={null}
+            height={8}
+            color={openInputExpensesOptions ? "rgba(0, 0, 0,.6)" : "#B17BFF"}
+            unfilledColor={
+              openInputExpensesOptions ? "rgba(0, 0, 0,.6)" : "#fff"
+            }
+            borderRadius={20}
+            style={styles.summaryProgressBar}
+          />
+          <Pressable
+            style={styles.summaryEditBudgetView}
+            onPress={() => setBudgetPopUp(true)}
+          >
+            <Icon
+              name="pencil"
+              size={15}
+              color={
+                openInputExpensesOptions ? "rgba(202, 170, 250,.6)" : "#B17BFF"
               }
-              editBudget(value);
-            }}
-            closeDialog={() => setBudgetPopUp(false)}
-            modalStyle={{ backgroundColor: "rgba(0,0,0,.6)" }}
-            dialogStyle={{
-              backgroundColor: "#dedfde",
-              paddingLeft: 15,
-              paddingRight: 15,
-            }}
-            textInputProps={{ keyboardType: "numeric" }}
-          />
-
-          <FlatList
-            data={expensesData.filter((element) => element.expense !== 0)}
-            keyExtractor={(item) => {
-              return item.id;
-            }}
-            renderItem={renderFlatListItem}
-            style={styles.flatList}
-          />
+            />
+            <Text
+              style={[
+                styles.summaryEditBudget,
+                {
+                  color: openInputExpensesOptions
+                    ? "rgba(202, 170, 250,.6)"
+                    : "#B17BFF",
+                },
+              ]}
+            >
+              Edit Budget
+            </Text>
+          </Pressable>
         </View>
 
-        {openInputExpensesOptions ? (
-          <BottomSheet
-            ref={sheetRef}
-            snapPoints={snapPoints}
-            enablePanDownToClose={true}
-            onClose={() => {
-              setOpenInputExpensesOptions(false);
-            }}
-          >
-            <BottomSheetFlatList
-              data={bottomSheetArray}
-              keyExtractor={(item) => item.id}
-              renderItem={renderBottomSheetItem}
-            />
-          </BottomSheet>
-        ) : null}
-      </SafeAreaView>
-    );
+        <DialogInput
+          isDialogVisible={budgetPopUp}
+          title={"Enter Monthly Budget"}
+          message={`Your current budget is $${parseFloat(budget).toFixed(2)}`}
+          hintInput={"enter your budget here"}
+          submitInput={(value) => {
+            if (!value) {
+              setBudgetPopUp(false);
+              return;
+            }
+            editBudget(value);
+          }}
+          closeDialog={() => setBudgetPopUp(false)}
+          modalStyle={{ backgroundColor: "rgba(0,0,0,.6)" }}
+          dialogStyle={{
+            backgroundColor: "#dedfde",
+            paddingLeft: 15,
+            paddingRight: 15,
+          }}
+          textInputProps={{ keyboardType: "numeric" }}
+        />
+
+        <FlatList
+          data={expensesData.filter((element) => element.expense !== 0)}
+          keyExtractor={(item) => {
+            return item.id;
+          }}
+          renderItem={renderFlatListItem}
+          style={styles.flatList}
+        />
+      </View>
+
+      {openInputExpensesOptions ? (
+        <BottomSheet
+          ref={sheetRef}
+          snapPoints={snapPoints}
+          enablePanDownToClose={true}
+          onClose={() => {
+            setOpenInputExpensesOptions(false);
+          }}
+        >
+          <BottomSheetFlatList
+            data={bottomSheetArray}
+            keyExtractor={(item) => item.id}
+            renderItem={renderBottomSheetItem}
+          />
+        </BottomSheet>
+      ) : null}
+    </SafeAreaView>
+  );
 };
 
 const styles = StyleSheet.create({
@@ -390,8 +376,8 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     borderRadius: 20,
     width: "85%",
-    padding:8,
-    fontSize:16,
+    padding: 8,
+    fontSize: 16,
     shadowColor: "black",
     shadowOffset: { width: -2, height: 3 },
     shadowOpacity: 0.16,
@@ -400,9 +386,9 @@ const styles = StyleSheet.create({
   summaryTitle: {
     marginLeft: 15,
     marginTop: 15,
-    fontFamily:"Montserrat_600SemiBold",
+    fontFamily: "Montserrat_600SemiBold",
     fontSize: 20,
-    marginBottom:8,
+    marginBottom: 8,
   },
   summaryExpense: {
     marginLeft: 15,
@@ -430,7 +416,7 @@ const styles = StyleSheet.create({
   summaryEditBudgetView: {
     flexDirection: "row",
     justifyContent: "flex-end",
-    alignItems:"center",
+    alignItems: "center",
     marginRight: 15,
     marginTop: 15,
     marginBottom: 15,

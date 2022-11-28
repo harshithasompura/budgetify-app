@@ -10,7 +10,7 @@ import {
   View,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import moment from 'moment';
+import moment from "moment";
 import { Divider } from "@rneui/themed";
 import BottomSheet, { BottomSheetFlatList } from "@gorhom/bottom-sheet";
 import useExpenses from "../redux/hook/useExpenses";
@@ -222,41 +222,34 @@ const InputExpensesScreen = ({ route }) => {
 
   // Save the expense to firestore
   const saveExpenseToFireStore = async (tempExpense) => {
-
     let tempAllExpenses = expenses;
 
     const tempObject = {
       category: category,
       date: moment(date).format("YYYY MMM DD"),
       total: parseFloat(tempExpense),
-    }
+    };
 
     console.log(tempObject["date"]);
 
     if (!tempAllExpenses[`${date.getFullYear()}`]) {
       tempAllExpenses[`${date.getFullYear()}`] = {};
     }
+    if (!tempAllExpenses[`${date.getFullYear()}`][`${date.getMonth() + 1}`]) {
+      tempAllExpenses[`${date.getFullYear()}`][`${date.getMonth() + 1}`] = {};
+    }
     if (
-      !tempAllExpenses[`${date.getFullYear()}`][
-        `${date.getMonth() + 1}`
+      !tempAllExpenses[`${date.getFullYear()}`][`${date.getMonth() + 1}`][
+        `${date.getDate()}`
       ]
     ) {
-      tempAllExpenses[`${date.getFullYear()}`][
-        `${date.getMonth() + 1}`
-      ] = {};
+      tempAllExpenses[`${date.getFullYear()}`][`${date.getMonth() + 1}`][
+        `${date.getDate()}`
+      ] = [];
     }
-    if (
-      !tempAllExpenses[`${date.getFullYear()}`][
-        `${date.getMonth() + 1}`
-      ][`${date.getDate()}`]
-    ) {
-      tempAllExpenses[`${date.getFullYear()}`][
-        `${date.getMonth() + 1}`
-      ][`${date.getDate()}`] = [];
-    }
-    tempAllExpenses[`${date.getFullYear()}`][
-      `${date.getMonth() + 1}`
-    ][`${date.getDate()}`].push(tempObject);
+    tempAllExpenses[`${date.getFullYear()}`][`${date.getMonth() + 1}`][
+      `${date.getDate()}`
+    ].push(tempObject);
 
     await updateDoc(doc(db, "users", userEmail, "expenses", userEmail), {
       summary: tempAllExpenses,

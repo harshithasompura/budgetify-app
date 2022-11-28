@@ -106,7 +106,7 @@ const RegisterScreen = ({ navigation }) => {
       });
       await setDoc(doc(db, "users", email, "expenses", email), {
         budget: 1000,
-        summary:{},
+        summary: {},
       });
       // - Navigate to home
       navigation.navigate("Tab");

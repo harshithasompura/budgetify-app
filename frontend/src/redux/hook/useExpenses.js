@@ -114,12 +114,9 @@ const useExpenses = () => {
     [dispatch]
   );
 
-  const clearExpenses = useCallback(
-    () => {
-      dispatch(expensesActions.clearExpenses());
-    },
-    [dispatch]
-  );
+  const clearExpenses = useCallback(() => {
+    dispatch(expensesActions.clearExpenses());
+  }, [dispatch]);
 
   return {
     budget,

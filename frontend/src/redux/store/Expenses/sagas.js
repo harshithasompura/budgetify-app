@@ -12,13 +12,17 @@ const calculateMonthExpense = (summary, category) => {
   const date = new Date();
   if (summary[date.getFullYear()]) {
     if (summary[date.getFullYear()][date.getMonth() + 1]) {
-      const tempMonthExpense =
-        summary[date.getFullYear()][date.getMonth() + 1];
+      const tempMonthExpense = summary[date.getFullYear()][date.getMonth() + 1];
       let total = 0;
 
       for (const [key, value] of Object.entries(tempMonthExpense)) {
-        const selectedCategory = value.filter(item => item["category"] === category)
-        const dateExpense = selectedCategory.reduce((acc, item) => acc + item["total"], 0);
+        const selectedCategory = value.filter(
+          (item) => item["category"] === category
+        );
+        const dateExpense = selectedCategory.reduce(
+          (acc, item) => acc + item["total"],
+          0
+        );
         total = total + dateExpense;
       }
       return total;
@@ -47,18 +51,12 @@ export function* fetchExpenses({ payload }) {
     if (!summary) return;
 
     yield put(
-        actions.setGroceriesExpense(
-          calculateMonthExpense(summary, "Groceries")
-        )
-    )
-    
-    yield put(
-      actions.setFoodExpense(calculateMonthExpense(summary, "Food"))
+      actions.setGroceriesExpense(calculateMonthExpense(summary, "Groceries"))
     );
 
-    yield put(
-      actions.setFuelExpense(calculateMonthExpense(summary, "Fuel"))
-    );
+    yield put(actions.setFoodExpense(calculateMonthExpense(summary, "Food")));
+
+    yield put(actions.setFuelExpense(calculateMonthExpense(summary, "Fuel")));
 
     yield put(
       actions.setTransportationExpense(
