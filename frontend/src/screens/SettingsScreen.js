@@ -77,7 +77,7 @@ const SettingsScreen = ({ navigation, route }) => {
     console.log(`Delete Account Pressed!`);
     Alert.alert(
       "Delete Account",
-      "Are you sure to delete the account",
+      "Are you sure to delete the account?",
       [
         {
           text: "Cancel",
