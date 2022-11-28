@@ -15,9 +15,11 @@ import * as ImagePicker from "expo-image-picker";
 import { useEffect, useState } from "react";
 import { auth } from "../../FirebaseApp";
 import { db } from "../../FirebaseApp";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { CommonActions } from "@react-navigation/native";
+import { signOut, onAuthStateChanged } from "firebase/auth";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
-import { doc, updateDoc, getDoc } from "firebase/firestore";
+import { doc, updateDoc, getDoc, deleteDoc } from "firebase/firestore";
+import { async } from "@firebase/util";
 
 const SettingsScreen = ({ navigation, route }) => {
   const [loggedInUser, setLoggedInUser] = useState("");
@@ -56,12 +58,12 @@ const SettingsScreen = ({ navigation, route }) => {
       screen: "ManageCategories",
     },
     {
-      text: "Manage Currencies",
-      screen: "ManageCurrencies",
+      text: "Terms & Conditions of Service",
+      screen: "TermsAndConditions",
     },
     {
-      text: "Notifications",
-      screen: "Notifications",
+      text: "Privacy Policy Agreement",
+      screen: "PrivacyPolicy",
     },
   ];
 
@@ -73,6 +75,50 @@ const SettingsScreen = ({ navigation, route }) => {
 
   const deleteAccount = async () => {
     console.log(`Delete Account Pressed!`);
+    Alert.alert(
+      "Delete Account",
+      "Are you sure to delete the account",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel"
+        },
+        { text: "OK", onPress: () => 
+        {
+          console.log("OK Pressed");
+          const listener = onAuthStateChanged(auth, async (user) => {
+            if (user) {
+              user.delete()
+              .then(async() => {
+                  var docRef = doc(db, "users", loggedInUser);
+                  var docSnap = await getDoc(docRef);
+                  if (docSnap.exists()) {
+                    await deleteDoc(doc(db, "users", loggedInUser))
+                    console.log("Document deleted", loggedInUser);
+                    Alert.alert( "Delete Account", "Deletion Successful. Signing Out!", [{
+                      text: "Ok",
+                      onPress: async() =>{
+                        console.log("Ok Pressed");
+                        await signOut(auth);
+                        console.log("User signed out");
+                        //reset the navigation state after logged out
+                        navigation.dispatch(
+                          CommonActions.reset({
+                            index: 0,
+                            routes: [{ name: "Login" }],
+                          })
+                        );
+                      }}]);
+                  } else {
+                    console.log("User Not Found");
+                  }           
+                })
+              .catch((error) => console.log(error));
+            }          
+          }) 
+          return listener;
+        }}])
   };
 
   const uploadImageToCloud = async (imageUri, userId) => {

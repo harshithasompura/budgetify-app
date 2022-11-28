@@ -7,12 +7,12 @@ import {
   Pressable,
 } from "react-native";
 
-const NotificationScreen = () => {
+const TermsAndConditionsScreen = () => {
   return (
     <SafeAreaView>
-      <Text>Notifications Screen</Text>
+      <Text>Terms And Conditions Screen</Text>
     </SafeAreaView>
   );
 };
 
-export default NotificationScreen;
+export default TermsAndConditionsScreen;
