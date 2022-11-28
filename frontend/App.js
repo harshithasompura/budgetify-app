@@ -90,6 +90,7 @@ export default function App() {
                   backgroundColor: "#fff",
                 },
                 headerBackVisible: false,
+                headerShadowVisible: false,
                 headerLeft: () => null,
                 headerRight: () => (
                   <Button

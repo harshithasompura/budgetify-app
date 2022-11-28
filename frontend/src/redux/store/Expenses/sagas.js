@@ -12,13 +12,17 @@ const calculateMonthExpense = (summary, category) => {
   const date = new Date();
   if (summary[date.getFullYear()]) {
     if (summary[date.getFullYear()][date.getMonth() + 1]) {
-      const tempMonthExpense =
-        summary[date.getFullYear()][date.getMonth() + 1];
+      const tempMonthExpense = summary[date.getFullYear()][date.getMonth() + 1];
       let total = 0;
 
       for (const [key, value] of Object.entries(tempMonthExpense)) {
-        const selectedCategory = value.filter(item => item["category"] === category)
-        const dateExpense = selectedCategory.reduce((acc, item) => acc + item["total"], 0);
+        const selectedCategory = value.filter(
+          (item) => item["category"] === category
+        );
+        const dateExpense = selectedCategory.reduce(
+          (acc, item) => acc + item["total"],
+          0
+        );
         total = total + dateExpense;
       }
       return total;
@@ -47,18 +51,12 @@ export function* fetchExpenses({ payload }) {
     if (!summary) return;
 
     yield put(
-        actions.setGroceriesExpense(
-          calculateMonthExpense(summary, "Groceries")
-        )
-    )
-    
-    yield put(
-      actions.setFoodExpense(calculateMonthExpense(summary, "Food"))
+      actions.setGroceriesExpense(calculateMonthExpense(summary, "Groceries"))
     );
 
-    yield put(
-      actions.setFuelExpense(calculateMonthExpense(summary, "Fuel"))
-    );
+    yield put(actions.setFoodExpense(calculateMonthExpense(summary, "Food")));
+
+    yield put(actions.setFuelExpense(calculateMonthExpense(summary, "Fuel")));
 
     yield put(
       actions.setTransportationExpense(
@@ -151,6 +149,72 @@ export function* fetchExpenses({ payload }) {
   }
 }
 
-const sagas = [takeLatest(ExpensesActionType.FETCH_EXPENSES, fetchExpenses)];
+export function* clearExpenses() {
+  console.log("CLEAR ALL EXPENSES A");
+  yield put(
+    actions.setExpensesData([
+      {
+        id: "0",
+        category: "Groceries",
+        imagePath: require(`../../../../assets/expenses/groceries-icon.png`),
+        expense: 0,
+      },
+      {
+        id: "1",
+        category: "Food",
+        imagePath: require(`../../../../assets/expenses/food-icon.png`),
+        expense: 0,
+      },
+      {
+        id: "2",
+        category: "Fuel",
+        imagePath: require(`../../../../assets/expenses/fuel-icon.png`),
+        expense: 0,
+      },
+      {
+        id: "3",
+        category: "Transportation",
+        imagePath: require(`../../../../assets/expenses/transportation-icon.png`),
+        expense: 0,
+      },
+      {
+        id: "4",
+        category: "Entertainment",
+        imagePath: require(`../../../../assets/expenses/entertainment-icon.png`),
+        expense: 0,
+      },
+      {
+        id: "5",
+        category: "Housing",
+        imagePath: require(`../../../../assets/expenses/housing-icon.png`),
+        expense: 0,
+      },
+      {
+        id: "6",
+        category: "Clothing",
+        imagePath: require(`../../../../assets/expenses/clothing-icon.png`),
+        expense: 0,
+      },
+      {
+        id: "7",
+        category: "Health",
+        imagePath: require(`../../../../assets/expenses/health-icon.png`),
+        expense: 0,
+      },
+      {
+        id: "8",
+        category: "Others",
+        imagePath: require(`../../../../assets/expenses/others-icon.png`),
+        expense: 0,
+      },
+    ])
+  );
+  console.log("CLEAR ALL EXPENSES B");
+}
+
+const sagas = [
+  takeLatest(ExpensesActionType.FETCH_EXPENSES, fetchExpenses),
+  takeLatest(ExpensesActionType.CLEAR_EXPENSES, clearExpenses),
+];
 
 export default sagas;

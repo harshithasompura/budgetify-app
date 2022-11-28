@@ -114,6 +114,10 @@ const useExpenses = () => {
     [dispatch]
   );
 
+  const clearExpenses = useCallback(() => {
+    dispatch(expensesActions.clearExpenses());
+  }, [dispatch]);
+
   return {
     budget,
     groceriesExpense,
@@ -138,6 +142,7 @@ const useExpenses = () => {
     setOthersExpense,
     setExpensesData,
     fetchExpenses,
+    clearExpenses,
   };
 };
 
