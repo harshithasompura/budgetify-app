@@ -7,17 +7,22 @@ import { db } from "../../../../FirebaseApp";
 import { doc, getDoc } from "firebase/firestore";
 
 // Get the sum of the expense in current month
-const calculateMonthExpense = (expenseOfCategory) => {
-  if (!expenseOfCategory) return 0;
+const calculateMonthExpense = (summary, category) => {
+  if (!summary) return 0;
   const date = new Date();
-  if (expenseOfCategory[date.getFullYear()]) {
-    if (expenseOfCategory[date.getFullYear()][date.getMonth() + 1]) {
-      const tempMonthExpense =
-        expenseOfCategory[date.getFullYear()][date.getMonth() + 1];
+  if (summary[date.getFullYear()]) {
+    if (summary[date.getFullYear()][date.getMonth() + 1]) {
+      const tempMonthExpense = summary[date.getFullYear()][date.getMonth() + 1];
       let total = 0;
 
       for (const [key, value] of Object.entries(tempMonthExpense)) {
-        const dateExpense = value.reduce((acc, item) => acc + item, 0);
+        const selectedCategory = value.filter(
+          (item) => item["category"] === category
+        );
+        const dateExpense = selectedCategory.reduce(
+          (acc, item) => acc + item["total"],
+          0
+        );
         total = total + dateExpense;
       }
       return total;
@@ -28,74 +33,58 @@ const calculateMonthExpense = (expenseOfCategory) => {
 
 export function* fetchExpenses({ payload }) {
   try {
-    console.log('call')
+    console.log("call");
     const { email } = payload;
-    const docRef = doc(db, "users", email);
+    const docRef = doc(db, "users", email, "expenses", email);
     console.log("payload", payload);
     const docSnap = yield getDoc(docRef);
 
     if (!docSnap.exists()) return;
 
-    const { budget, allExpenses } = docSnap.data();
+    const { budget, summary } = docSnap.data();
 
     if (budget) {
       yield put(actions.setBudget(budget));
-      console.log("BudGet",budget);
+      console.log("BudGet", budget);
     }
 
-    if (!allExpenses) return;
+    if (!summary) return;
 
     yield put(
-        actions.setGroceriesExpense(
-          calculateMonthExpense(allExpenses["Groceries"])
-        )
-    )
-    console.log("Groceries",calculateMonthExpense(allExpenses["Groceries"]));
-    
-    yield put(
-      actions.setFoodExpense(calculateMonthExpense(allExpenses["Food"]))
+      actions.setGroceriesExpense(calculateMonthExpense(summary, "Groceries"))
     );
-    console.log("Food",calculateMonthExpense(allExpenses["Food"]));
 
-    yield put(
-      actions.setFuelExpense(calculateMonthExpense(allExpenses["Fuel"]))
-    );
-    console.log("Fuel",calculateMonthExpense(allExpenses["Fuel"]));
+    yield put(actions.setFoodExpense(calculateMonthExpense(summary, "Food")));
+
+    yield put(actions.setFuelExpense(calculateMonthExpense(summary, "Fuel")));
 
     yield put(
       actions.setTransportationExpense(
-        calculateMonthExpense(allExpenses["Transportation"])
+        calculateMonthExpense(summary, "Transportation")
       )
     );
-    console.log("Transportation",calculateMonthExpense(allExpenses["Transportation"]));
 
     yield put(
       actions.setEntertainmentExpense(
-        calculateMonthExpense(allExpenses["Entertainment"])
+        calculateMonthExpense(summary, "Entertainment")
       )
     );
-    console.log("Entertainment",calculateMonthExpense(allExpenses["Entertainment"]));
 
     yield put(
-      actions.setHousingExpense(calculateMonthExpense(allExpenses["Housing"]))
+      actions.setHousingExpense(calculateMonthExpense(summary, "Housing"))
     );
-    console.log("Housing",calculateMonthExpense(allExpenses["Housing"]));
 
     yield put(
-      actions.setClothingExpense(calculateMonthExpense(allExpenses["Clothing"]))
+      actions.setClothingExpense(calculateMonthExpense(summary, "Clothing"))
     );
-    console.log("Clothing",calculateMonthExpense(allExpenses["Clothing"]));
 
     yield put(
-      actions.setHealthExpense(calculateMonthExpense(allExpenses["Health"]))
+      actions.setHealthExpense(calculateMonthExpense(summary, "Health"))
     );
-    console.log("Health",calculateMonthExpense(allExpenses["Health"]));
 
     yield put(
-      actions.setOthersExpense(calculateMonthExpense(allExpenses["Others"]))
+      actions.setOthersExpense(calculateMonthExpense(summary, "Others"))
     );
-    console.log("Others",calculateMonthExpense(allExpenses["Others"]));
-
 
     yield put(
       actions.setExpensesData([
@@ -103,64 +92,129 @@ export function* fetchExpenses({ payload }) {
           id: "0",
           category: "Groceries",
           imagePath: require(`../../../../assets/expenses/groceries-icon.png`),
-          expense: calculateMonthExpense(allExpenses["Groceries"]),
+          expense: calculateMonthExpense(summary, "Groceries"),
         },
         {
           id: "1",
           category: "Food",
           imagePath: require(`../../../../assets/expenses/food-icon.png`),
-          expense: calculateMonthExpense(allExpenses["Food"]),
+          expense: calculateMonthExpense(summary, "Food"),
         },
         {
           id: "2",
           category: "Fuel",
           imagePath: require(`../../../../assets/expenses/fuel-icon.png`),
-          expense: calculateMonthExpense(allExpenses["Fuel"]),
+          expense: calculateMonthExpense(summary, "Fuel"),
         },
         {
           id: "3",
           category: "Transportation",
           imagePath: require(`../../../../assets/expenses/transportation-icon.png`),
-          expense: calculateMonthExpense(allExpenses["Transportation"]),
+          expense: calculateMonthExpense(summary, "Transportation"),
         },
         {
           id: "4",
           category: "Entertainment",
           imagePath: require(`../../../../assets/expenses/entertainment-icon.png`),
-          expense: calculateMonthExpense(allExpenses["Entertainment"]),
+          expense: calculateMonthExpense(summary, "Entertainment"),
         },
         {
           id: "5",
           category: "Housing",
           imagePath: require(`../../../../assets/expenses/housing-icon.png`),
-          expense: calculateMonthExpense(allExpenses["Housing"]),
+          expense: calculateMonthExpense(summary, "Housing"),
         },
         {
           id: "6",
           category: "Clothing",
           imagePath: require(`../../../../assets/expenses/clothing-icon.png`),
-          expense: calculateMonthExpense(allExpenses["Clothing"]),
+          expense: calculateMonthExpense(summary, "Clothing"),
         },
         {
           id: "7",
           category: "Health",
           imagePath: require(`../../../../assets/expenses/health-icon.png`),
-          expense: calculateMonthExpense(allExpenses["Health"]),
+          expense: calculateMonthExpense(summary, "Health"),
         },
         {
           id: "8",
           category: "Others",
           imagePath: require(`../../../../assets/expenses/others-icon.png`),
-          expense: calculateMonthExpense(allExpenses["Others"]),
+          expense: calculateMonthExpense(summary, "Others"),
         },
       ])
     );
-    
   } catch (err) {
     console.log(err);
   }
 }
 
-const sagas = [takeLatest(ExpensesActionType.FETCH_EXPENSES, fetchExpenses)];
+export function* clearExpenses() {
+  console.log("CLEAR ALL EXPENSES A");
+  yield put(
+    actions.setExpensesData([
+      {
+        id: "0",
+        category: "Groceries",
+        imagePath: require(`../../../../assets/expenses/groceries-icon.png`),
+        expense: 0,
+      },
+      {
+        id: "1",
+        category: "Food",
+        imagePath: require(`../../../../assets/expenses/food-icon.png`),
+        expense: 0,
+      },
+      {
+        id: "2",
+        category: "Fuel",
+        imagePath: require(`../../../../assets/expenses/fuel-icon.png`),
+        expense: 0,
+      },
+      {
+        id: "3",
+        category: "Transportation",
+        imagePath: require(`../../../../assets/expenses/transportation-icon.png`),
+        expense: 0,
+      },
+      {
+        id: "4",
+        category: "Entertainment",
+        imagePath: require(`../../../../assets/expenses/entertainment-icon.png`),
+        expense: 0,
+      },
+      {
+        id: "5",
+        category: "Housing",
+        imagePath: require(`../../../../assets/expenses/housing-icon.png`),
+        expense: 0,
+      },
+      {
+        id: "6",
+        category: "Clothing",
+        imagePath: require(`../../../../assets/expenses/clothing-icon.png`),
+        expense: 0,
+      },
+      {
+        id: "7",
+        category: "Health",
+        imagePath: require(`../../../../assets/expenses/health-icon.png`),
+        expense: 0,
+      },
+      {
+        id: "8",
+        category: "Others",
+        imagePath: require(`../../../../assets/expenses/others-icon.png`),
+        expense: 0,
+      },
+    ])
+  );
+  console.log("CLEAR ALL EXPENSES B");
+}
+
+const sagas = [
+  takeLatest(ExpensesActionType.FETCH_EXPENSES, fetchExpenses),
+  takeLatest(ExpensesActionType.CLEAR_EXPENSES, clearExpenses),
+];
 
 export default sagas;

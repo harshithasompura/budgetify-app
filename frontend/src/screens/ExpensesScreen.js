@@ -12,63 +12,28 @@ import * as Progress from "react-native-progress";
 import { Divider } from "@rneui/themed";
 import DialogInput from "react-native-dialog-input";
 import BottomSheet, { BottomSheetFlatList } from "@gorhom/bottom-sheet";
-import useExpenses from '../redux/hook/useExpenses'
+import useExpenses from "../redux/hook/useExpenses";
 
 // Firebase
 import { auth, db } from "../../FirebaseApp";
 import { onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 
-// Importing fonts
-import {
-  useFonts,
-  IBMPlexMono_400Regular,
-  IBMPlexMono_500Medium,
-  IBMPlexMono_600SemiBold,
-  IBMPlexMono_700Bold,
-} from "@expo-google-fonts/ibm-plex-mono";
 // Vector Icons
 import Icon from "react-native-vector-icons/FontAwesome";
 
 const ExpensesScreen = ({ navigation }) => {
-
   // redux state
   const {
     // state for budget
     budget,
 
     // state for expenses data
-    groceriesExpense,
-    foodExpense,
-    fuelExpense,
-    transportationExpense,
-    entertainmentExpense,
-    housingExpense,
-    clothingExpense,
-    healthExpense,
-    othersExpense,
     expensesData,
-    
-    // state for budget
-    setBudget,
 
-    // state for expenses data
-    setGroceriesExpense,
-    setFoodExpense,
-    setFuelExpense,
-    setTransportationExpense,
-    setEntertainmentExpense,
-    setHousingExpense,
-    setClothingExpense,
-    setHealthExpense,
-    setOthersExpense,
-    setExpensesData,
-    fetchExpenses
+    // state for fetching data
+    fetchExpenses,
   } = useExpenses();
-  
-  const [plusVisible, setPlusVisible] = useState(true);
-  const [openInputExpensesOptions, setOpenInputExpensesOptions] =
-    useState(false);
 
   // useState for Current User
   const [userEmail, setUserEmail] = useState("testingUID");
@@ -78,6 +43,10 @@ const ExpensesScreen = ({ navigation }) => {
 
   // useState for Budget
   const [budgetPopUp, setBudgetPopUp] = useState(false);
+
+  // useState for Open Bottom Sheet
+  const [openInputExpensesOptions, setOpenInputExpensesOptions] =
+    useState(false);
 
   // Bottom Sheet Setting
   const sheetRef = useRef(null);
@@ -97,29 +66,9 @@ const ExpensesScreen = ({ navigation }) => {
 
   // Get the expenses of each categories and the monthly budget from Firestore
   useEffect(() => {
-    if (!userEmail) return
-    // getBudgetAndExpensesFromFirestore();
+    if (!userEmail) return;
     fetchExpenses(userEmail);
   }, [userEmail, budget]);
-
-  // Get the sum of the expense in current month
-  const calculateMonthExpense = (expenseOfCategory) => {
-    const date = new Date();
-    if (expenseOfCategory[date.getFullYear()]) {
-      if (expenseOfCategory[date.getFullYear()][date.getMonth() + 1]) {
-        const tempMonthExpense =
-          expenseOfCategory[date.getFullYear()][date.getMonth() + 1];
-        let total = 0;
-
-        for (const [key, value] of Object.entries(tempMonthExpense)) {
-          const dateExpense = value.reduce((acc, item) => acc + item, 0);
-          total = total + dateExpense;
-        }
-        return total;
-      }
-    }
-    return 0;
-  };
 
   // Get the total expense
   useEffect(() => {
@@ -129,10 +78,6 @@ const ExpensesScreen = ({ navigation }) => {
     );
     setTotalExpenses(totalExpensesNumber);
   }, [expensesData]);
-
-  useEffect(() => {
-    setPlusVisible(true);
-  }, [openInputExpensesOptions]);
 
   //Edit Budget
   const editBudget = (value) => {
@@ -145,7 +90,7 @@ const ExpensesScreen = ({ navigation }) => {
   };
 
   const saveBudgetToFirestore = async (value) => {
-    const userRef = doc(db, "users", userEmail);
+    const userRef = doc(db, "users", userEmail, "expenses", userEmail);
     await updateDoc(userRef, {
       budget: value,
     });
@@ -153,7 +98,14 @@ const ExpensesScreen = ({ navigation }) => {
 
   // render the expenses flatList
   const renderFlatListItem = ({ item: { category, imagePath, expense } }) => (
-    <Pressable>
+    <Pressable
+      onPress={() =>
+        navigation.navigate("Expense Detail", {
+          category: category,
+          userEmail: userEmail,
+        })
+      }
+    >
       <View style={styles.flatListRow}>
         <View style={styles.flatListCategoryView}>
           <Image style={styles.flatListCategoryIcon} source={imagePath} />
@@ -165,7 +117,7 @@ const ExpensesScreen = ({ navigation }) => {
             {
               color: openInputExpensesOptions
                 ? "rgba(202, 170, 250,.6)"
-                : "#B17BFF",
+                : "rgb(56,69,72)",
             },
           ]}
         >
@@ -196,7 +148,6 @@ const ExpensesScreen = ({ navigation }) => {
     // navigate to corresponding screen
     navigation.navigate(screenName, { userEmail: userEmail });
     setOpenInputExpensesOptions(false);
-    setPlusVisible(true);
     return;
   };
 
@@ -210,8 +161,8 @@ const ExpensesScreen = ({ navigation }) => {
         {icon}
         <Text
           style={{
-            fontSize: 30,
-            fontFamily: "IBMPlexMono_500Medium",
+            fontSize: 18,
+            fontFamily: "Montserrat_400Regular",
             marginLeft: 20,
           }}
         >
@@ -221,202 +172,181 @@ const ExpensesScreen = ({ navigation }) => {
     </Pressable>
   );
 
-  let [fontsLoaded] = useFonts({
-    IBMPlexMono_400Regular,
-    IBMPlexMono_500Medium,
-    IBMPlexMono_600SemiBold,
-    IBMPlexMono_700Bold,
-  });
-  if (!fontsLoaded) {
-    return <Text>Fonts are loading...</Text>;
-  } else {
-    // ------------------------ View Template -----------------------
-    return (
-      <SafeAreaView style={styles.container}>
+  // ------------------------ View Template -----------------------
+  return (
+    <SafeAreaView style={styles.container}>
+      <View
+        style={[
+          styles.contentContainer,
+          {
+            backgroundColor: openInputExpensesOptions
+              ? "rgba(0,0,0,.6)"
+              : "white",
+          },
+        ]}
+      >
+        <View style={styles.screenHeadingView}>
+          <Text
+            style={[
+              styles.screenHeading,
+              { fontFamily: "Montserrat_600SemiBold" },
+            ]}
+          >
+            Expenses
+          </Text>
+
+          <Pressable
+            style={styles.plus}
+            onPress={() => {
+              // Open the bottom sheet
+              setOpenInputExpensesOptions(true);
+            }}
+          >
+            <Icon name="plus" size={22} />
+          </Pressable>
+        </View>
+
         <View
           style={[
-            styles.contentContainer,
+            styles.summary,
             {
               backgroundColor: openInputExpensesOptions
                 ? "rgba(0,0,0,.6)"
-                : "white",
+                : "#62D2B3",
             },
           ]}
         >
-          <View style={styles.screenHeadingView}>
-            <Text
-              style={[
-                styles.screenHeading,
-                { fontFamily: "IBMPlexMono_500Medium" },
-              ]}
-            >
-              Expenses
-            </Text>
-
-            {plusVisible && (
-              <Pressable
-                style={styles.plus}
-                onPress={() => {
-                  // Open the bottom sheet
-                  setOpenInputExpensesOptions(true);
-                }}
-              >
-                <Icon name="plus" size={25} />
-              </Pressable>
-            )}
-          </View>
-
-          <View
+          <Text
             style={[
-              styles.summary,
+              styles.summaryTitle,
               {
-                backgroundColor: openInputExpensesOptions
-                  ? "rgba(0,0,0,.6)"
-                  : "black",
+                color: openInputExpensesOptions ? "rgba(0, 0, 0,.6)" : "#fef",
               },
             ]}
           >
+            Your expenses
+          </Text>
+          <Text
+            style={[
+              styles.summaryExpense,
+              {
+                color: openInputExpensesOptions ? "rgba(0, 0, 0,.6)" : "white",
+              },
+            ]}
+          >
+            ${totalExpenses.toFixed(2)}
+          </Text>
+
+          <View style={styles.summaryRemainingView}>
             <Text
               style={[
-                styles.summaryTitle,
+                styles.summaryRemaining,
                 {
-                  color: openInputExpensesOptions
-                    ? "rgba(224, 242, 119,.6)"
-                    : "#C5F277",
+                  color: openInputExpensesOptions ? "rgba(0, 0, 0,.6)" : "#fef",
                 },
               ]}
             >
-              Your expenses
+              Budget
             </Text>
             <Text
               style={[
-                styles.summaryExpense,
+                styles.summaryRemaining,
                 {
-                  color: openInputExpensesOptions
-                    ? "rgba(224, 242, 119,.6)"
-                    : "#C5F277",
+                  color: openInputExpensesOptions ? "rgba(0, 0, 0,.6)" : "#fef",
                 },
               ]}
             >
-              ${totalExpenses.toFixed(2)}
+              ${`${(budget - parseFloat(totalExpenses)).toFixed(2)}`} remaining
             </Text>
+          </View>
 
-            <View style={styles.summaryRemainingView}>
-              <Text
-                style={[
-                  styles.summaryRemaining,
-                  {
-                    color: openInputExpensesOptions
-                      ? "rgba(224, 242, 119,.6)"
-                      : "#C5F277",
-                  },
-                ]}
-              >
-                Your monthly budget
-              </Text>
-              <Text
-                style={[
-                  styles.summaryRemaining,
-                  {
-                    color: openInputExpensesOptions
-                      ? "rgba(224, 242, 119,.6)"
-                      : "#C5F277",
-                  },
-                ]}
-              >
-                ${`${(budget - parseFloat(totalExpenses)).toFixed(2)}`}{" "}
-                remaining
-              </Text>
-            </View>
-
-            <Progress.Bar
-              progress={(budget - parseFloat(totalExpenses)) / budget}
-              width={null}
-              height={8}
+          <Progress.Bar
+            progress={(budget - parseFloat(totalExpenses)) / budget}
+            width={null}
+            height={8}
+            color={openInputExpensesOptions ? "rgba(0, 0, 0,.6)" : "#B17BFF"}
+            unfilledColor={
+              openInputExpensesOptions ? "rgba(0, 0, 0,.6)" : "#fff"
+            }
+            borderRadius={20}
+            style={styles.summaryProgressBar}
+          />
+          <Pressable
+            style={styles.summaryEditBudgetView}
+            onPress={() => setBudgetPopUp(true)}
+          >
+            <Icon
+              name="pencil"
+              size={15}
               color={
                 openInputExpensesOptions ? "rgba(202, 170, 250,.6)" : "#B17BFF"
               }
-              unfilledColor={
-                openInputExpensesOptions ? "rgba(215, 217, 208,.6)" : "#fff"
-              }
-              borderRadius={20}
-              style={styles.summaryProgressBar}
             />
-            <Pressable
-              style={styles.summaryEditBudgetView}
-              onPress={() => setBudgetPopUp(true)}
-            >
-              <Icon
-                name="pencil"
-                size={15}
-                color={
-                  openInputExpensesOptions
+            <Text
+              style={[
+                styles.summaryEditBudget,
+                {
+                  color: openInputExpensesOptions
                     ? "rgba(202, 170, 250,.6)"
-                    : "#B17BFF"
-                }
-              />
-              <Text
-                style={[
-                  styles.summaryEditBudget,
-                  {
-                    color: openInputExpensesOptions
-                      ? "rgba(202, 170, 250,.6)"
-                      : "#B17BFF",
-                  },
-                ]}
-              >
-                Edit Budget
-              </Text>
-            </Pressable>
-          </View>
-
-          <DialogInput
-            isDialogVisible={budgetPopUp}
-            title={"Enter Monthly Budget"}
-            message={`Your current budget is $${parseFloat(budget).toFixed(2)}`}
-            hintInput={"enter your budget here"}
-            submitInput={(value) => {
-              editBudget(value);
-            }}
-            closeDialog={() => setBudgetPopUp(false)}
-            modalStyle={{ backgroundColor: "rgba(0,0,0,.6)" }}
-            dialogStyle={{
-              backgroundColor: "#dedfde",
-              paddingLeft: 15,
-              paddingRight: 15,
-            }}
-            textInputProps={{ keyboardType: "numeric" }}
-          />
-
-          <FlatList
-            data={expensesData.filter((element) => element.expense !== 0)}
-            keyExtractor={(item) => {
-              return item.id;
-            }}
-            renderItem={renderFlatListItem}
-            style={styles.flatList}
-          />
+                    : "#B17BFF",
+                },
+              ]}
+            >
+              Edit Budget
+            </Text>
+          </Pressable>
         </View>
 
-        {openInputExpensesOptions ? (
-          <BottomSheet
-            ref={sheetRef}
-            snapPoints={snapPoints}
-            enablePanDownToClose={true}
-            onClose={() => {
-              setOpenInputExpensesOptions(false);
-            }}
-          >
-            <BottomSheetFlatList
-              data={bottomSheetArray}
-              keyExtractor={(item) => item.id}
-              renderItem={renderBottomSheetItem}
-            />
-          </BottomSheet>
-        ) : null}
-      </SafeAreaView>
-    );
-  }
+        <DialogInput
+          isDialogVisible={budgetPopUp}
+          title={"Enter Monthly Budget"}
+          message={`Your current budget is $${parseFloat(budget).toFixed(2)}`}
+          hintInput={"enter your budget here"}
+          submitInput={(value) => {
+            if (!value) {
+              setBudgetPopUp(false);
+              return;
+            }
+            editBudget(value);
+          }}
+          closeDialog={() => setBudgetPopUp(false)}
+          modalStyle={{ backgroundColor: "rgba(0,0,0,.6)" }}
+          dialogStyle={{
+            backgroundColor: "#dedfde",
+            paddingLeft: 15,
+            paddingRight: 15,
+          }}
+          textInputProps={{ keyboardType: "numeric" }}
+        />
+
+        <FlatList
+          data={expensesData.filter((element) => element.expense !== 0)}
+          keyExtractor={(item) => {
+            return item.id;
+          }}
+          renderItem={renderFlatListItem}
+          style={styles.flatList}
+        />
+      </View>
+
+      {openInputExpensesOptions ? (
+        <BottomSheet
+          ref={sheetRef}
+          snapPoints={snapPoints}
+          enablePanDownToClose={true}
+          onClose={() => {
+            setOpenInputExpensesOptions(false);
+          }}
+        >
+          <BottomSheetFlatList
+            data={bottomSheetArray}
+            keyExtractor={(item) => item.id}
+            renderItem={renderBottomSheetItem}
+          />
+        </BottomSheet>
+      ) : null}
+    </SafeAreaView>
+  );
 };
 
 const styles = StyleSheet.create({
@@ -433,8 +363,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   screenHeading: {
-    fontSize: 30,
-    fontWeight: "400",
+    fontSize: 22,
     marginVertical: 30,
     marginHorizontal: 30,
   },
@@ -445,21 +374,27 @@ const styles = StyleSheet.create({
   },
   summary: {
     alignSelf: "center",
-    borderWidth: 1,
     borderRadius: 20,
-    borderColor: "black",
     width: "85%",
+    padding: 8,
+    fontSize: 16,
+    shadowColor: "black",
+    shadowOffset: { width: -2, height: 3 },
+    shadowOpacity: 0.16,
+    shadowRadius: 4,
   },
   summaryTitle: {
     marginLeft: 15,
     marginTop: 15,
+    fontFamily: "Montserrat_600SemiBold",
     fontSize: 20,
+    marginBottom: 8,
   },
   summaryExpense: {
     marginLeft: 15,
-    marginTop: 10,
-    fontFamily: "IBMPlexMono_500Medium",
-    fontSize: 36,
+    marginVertical: 8,
+    fontFamily: "Montserrat_700Bold",
+    fontSize: 28,
   },
   summaryRemainingView: {
     flexDirection: "row",
@@ -470,6 +405,7 @@ const styles = StyleSheet.create({
   },
   summaryRemaining: {
     fontSize: 15,
+    fontFamily: "Montserrat_600SemiBold",
   },
   summaryProgressBar: {
     marginTop: 15,
@@ -480,6 +416,7 @@ const styles = StyleSheet.create({
   summaryEditBudgetView: {
     flexDirection: "row",
     justifyContent: "flex-end",
+    alignItems: "center",
     marginRight: 15,
     marginTop: 15,
     marginBottom: 15,
@@ -487,10 +424,11 @@ const styles = StyleSheet.create({
   summaryEditBudget: {
     fontSize: 15,
     fontWeight: "bold",
+    fontFamily: "Montserrat_600SemiBold",
     marginLeft: 5,
   },
   flatList: {
-    marginTop: 30,
+    marginTop: 44,
     alignSelf: "center",
     width: "80%",
   },
@@ -504,18 +442,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   flatListCategoryIcon: {
-    height: 25,
-    width: 25,
+    height: 18,
+    width: 18,
   },
   flatListCategoryText: {
-    fontSize: 25,
+    fontSize: 16,
     fontWeight: "300",
+    fontFamily: "Montserrat_400Regular",
     marginLeft: 20,
   },
   flatListExpense: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#B17BFF",
+    fontSize: 16,
+    fontFamily: "Montserrat_600SemiBold",
   },
   divider: {
     marginTop: 20,

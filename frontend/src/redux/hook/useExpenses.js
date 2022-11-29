@@ -99,13 +99,13 @@ const useExpenses = () => {
     [dispatch]
   );
 
-    // Set the array of categories
-    const setExpensesData = useCallback(
-      (expensesData) => {
-        dispatch(expensesActions.setExpensesData(expensesData));
-      },
-      [dispatch]
-    );
+  // Set the array of categories
+  const setExpensesData = useCallback(
+    (expensesData) => {
+      dispatch(expensesActions.setExpensesData(expensesData));
+    },
+    [dispatch]
+  );
 
   const fetchExpenses = useCallback(
     (email) => {
@@ -113,6 +113,10 @@ const useExpenses = () => {
     },
     [dispatch]
   );
+
+  const clearExpenses = useCallback(() => {
+    dispatch(expensesActions.clearExpenses());
+  }, [dispatch]);
 
   return {
     budget,
@@ -138,6 +142,7 @@ const useExpenses = () => {
     setOthersExpense,
     setExpensesData,
     fetchExpenses,
+    clearExpenses,
   };
 };
 

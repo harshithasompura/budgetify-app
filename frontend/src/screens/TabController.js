@@ -15,6 +15,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import HomeScreen from "./HomeScreen";
 import ExpensesScreen from "./ExpensesScreen";
 import InputExpensesScreen from "./InputExpensesScreen";
+import ExpensesDetailScreen from "./ExpensesDetailScreen";
 import SettingsScreen from "./SettingsScreen";
 import CommunityScreen from "./CommunityScreen";
 import EditProfileScreen from "./EditProfileScreen";
@@ -30,8 +31,8 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import CameraScreen from "../components/Camera";
 import ManageCategoriesScreen from "./ManageCategoriesScreen";
 import ChangePasswordScreen from "./ChangePasswordScreen";
-import ManageCurrenciesScreen from "./ManageCurrenciesScreen";
-import NotificationScreen from "./NotificationScreen";
+import TermsAndConditionsScreen from "./TermsAndConditionsScreen";
+import PrivacyPolicyScreen from "./PrivacyPolicyScreen";
 
 // create stack navigators for each tab
 // each tab has its own stack
@@ -88,8 +89,8 @@ const SettingsStackScreen = () => {
             backgroundColor: "#F2F3F4",
           },
         }}
-        name="ManageCurrencies"
-        component={ManageCurrenciesScreen}
+        name="TermsAndConditions"
+        component={TermsAndConditionsScreen}
       ></SettingsStack.Screen>
       <SettingsStack.Screen
         options={{
@@ -100,8 +101,8 @@ const SettingsStackScreen = () => {
             backgroundColor: "#F2F3F4",
           },
         }}
-        name="Notifications"
-        component={NotificationScreen}
+        name="PrivacyPolicy"
+        component={PrivacyPolicyScreen}
       ></SettingsStack.Screen>
       {/* add those screens that should be navigated inside Setting Tab in here */}
     </SettingsStack.Navigator>
@@ -129,25 +130,47 @@ const ExpensesStackScreen = () => {
             component={InputExpensesScreen}
           />
       </ExpensesStack.Group>
-      <ExpensesStack.Screen 
-        name="Camera" 
+      <ExpensesStack.Screen
+        options={{
+          headerTitle: "",
+          headerShadowVisible: false,
+          headerShown: false,
+          headerStyle: { backgroundColor: "white" },
+          headerTintColor: "#001c00",
+        }}
+        name="Expense Detail"
+        component={ExpensesDetailScreen}
+      />
+      <ExpensesStack.Screen
+        name="Camera"
         options={{
           headerShown: false,
         }}
-        component={CameraScreen} />
-      <ExpensesStack.Screen 
-        name="Edit Expenses" 
+        component={CameraScreen}
+      />
+      <ExpensesStack.Screen
+        name="Edit Expenses"
         options={{
           headerShown: false,
         }}
-        component={EditExpensesScreen} />
+        component={EditExpensesScreen}
+      />
     </ExpensesStack.Navigator>
   );
 };
 
 const HomeStackScreen = () => {
-  // return (
-  // );
+  return (
+    <HomeStack.Navigator>
+      <HomeStack.Screen
+        name="Home Analytics"
+        options={{
+          headerShown: false,
+        }}
+        component={HomeScreen}
+      />
+    </HomeStack.Navigator>
+  );
 };
 
 const CommunityStackScreen = () => {
@@ -207,13 +230,13 @@ const TabController = () => {
   return (
     <Tab.Navigator
       screenOptions={{
-        tabBarActiveBackgroundColor: "#001C00",
-        tabBarActiveTintColor: "#C5F277",
+        tabBarActiveTintColor: "#62D2B3",
         tabBarInactiveTintColor: "gray",
+        tabBarShowLabel: false,
       }}
     >
       <Tab.Screen
-        component={HomeScreen}
+        component={HomeStackScreen}
         name="Home"
         options={{
           tabBarIcon: ({ color, size }) => (

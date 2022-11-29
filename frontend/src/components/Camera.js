@@ -11,7 +11,7 @@ import {
   Image,
   Pressable,
   Touchable,
-  ActivityIndicator
+  ActivityIndicator,
 } from "react-native";
 import { Camera } from "expo-camera";
 import * as MediaLibrary from "expo-media-library";
@@ -49,13 +49,13 @@ const CameraScreen = ({ navigation, route }) => {
   };
 
   const scanReceipt = async (imageUri, endpointNum) => {
-    console.log('Processing...');
+    console.log("Processing...");
     //send image to web api hosted on Render for text recognition
     const endpointLink = remoteBase + endpointNum;
 
     const response = await FileSystem.uploadAsync(endpointLink, imageUri, {
-      fieldName: 'file',
-      httpMethod: 'PATCH',
+      fieldName: "file",
+      httpMethod: "PATCH",
       uploadType: FileSystem.FileSystemUploadType.BINARY_CONTENT,
     });
 
@@ -169,7 +169,6 @@ const CameraScreen = ({ navigation, route }) => {
           <Pressable
             style={styles.backButton}
             onPress={() => {
-
               navigation.popToTop();
             }}
           >
@@ -190,7 +189,7 @@ const styles = StyleSheet.create({
     // borderRadius: 10,
     flex: 1,
     // flexDirection: "column",
-    position: 'relative'
+    position: "relative",
   },
   saveButton: {
     margin: 20,
@@ -209,7 +208,7 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
     alignItems: "center",
     justifyContent: "center",
-    position: 'absolute',
+    position: "absolute",
   },
   cancelButton: {
     margin: 20,
@@ -219,8 +218,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#001c00",
     alignItems: "center",
     justifyContent: "center",
-    position: 'absolute',
-    top: 0
+    position: "absolute",
+    top: 0,
   },
   confirmButton: {
     margin: 20,
@@ -230,22 +229,22 @@ const styles = StyleSheet.create({
     backgroundColor: "#001c00",
     alignItems: "center",
     justifyContent: "center",
-    position: 'absolute',
+    position: "absolute",
     top: 0,
-    right: 0 
+    right: 0,
   },
   capturedImage: {
     height: "100%",
     width: "100%",
   },
   indicator: {
-    position: 'absolute', 
-    alignSelf: 'center', 
+    position: "absolute",
+    alignSelf: "center",
     marginVertical: 350,
     backgroundColor: "#C5F277",
     borderRadius: 40,
     padding: 10,
-  }
+  },
 });
 
 export default CameraScreen;

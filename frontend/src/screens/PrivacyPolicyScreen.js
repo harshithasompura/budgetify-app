@@ -7,12 +7,12 @@ import {
   Pressable,
 } from "react-native";
 
-const ManageCurrenciesScreen = () => {
+const PrivacyPolicyScreen = () => {
   return (
     <SafeAreaView>
-      <Text>Manage Currencies Screen</Text>
+      <Text>Privacy Policy Screen</Text>
     </SafeAreaView>
   );
 };
 
-export default ManageCurrenciesScreen;
+export default PrivacyPolicyScreen;
