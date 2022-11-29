@@ -1,3 +1,4 @@
+import React, { useCallback } from "react";
 import {
   FlatList,
   StyleSheet,
@@ -8,6 +9,7 @@ import {
   Image,
   Platform,
   Alert,
+  Linking,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
@@ -24,6 +26,8 @@ import { async } from "@firebase/util";
 const SettingsScreen = ({ navigation, route }) => {
   const [loggedInUser, setLoggedInUser] = useState("");
   const [image, setImage] = useState(null);
+  const termsURL = "https://budgetify-landing.vercel.app/terms-and-conditions";
+  const privacyURL = "https://budgetify-landing.vercel.app/privacy-policy";
 
   useEffect(() => {
     checkForCameraRollPermission();
@@ -58,12 +62,12 @@ const SettingsScreen = ({ navigation, route }) => {
       screen: "ManageCategories",
     },
     {
-      text: "Terms & Conditions of Service",
-      screen: "TermsAndConditions",
+      text: "Terms & Conditions",
+      url: termsURL,
     },
     {
       text: "Privacy Policy Agreement",
-      screen: "PrivacyPolicy",
+      url: privacyURL,
     },
   ];
 
@@ -75,50 +79,58 @@ const SettingsScreen = ({ navigation, route }) => {
 
   const deleteAccount = async () => {
     console.log(`Delete Account Pressed!`);
-    Alert.alert(
-      "Delete Account",
-      "Are you sure to delete the account?",
-      [
-        {
-          text: "Cancel",
-          onPress: () => console.log("Cancel Pressed"),
-          style: "cancel"
-        },
-        { text: "OK", onPress: () => 
-        {
+    Alert.alert("Delete Account", "Are you sure to delete the account?", [
+      {
+        text: "Cancel",
+        onPress: () => console.log("Cancel Pressed"),
+        style: "cancel",
+      },
+      {
+        text: "OK",
+        onPress: () => {
           console.log("OK Pressed");
           const listener = onAuthStateChanged(auth, async (user) => {
             if (user) {
-              user.delete()
-              .then(async() => {
+              user
+                .delete()
+                .then(async () => {
                   var docRef = doc(db, "users", loggedInUser);
                   var docSnap = await getDoc(docRef);
                   if (docSnap.exists()) {
-                    await deleteDoc(doc(db, "users", loggedInUser))
+                    await deleteDoc(doc(db, "users", loggedInUser));
                     console.log("Document deleted", loggedInUser);
-                    Alert.alert( "Delete Account", "Deletion Successful. Signing Out!", [{
-                      text: "Ok",
-                      onPress: async() =>{
-                        console.log("Ok Pressed");
-                        await signOut(auth);
-                        console.log("User signed out");
-                        //reset the navigation state after logged out
-                        navigation.dispatch(
-                          CommonActions.reset({
-                            index: 0,
-                            routes: [{ name: "Login" }],
-                          })
-                        );
-                      }}]);
+                    Alert.alert(
+                      "Delete Account",
+                      "Deletion Successful. Signing Out!",
+                      [
+                        {
+                          text: "Ok",
+                          onPress: async () => {
+                            console.log("Ok Pressed");
+                            await signOut(auth);
+                            console.log("User signed out");
+                            //reset the navigation state after logged out
+                            navigation.dispatch(
+                              CommonActions.reset({
+                                index: 0,
+                                routes: [{ name: "Login" }],
+                              })
+                            );
+                          },
+                        },
+                      ]
+                    );
                   } else {
                     console.log("User Not Found");
-                  }           
+                  }
                 })
-              .catch((error) => console.log(error));
-            }          
-          }) 
+                .catch((error) => console.log(error));
+            }
+          });
           return listener;
-        }}])
+        },
+      },
+    ]);
   };
 
   const uploadImageToCloud = async (imageUri, userId) => {
@@ -167,10 +179,28 @@ const SettingsScreen = ({ navigation, route }) => {
     }
   };
 
+  const OpenURLButton = async (url) => {
+    // console.log(`Opening ${url}`)
+    const supported = await Linking.canOpenURL(url);
+    if (supported) {
+      // Opening the link with some app, if the URL scheme is "http" the web link should be opened
+      // by some browser in the mobile
+      console.log(`Opening ${url}`);
+      await Linking.openURL(url);
+    } else {
+      Alert.alert(`Don't know how to open this URL: ${url}`);
+    }
+  };
+
   const renderItem = ({ item }) => (
     <TouchableOpacity
       onPress={() => {
-        navigation.navigate(item.screen);
+        {
+          item.screen && navigation.navigate(item.screen);
+        }
+        {
+          item.url && OpenURLButton(item.url);
+        }
       }}
     >
       <View style={styles.listItem}>
@@ -239,11 +269,13 @@ const styles = StyleSheet.create({
     paddingLeft: 15,
   },
   textHeading: {
-    fontSize: 25,
+    fontSize: 22,
     paddingLeft: 15,
-    fontWeight: "bold",
+    fontFamily: "Montserrat_700Bold",
     paddingTop: 15,
     paddingBottom: 15,
+    textAlign: "center",
+    margin: "auto",
   },
   subHeading: {
     fontSize: 20,
