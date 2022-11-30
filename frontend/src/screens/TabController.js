@@ -29,8 +29,8 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import CameraScreen from "../components/Camera";
 import ManageCategoriesScreen from "./ManageCategoriesScreen";
 import ChangePasswordScreen from "./ChangePasswordScreen";
-import ManageCurrenciesScreen from "./ManageCurrenciesScreen";
-import NotificationScreen from "./NotificationScreen";
+import TermsAndConditionsScreen from "./TermsAndConditionsScreen";
+import PrivacyPolicyScreen from "./PrivacyPolicyScreen";
 
 // create stack navigators for each tab
 // each tab has its own stack
@@ -87,8 +87,8 @@ const SettingsStackScreen = () => {
             backgroundColor: "#F2F3F4",
           },
         }}
-        name="ManageCurrencies"
-        component={ManageCurrenciesScreen}
+        name="TermsAndConditions"
+        component={TermsAndConditionsScreen}
       ></SettingsStack.Screen>
       <SettingsStack.Screen
         options={{
@@ -99,8 +99,8 @@ const SettingsStackScreen = () => {
             backgroundColor: "#F2F3F4",
           },
         }}
-        name="Notifications"
-        component={NotificationScreen}
+        name="PrivacyPolicy"
+        component={PrivacyPolicyScreen}
       ></SettingsStack.Screen>
       {/* add those screens that should be navigated inside Setting Tab in here */}
     </SettingsStack.Navigator>
