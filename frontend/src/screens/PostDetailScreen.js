@@ -41,7 +41,7 @@ const PostDetailScreen = ({navigation, route}) => {
     const [comments, setComments] = useState([]);
 
     const sheetRef = useRef(null);
-    const snapPoints = ["58%", "75%"];
+    const snapPoints = ["70%", "75%"];
     const handleClosePress = () => sheetRef.current.close();
     const handleOpenPress = () => sheetRef.current.snapToIndex(0);
 
@@ -108,7 +108,7 @@ const PostDetailScreen = ({navigation, route}) => {
     };
 
     return (
-        <SafeAreaView style={{flex: 1}}>
+        <SafeAreaView style={{flex: 1, backgroundColor: '#62D3B4'}}>
             <View style={{ flexDirection: "row", position: "relative"}}>
                 <Pressable
                     style={styles.backArrow}
@@ -126,16 +126,16 @@ const PostDetailScreen = ({navigation, route}) => {
                 {/* Post header */}
                 <Image style={styles.userAvatar} source={{ url: postInfo.userAvatar }} />
                 <View>
-                    <Text style={[{marginLeft: 8, color: '#C5F277', fontSize: 20, fontWeight: 'bold' }]}>
+                    <Text style={[{marginLeft: 8, color: 'black', fontSize: 20, fontWeight: 'bold' }]}>
                     {postInfo.username}
                     </Text>
-                    <Text style={[{marginLeft: 8, color: '#B17BFF', fontSize: 16}]}>{postInfo.createdAt}</Text>
+                    <Text style={[{marginLeft: 8, color: '#BCBCBC', fontSize: 16}]}>{postInfo.createdAt}</Text>
                 </View>
                 </View>
                 <Text
                 style={[
                     {
-                    color: "#C5F277",
+                    color: "black",
                     fontSize: 20,
                     marginHorizontal: 13,
                     paddingBottom: 20,
@@ -157,7 +157,7 @@ const PostDetailScreen = ({navigation, route}) => {
                     <Text
                         style={[
                         {
-                            color: "#C5F277",
+                            color: "black",
                             fontSize: 20,
                             marginHorizontal: 8,
                             lineHeight: 22,
@@ -181,7 +181,7 @@ const PostDetailScreen = ({navigation, route}) => {
                                   }
                                 }}
                             >
-                                <AntDesign name={likeButton} size={25} color="#B17BFF" />
+                                <AntDesign name={likeButton} size={25} color="#BCBCBC" />
                             </Pressable>
                             <Text style={styles.likeCommentNum}>{likesNum}</Text>
                         </View>
@@ -190,35 +190,35 @@ const PostDetailScreen = ({navigation, route}) => {
                                 activeOpacity={0.7}
                                 onPress={fetchComments}
                             >
-                                <AntDesign name="message1" size={25} color="#B17BFF" />
+                                <AntDesign name="message1" size={25} color="#BCBCBC" />
                             </TouchableOpacity>
                             <Text style={styles.likeCommentNum}>{commentsNum}</Text>
                         </View>
                     </View>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={handleOpenPress}>
                         <Text 
-                            style={[styles.likeCommentNum, {fontSize: 15, position: 'absolute', right: 15, bottom: 10 }]}
-                            onPress={handleOpenPress}
+                            style={[styles.likeCommentNum, {fontSize: 15, position: 'absolute', right: 15, bottom: 10, color: '#B17BFF', fontWeight: '600' }]}
                             >Add a comment</Text>
                     </TouchableOpacity>
             </View>
             <View style={[styles.commentsContainer]}>
-                <Text style={{color: '#C5F277', margin: 15, fontSize: 20}}>Comments</Text>
+                <Text style={{color: 'black', margin: 15, fontSize: 20}}>Comments</Text>
                 {
                     comments && comments.map((item, index) => (
                         <View style={{flexDirection: 'row', marginHorizontal: 10 }} key={index}>
                             <Image style={styles.userAvatar} source={{ url: item.userAvatar }} />
                             <View style={styles.textsContainer}>
-                                <Text style={{color: '#C5F277', fontWeight: 'bold'}}>{item.username}</Text>
-                                <Text style={{color: '#B17BFF'}}>{item.createdAt}</Text>
-                                <Text style={{color: "#C5F277", marginTop: 10}}>{item.comment}</Text>
+                                <Text style={{color: 'black', fontWeight: 'bold'}}>{item.username}</Text>
+                                <Text style={{color: '#BCBCBC'}}>{item.createdAt}</Text>
+                                <Text style={{color: "black", marginTop: 10}}>{item.comment}</Text>
                                 {
                                     (index !== comments.length - 1) &&
                                     <View
                                         style={{
-                                            borderBottomColor: '#C5F277',
-                                            borderBottomWidth: 0.3,
-                                            marginTop: 20
+                                            borderBottomColor: 'grey',
+                                            borderBottomWidth: 1,
+                                            marginTop: 20,
+                                            opacity: 0.5
                                         }}
                                     />
                                 }
@@ -235,6 +235,7 @@ const PostDetailScreen = ({navigation, route}) => {
             index={-1}
             enablePanDownToClose={true}
             backdropComponent={renderBackdrop}
+            backgroundStyle={{backgroundColor: '#62D3B4'}}
           >
             <BottomSheetView>
               <Comment 
@@ -251,10 +252,6 @@ const PostDetailScreen = ({navigation, route}) => {
 };
 
 const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: "#fff",
-    },
     screenHeading: {
       fontSize: 30,
       fontWeight: "400"
@@ -279,13 +276,13 @@ const styles = StyleSheet.create({
     },
     postContainer: {
       borderRadius: 25,
-      backgroundColor: 'black', 
-    //   margin: 10,
+      backgroundColor: '#FFFFFF', 
+      marginBottom: 5,
   
-      shadowOffset:{width:0, height:5},  
-      shadowColor:'#171717',  
-      shadowOpacity:0.2,  
-      shadowRadius:2,  
+      // shadowOffset:{width:0, height:5},  
+      // shadowColor:'#171717',  
+      // shadowOpacity:0.2,  
+      // shadowRadius:2,  
     },
     postHeader: {
       flexDirection: "row",
@@ -322,7 +319,7 @@ const styles = StyleSheet.create({
     likeCommentNum: {
       fontSize: 20,
       lineHeight: 28,
-      color: '#B17BFF',
+      color: '#BCBCBC',
       marginLeft: 5
     },
     backArrow: {
@@ -339,13 +336,13 @@ const styles = StyleSheet.create({
     },
     commentsContainer: {
         borderRadius: 25,
-        backgroundColor: 'black', 
+        backgroundColor: '#FFFFFF', 
         // margin: 10,
         marginTop: 5,
-        shadowOffset:{width:0, height:5},  
-        shadowColor:'#171717',  
-        shadowOpacity:0.2,  
-        shadowRadius:2,  
+        // shadowOffset:{width:0, height:5},  
+        // shadowColor:'#171717',  
+        // shadowOpacity:0.2,  
+        // shadowRadius:2,  
     },
     textsContainer: {
         position: 'relative',

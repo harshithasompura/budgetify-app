@@ -40,6 +40,7 @@ const SettingsStack = createNativeStackNavigator();
 const HomeStack = createNativeStackNavigator();
 const ExpensesStack = createNativeStackNavigator();
 const CommunityStack = createNativeStackNavigator();
+const MessagesStack = createNativeStackNavigator();
 
 // define screens included in the stack for Settings Tab
 const SettingsStackScreen = () => {
@@ -188,22 +189,6 @@ const CommunityStackScreen = () => {
         options={{
           headerShown: false,
         }}
-        name="Chats List"
-        component={ChatsListScreen}
-      ></CommunityStack.Screen>
-
-      <CommunityStack.Screen
-        options={{
-          headerShown: false,
-        }}
-        name="Chat Room"
-        component={ChatScreen}
-      ></CommunityStack.Screen>
-
-      <CommunityStack.Screen
-        options={{
-          headerShown: false,
-        }}
         name="Post Detail"
         component={PostDetailScreen}
       ></CommunityStack.Screen>
@@ -211,6 +196,28 @@ const CommunityStackScreen = () => {
     </CommunityStack.Navigator>
   );
 };
+
+const MessagesStackScreen = () => {
+  return (
+    <MessagesStack.Navigator>
+      <MessagesStack.Screen
+        options={{
+          headerShown: false,
+        }}
+        name="Chats List"
+        component={ChatsListScreen}
+      ></MessagesStack.Screen>
+
+      <MessagesStack.Screen
+        options={{
+          headerShown: false,
+        }}
+        name="Chat Room"
+        component={ChatScreen}
+      ></MessagesStack.Screen>
+    </MessagesStack.Navigator>
+  );
+}
 
 const TabController = () => {
   const Tab = createBottomTabNavigator();
@@ -263,6 +270,17 @@ const TabController = () => {
           tabBarStyle: { display: getTabBarVisibility(route) },
           tabBarIcon: ({ color, size }) => (
             <Icon name="star" color={color} size={size} />
+          ),
+          headerShown: false,
+        })}
+      />
+      <Tab.Screen
+        name="Messages"
+        component={MessagesStackScreen}
+        options={({ route }) => ({
+          tabBarStyle: { display: getTabBarVisibility(route) },
+          tabBarIcon: ({ color, size }) => (
+            <Icon name="commenting-o" color={color} size={size} />
           ),
           headerShown: false,
         })}

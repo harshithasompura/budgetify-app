@@ -45,7 +45,7 @@ import {
         >
         <Text style={styles.bsTitle}>Create a Comment</Text>
         <Pressable style={styles.postButton} onPress={addComment}>
-          <Text style={{ color: "black", fontSize: 19 }}>Add</Text>
+          <Text style={{ color: "black", fontSize: 19, fontWeight: 'bold' }}>Add</Text>
         </Pressable>
       </View>
       <View style={styles.descriptionInputBoxContainer}>
@@ -55,41 +55,20 @@ import {
           value={comment}
           onChangeText={setComment}
           multiline={true}
-          placeholderTextColor={'#B17BFF'}
-          color={'#C5F277'}
+          placeholderTextColor={'#BCBCBC'}
+          color={'black'}
         />
       </View>
       </BottomSheetView>
     );
   };
   const styles = StyleSheet.create({
-    titleInputBox: {
-      marginHorizontal: 10,
-      marginTop: 10,
-      padding: 15,
-      flex: 1,
-      paddingLeft: 15,
-      backgroundColor: "black",
-      borderRadius: 15,
-      fontSize: 16,
-  
-      shadowOffset:{width:0, height:5},  
-      shadowColor:'#171717',  
-      shadowOpacity:0.2,  
-      shadowRadius:2,  
-    },
     descriptionInputBoxContainer: {
-      backgroundColor: "black",
+      backgroundColor: "#FFFFFF",
       borderRadius: 15,
       height: 320,
       marginTop: 10,
-      margin: 10,
-  
-      shadowOffset:{width:0, height:5},  
-      shadowColor:'#171717',  
-      shadowOpacity:0.2,  
-      shadowRadius:2, 
-  
+      margin: 10
     },
     descriptionInputBox: {
       borderColor: "#ddd",
@@ -98,7 +77,7 @@ import {
       padding: 8,
       flex: 1,
       // paddingLeft: 15,
-      backgroundColor: "black",
+      backgroundColor: "#FFFFFF",
       fontSize: 16
       // width: '
       // marginRight: 10

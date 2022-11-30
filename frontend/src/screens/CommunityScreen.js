@@ -107,16 +107,16 @@ const CommunityScreen = ({ navigation, route }) => {
           {/* Post header */}
           <Image style={styles.userAvatar} source={{ url: item.userAvatar }} />
           <View>
-            <Text style={[{marginLeft: 8, color: '#C5F277', fontSize: 20 }]}>
+            <Text style={[{marginLeft: 8, color: 'black', fontSize: 20 }]}>
               {item.username}
             </Text>
-            <Text style={[{marginLeft: 8, color: '#B17BFF', fontSize: 16}]}>{item.createdAt}</Text>
+            <Text style={[{marginLeft: 8, color: '#BCBCBC', fontSize: 16}]}>{item.createdAt}</Text>
           </View>
         </View>
         <Text
           style={[
             {
-              color: "#C5F277",
+              color: "black",
               fontSize: 20,
               marginHorizontal: 13,
               paddingBottom: 10,
@@ -128,7 +128,7 @@ const CommunityScreen = ({ navigation, route }) => {
           {item.title}
         </Text>
         <View style={
-              { backgroundColor: 'black',
+              { backgroundColor: '#FFFFFF',
                 marginHorizontal: 5,
                 height: 82,
                 borderRadius: 10,
@@ -137,7 +137,7 @@ const CommunityScreen = ({ navigation, route }) => {
           <Text
             style={[
               {
-                color: "#C5F277",
+                color: "black",
                 fontSize: 20,
                 marginHorizontal: 8,
                 height: 82,
@@ -155,11 +155,11 @@ const CommunityScreen = ({ navigation, route }) => {
               style={styles.likeComment} 
               name={item.didCurrUserLike ? 'like1' : 'like2'}
               size={25} 
-              color="#B17BFF" />
+              color="#BCBCBC" />
             <Text style={styles.likeCommentNum}>{item.likesNum}</Text>
           </View>
           <View style={styles.commentContainer}>
-            <AntDesign style={styles.likeComment} name="message1" size={25} color="#B17BFF" />
+            <AntDesign style={styles.likeComment} name="message1" size={25} color="#BCBCBC" />
             <Text style={styles.likeCommentNum}>{item.commentsNum}</Text>
           </View>
         </View>
@@ -198,24 +198,18 @@ const CommunityScreen = ({ navigation, route }) => {
           alignItems: "center",
           height: 50,
           marginHorizontal: 20,
-          marginTop: 10,
+          marginVertical: 10,
+          // backgroundColor: 'green',
         }}
       >
         {/* Header: Title + Chat button/icon */}
         <Text
           style={[styles.screenHeading, {fontWeight: 'bold'}]}
         >
-          My Feeds
+          Post Feeds
         </Text>
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate("Chats List");
-          }}
-        >
-          <Ionicons style={styles.icon} name="chatbox-ellipses" size={35} />
-        </TouchableOpacity>
       </View>
-      <View style={[styles.postFeed, {backgroundColor: 'white'}]}>
+      <View style={[styles.postFeed, {backgroundColor: '#62D3B4'}]}>
         {/* Post feed should go here */}
         <FlatList data={postsList} 
                   renderItem={renderItem} 
@@ -247,7 +241,8 @@ const CommunityScreen = ({ navigation, route }) => {
         index={-1}
         snapPoints={snapPoints}
         enablePanDownToClose={true}
-        backdropComponent={renderBackdrop}        
+        backdropComponent={renderBackdrop}
+        backgroundStyle={{backgroundColor: '#62D3B4'}}
       >
         <BottomSheetView>
           <Post
@@ -268,11 +263,11 @@ const CommunityScreen = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#62D3B4",
   },
   screenHeading: {
     fontSize: 30,
-    fontWeight: "400"
+    fontWeight: "400",
   },
   icon: {
     padding: 3,
@@ -294,13 +289,13 @@ const styles = StyleSheet.create({
   },
   postContainer: {
     borderRadius: 25,
-    backgroundColor: 'black',
+    backgroundColor: '#FFFFFF',
     height: 235,
 
-    shadowOffset:{width:0, height:5},  
-    shadowColor:'#171717',  
-    shadowOpacity:0.2,  
-    shadowRadius:2,  
+    // shadowOffset:{width:0, height:1},  
+    // shadowColor:'#171717',  
+    // shadowOpacity:0.1,  
+    // shadowRadius:1,  
   },
   postHeader: {
     flexDirection: "row",
@@ -342,7 +337,7 @@ const styles = StyleSheet.create({
   likeCommentNum: {
     fontSize: 20,
     lineHeight: 28,
-    color: '#B17BFF',
+    color: '#BCBCBC',
     marginLeft: 5
   }
 });

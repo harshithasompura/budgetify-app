@@ -58,12 +58,12 @@ const Post = (props) => {
         style={{
           flexDirection: "row",
           marginVertical: 8,
-          position: 'relative'
+          position: 'relative',
         }}
       >
       <Text style={styles.bsTitle}>Create a Post</Text>
       <Pressable style={styles.postButton} onPress={addPost}>
-        <Text style={{ color: "black", fontSize: 19 }}>Post</Text>
+        <Text style={{ color: "black", fontSize: 19, fontWeight: 'bold' }}>Post</Text>
       </Pressable>
     </View>
     <View style={{ display: "flex", flexDirection: "row", marginTop: 10 }}>
@@ -72,8 +72,8 @@ const Post = (props) => {
         placeholder="Enter a title"
         value={title}
         onChangeText={setTitle}
-        placeholderTextColor={'#B17BFF'}
-        color={'#C5F277'}
+        placeholderTextColor={'#BCBCBC'}
+        color={'black'}
       />
     </View>
     <View style={styles.descriptionInputBoxContainer}>
@@ -84,8 +84,8 @@ const Post = (props) => {
         onChangeText={setComment}
         onSubmitEditing
         multiline={true}
-        placeholderTextColor={'#B17BFF'}
-        color={'#C5F277'}
+        placeholderTextColor={'#BCBCBC'}
+        color={'black'}
       />
     </View>
     </BottomSheetView>
@@ -98,26 +98,26 @@ const styles = StyleSheet.create({
     padding: 15,
     flex: 1,
     paddingLeft: 15,
-    backgroundColor: "black",
+    backgroundColor: "#FFFFFF",
     borderRadius: 15,
     fontSize: 16,
 
-    shadowOffset:{width:0, height:5},  
-    shadowColor:'#171717',  
-    shadowOpacity:0.2,  
-    shadowRadius:2,  
+    // shadowOffset:{width:0, height:5},  
+    // shadowColor:'#171717',  
+    // shadowOpacity:0.2,  
+    // shadowRadius:2,  
   },
   descriptionInputBoxContainer: {
-    backgroundColor: "black",
+    backgroundColor: "#FFFFFF",
     borderRadius: 15,
     height: 320,
     marginTop: 10,
     margin: 10,
 
-    shadowOffset:{width:0, height:5},  
-    shadowColor:'#171717',  
-    shadowOpacity:0.2,  
-    shadowRadius:2, 
+    // shadowOffset:{width:0, height:5},  
+    // shadowColor:'#171717',  
+    // shadowOpacity:0.2,  
+    // shadowRadius:2, 
 
   },
   descriptionInputBox: {
@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
     padding: 8,
     flex: 1,
     // paddingLeft: 15,
-    backgroundColor: "black",
+    backgroundColor: "#FFFFFF",
     fontSize: 16
     // width: '
     // marginRight: 10
