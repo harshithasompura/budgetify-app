@@ -224,8 +224,7 @@ const TabController = () => {
 
   const getTabBarVisibility = (route) => {
     const routeName = getFocusedRouteNameFromRoute(route) ?? "";
-    return routeName === "Chats List" || 
-           routeName === "Chat Room" ||
+    return routeName === "Chat Room" ||
            routeName === "Camera" ||
            routeName === "Edit Expenses" ||
            routeName === "Add Expense"
