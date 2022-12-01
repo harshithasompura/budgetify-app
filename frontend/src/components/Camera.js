@@ -135,7 +135,7 @@ const CameraScreen = ({ navigation, route }) => {
   return (
     <SafeAreaView style={styles.container}>
       {image !== null ? (
-        <View style={{ backgroundColor: "green", flex: 1 }}>
+        <View style={{ backgroundColor: "white", flex: 1 }}>
           <Image source={{ uri: image }} style={{ flex: 1 }}></Image>
           {loading && (
             <View style={styles.indicator}>
@@ -155,14 +155,14 @@ const CameraScreen = ({ navigation, route }) => {
               }}
             >
               {/* <Text style={{color:"#C5F277"}}>Save</Text> */}
-              <Icon name="times-circle" color={"#C5F277"} size={30} />
+              <Icon name="times-circle" color={"white"} size={30} />
             </Pressable>
           )}
 
           {!loading && (
             <Pressable style={styles.confirmButton} onPress={startLoading}>
               {/* <Text style={{color:"#C5F277"}}>Save</Text> */}
-              <Icon name="check" color={"#C5F277"} size={30} />
+              <Icon name="check" color={"white"} size={30} />
             </Pressable>
           )}
         </View>
@@ -171,7 +171,7 @@ const CameraScreen = ({ navigation, route }) => {
           {/* <Text>[CAPTURE]</Text> */}
           <Pressable style={styles.saveButton} onPress={takePicture}>
             {/* <Text style={{color:"#C5F277"}}>Save</Text> */}
-            <Icon name="camera" color={"#C5F277"} size={20} />
+            <Icon name="camera" color={"white"} size={20} />
           </Pressable>
           <Pressable
             style={styles.backButton}
@@ -179,7 +179,7 @@ const CameraScreen = ({ navigation, route }) => {
               navigation.popToTop();
             }}
           >
-            <Ionicons name="arrow-back-sharp" size={40} color="#C5F277" />
+            <Ionicons name="arrow-back-sharp" size={40} color="#62D3B4" />
           </Pressable>
         </Camera>
       )}
@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
     width: 70,
     height: 70,
     borderRadius: 40,
-    backgroundColor: "#001c00",
+    backgroundColor: "#62D3B4",
     alignSelf: "flex-end",
     alignItems: "center",
     justifyContent: "center",
@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
     width: 70,
     height: 70,
     borderRadius: 40,
-    backgroundColor: "#001c00",
+    backgroundColor: "#62D3B4",
     alignItems: "center",
     justifyContent: "center",
     position: "absolute",
@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
     width: 70,
     height: 70,
     borderRadius: 40,
-    backgroundColor: "#001c00",
+    backgroundColor: "#62D3B4",
     alignItems: "center",
     justifyContent: "center",
     position: "absolute",
@@ -248,7 +248,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     alignSelf: "center",
     marginVertical: 350,
-    backgroundColor: "#C5F277",
+    backgroundColor: "#62D3B4",
     borderRadius: 40,
     padding: 10,
   },

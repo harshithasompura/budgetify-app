@@ -318,7 +318,7 @@ const InputExpensesScreen = ({ route }) => {
 
         {category === title && (
           <Image
-            style={{ height: 40, width: 40 }}
+            style={{ height: 30, width: 30, marginBottom: 18 }}
             source={require(`../../assets/expenses/check-icon.png`)}
           />
         )}
@@ -366,14 +366,14 @@ const InputExpensesScreen = ({ route }) => {
           <Pressable
             style={[
               styles.contentContainer,
-              isDateSelected ? { backgroundColor: "black" } : null,
+              isDateSelected ? { backgroundColor: "#62D3B4" } : null,
             ]}
             onPress={showCategoriesMenu ? null : openDatePicker}
           >
             <Text
               style={[
                 styles.contentText,
-                isDateSelected ? { color: "#C5F277", fontSize: 30 } : null,
+                isDateSelected ? { color: "white", fontSize: 26 } : null,
               ]}
             >
               {isDateSelected ? date.toLocaleDateString() : "Date of Expense"}
@@ -383,7 +383,7 @@ const InputExpensesScreen = ({ route }) => {
           <Pressable
             style={[
               styles.contentContainer,
-              category ? { backgroundColor: "black" } : null,
+              category ? { backgroundColor: "#62D3B4" } : null,
             ]}
             onPress={() => {
               setShowCategoriesMenu(true);
@@ -394,7 +394,7 @@ const InputExpensesScreen = ({ route }) => {
             <Text
               style={[
                 styles.contentText,
-                category ? { color: "#C5F277", fontSize: 30 } : null,
+                category ? { color: "white", fontSize: 26 } : null,
               ]}
             >
               {category ? category : "Select Category"}
@@ -587,12 +587,14 @@ const styles = StyleSheet.create({
     width: "90%",
   },
   screenHeading: {
-    fontSize: 30,
+    marginVertical: 20,
+    fontSize: 24,
     fontWeight: "200",
     fontFamily: "Montserrat_600SemiBold",
   },
   checkIconView: {
     alignSelf: "flex-end",
+    marginVertical: 20,
   },
   checkIcon: {
     height: 35,
@@ -646,7 +648,7 @@ const styles = StyleSheet.create({
   },
   calculatorText: {
     alignSelf: "center",
-    fontSize: 48,
+    fontSize: 40,
     fontFamily: "Montserrat_600SemiBold",
     color: "#1A191C75",
   },
@@ -656,7 +658,8 @@ const styles = StyleSheet.create({
     alignSelf: "flex-end",
   },
   clearText: {
-    fontSize: 45,
+    fontSize: 30,
+    paddingVertical: 10,
     fontFamily: "Arial",
     color: "black",
   },
@@ -678,6 +681,7 @@ const styles = StyleSheet.create({
   dateConfirm: {
     alignSelf: "center",
     fontSize: 20,
+    fontFamily: "Montserrat_600SemiBold",
   },
   calender: {
     height: 350,
@@ -707,9 +711,10 @@ const styles = StyleSheet.create({
     width: 25,
   },
   flatListCategoryText: {
-    fontSize: 25,
+    fontSize: 18,
     fontWeight: "300",
     marginLeft: 20,
+    fontFamily: "Montserrat_400Regular",
   },
   divider: {
     // marginTop: 20,
