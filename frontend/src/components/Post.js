@@ -7,23 +7,21 @@ import {
   Pressable,
 } from "react-native";
 import React, { useCallback, useRef, useState, useEffect } from "react";
-import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
+import BottomSheet, { BottomSheetView, BottomSheetTextInput, BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { db } from "../../FirebaseApp";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { collection, addDoc, Timestamp } from "firebase/firestore";
 import { auth } from "../../FirebaseApp";
 import { onAuthStateChanged } from "firebase/auth";
 const Post = (props) => {
+  const [title, setTitle] = useState("");
   const [comment, setComment] = useState("");
-  const [uid, setUid] = useState();
-  const [username, setUsername] = useState();
-  const blankAvatar = `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBGwlAahaapmmJ7Riv_L_ZujOcfWSUJnm71g&usqp=CAU`;
+  const [userEmail, setUserEmail] = useState();
 
   useEffect(() => {
     const unsubscribeOnAuth = onAuthStateChanged(auth, (user) => {
       if (user) {
-        setUid(user.uid);
-        setUsername(() => {
-          return user.email.split("@")[0];
+        setUserEmail(() => {
+          return user.email;
         });
       } else {
         console.log("no signed-in user");
@@ -35,18 +33,19 @@ const Post = (props) => {
   }, []);
 
   //Handlers
-  const addComment = async () => {
+  const addPost = async () => {
     try {
       await addDoc(collection(db, "post"), {
-        username,
-        userAvatar: blankAvatar,
-        uid,
-        createdAt: serverTimestamp(),
-        comment,
-        likesCount: 0,
-        replyComment: [],
+        userEmail: userEmail,
+        title: title,
+        description: comment,
+        createdAt: Timestamp.now(),
+        comments: [],
+        likes: []
       });
       // Post is successful
+      setComment("");
+      setTitle("");
       props.postResult(true);
     } catch (err) {
       console.log(err);
@@ -54,63 +53,105 @@ const Post = (props) => {
   };
 
   return (
-    <View style={styles.container}>
+    <BottomSheetView>
       <View
         style={{
-          display: "flex",
           flexDirection: "row",
-          marginVertical: 10,
-          alignItems: "center",
+          marginVertical: 8,
+          position: 'relative',
         }}
       >
-        {/* Header */}
-        <Text style={{ fontSize: 19, fontWeight: "bold", flex: 1 }}>
-          Create a Post
-        </Text>
-        <Pressable style={styles.postButton} onPress={addComment}>
-          <Text style={{ color: "white" }}>Post</Text>
-        </Pressable>
-      </View>
-      <View style={{ display: "flex", flexDirection: "row", marginTop: 10 }}>
-        {/* Post */}
-        <Image
-          style={styles.logo}
-          source={{
-            uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBGwlAahaapmmJ7Riv_L_ZujOcfWSUJnm71g&usqp=CAU",
-          }}
-        />
-        <TextInput
-          style={styles.inputBox}
-          placeholder="Post a question"
-          onChangeText={setComment}
-        />
-      </View>
+      <Text style={styles.bsTitle}>Create a Post</Text>
+      <Pressable style={styles.postButton} onPress={addPost}>
+        <Text style={{ color: "black", fontSize: 19, fontWeight: 'bold' }}>Post</Text>
+      </Pressable>
     </View>
+    <View style={{ display: "flex", flexDirection: "row", marginTop: 10 }}>
+      <BottomSheetTextInput
+        style={styles.titleInputBox}
+        placeholder="Enter a title"
+        value={title}
+        onChangeText={setTitle}
+        placeholderTextColor={'#BCBCBC'}
+        color={'black'}
+      />
+    </View>
+    <View style={styles.descriptionInputBoxContainer}>
+      <BottomSheetTextInput
+        style={styles.descriptionInputBox}
+        placeholder="Enter a descrition"
+        value={comment}
+        onChangeText={setComment}
+        onSubmitEditing
+        multiline={true}
+        placeholderTextColor={'#BCBCBC'}
+        color={'black'}
+      />
+    </View>
+    </BottomSheetView>
   );
 };
 const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    height: "100%",
-    padding: 20,
-    margin: 10,
-  },
-  logo: {
-    width: 66,
-    height: 58,
-  },
-  inputBox: {
-    borderWidth: 1,
-    borderColor: "#ddd",
+  titleInputBox: {
+    marginHorizontal: 10,
+    marginTop: 10,
+    padding: 15,
     flex: 1,
+    paddingLeft: 15,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 15,
+    fontSize: 16,
+
+    // shadowOffset:{width:0, height:5},  
+    // shadowColor:'#171717',  
+    // shadowOpacity:0.2,  
+    // shadowRadius:2,  
+  },
+  descriptionInputBoxContainer: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 15,
+    height: 320,
+    marginTop: 10,
     margin: 10,
-    padding: 5,
+
+    // shadowOffset:{width:0, height:5},  
+    // shadowColor:'#171717',  
+    // shadowOpacity:0.2,  
+    // shadowRadius:2, 
+
+  },
+  descriptionInputBox: {
+    borderColor: "#ddd",
+    // flex: 1,
+    margin: 8,
+    padding: 8,
+    flex: 1,
+    // paddingLeft: 15,
+    backgroundColor: "#FFFFFF",
+    fontSize: 16
+    // width: '
+    // marginRight: 10
+    
   },
   postButton: {
-    backgroundColor: "#001c00",
-    paddingVertical: 10,
-    paddingHorizontal: 30,
+    backgroundColor: "#C5F277",
+    paddingVertical: 8,
+    paddingHorizontal: 25,
     borderRadius: 20,
+    position: 'absolute',
+    right: 15,
+
+    shadowOffset:{width:0, height:2},  
+    shadowColor:'#171717',  
+    shadowOpacity:0.2,  
+    shadowRadius:2, 
+  },
+  bsTitle: {
+    // backgroundColor: 'green',
+    fontSize: 30,
+    padding: 2,
+    marginLeft: 18,
+    fontWeight: "bold",
   },
 });
 
