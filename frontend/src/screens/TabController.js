@@ -63,7 +63,7 @@ const SettingsStackScreen = () => {
           headerTitle: "",
           headerShadowVisible: false, // applied here
           headerStyle: {
-            backgroundColor: "#F2F3F4",
+            backgroundColor: "#fff",
           },
         }}
         name="ChangePassword"

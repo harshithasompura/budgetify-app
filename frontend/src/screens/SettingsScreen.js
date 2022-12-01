@@ -66,7 +66,7 @@ const SettingsScreen = ({ navigation, route }) => {
       url: termsURL,
     },
     {
-      text: "Privacy Policy Agreement",
+      text: "Privacy Policy",
       url: privacyURL,
     },
   ];
@@ -214,7 +214,7 @@ const SettingsScreen = ({ navigation, route }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.textHeading}>Settings</Text>
-      <View style={{ flexDirection: "row" }}>
+      <View style={{ flexDirection: "column" }}>
         <View style={styles.imgContainer}>
           {image && (
             <Image
@@ -230,7 +230,7 @@ const SettingsScreen = ({ navigation, route }) => {
           </View>
         </View>
         <View style={{ flexDirection: "column" }}>
-          <Text style={styles.userEmail}>{loggedInUser}</Text>
+          {/* <Text style={styles.userEmail}>{loggedInUser}</Text> */}
           <Pressable style={styles.editPressable} onPress={editProfile}>
             <Ionicons style={styles.editIcon} name="create-outline" size={25} />
             <Text style={styles.editText}>Edit Profile</Text>
@@ -263,10 +263,11 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
   settingText: {
-    fontSize: 18,
+    fontSize: 14,
     paddingTop: 15,
     paddingBottom: 15,
     paddingLeft: 15,
+    fontFamily: "Montserrat_400Regular",
   },
   textHeading: {
     fontSize: 22,
@@ -278,8 +279,9 @@ const styles = StyleSheet.create({
     margin: "auto",
   },
   subHeading: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: "bold",
+    fontFamily: "Montserrat_600SemiBold",
     paddingLeft: 20,
     paddingTop: 15,
     paddingBottom: 5,
@@ -288,15 +290,21 @@ const styles = StyleSheet.create({
     elevation: 2,
     height: 100,
     width: 100,
+    alignSelf: "center",
     backgroundColor: "#efefef",
     position: "relative",
     borderRadius: 999,
     overflow: "hidden",
     marginLeft: 10,
+    shadowColor: "black",
+    shadowOffset: { width: -2, height: 3 },
+    shadowOpacity: 0.16,
+    shadowRadius: 4,
   },
   uploadBtnContainer: {
     opacity: 0.7,
     position: "absolute",
+    alignSelf: "center",
     right: 0,
     bottom: 0,
     backgroundColor: "lightgrey",
@@ -310,39 +318,41 @@ const styles = StyleSheet.create({
   },
   userEmail: {
     color: "#1A191C",
+    alignSelf: "center",
     fontSize: 19,
-    marginLeft: 20,
     paddingBottom: 10,
+    marginVertical: 6,
   },
   profileIcon: {
     padding: 8,
   },
   editPressable: {
-    flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#1A191C",
-    marginLeft: 20,
-    marginRight: 200,
+    backgroundColor: "#CDFE5C",
+    alignSelf: "center",
     padding: 10,
-    paddingLeft: 15,
-    paddingRight: 15,
-    borderRadius: 8,
+    marginVertical: 12,
+    paddingHorizontal: 30,
+    borderRadius: 24,
   },
   editIcon: {
-    color: "#C5F277",
+    color: "#001c00",
   },
   editText: {
-    color: "#C5F277",
+    color: "#001c00",
+    fontFamily: "Montserrat_600SemiBold",
     fontSize: 15,
   },
   deleteAccountPressable: {
     backgroundColor: "#FCE8E8",
-    padding: 10,
-    marginTop: 10,
-    margin: 70,
+    marginHorizontal: 80,
+    marginVertical: 30,
+    borderRadius: 24,
+    paddingVertical: 14,
   },
   deleteAccountText: {
+    fontFamily: "Montserrat_700Bold",
     fontSize: 20,
     fontWeight: "bold",
     color: "#DC6B6B",
