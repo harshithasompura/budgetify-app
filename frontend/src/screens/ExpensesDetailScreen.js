@@ -1,22 +1,44 @@
-import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
+import {
+  FlatList,
+  Pressable,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { useEffect, useState } from "react";
+
+import moment from "moment";
 
 // Firebase
 import { db } from "../../FirebaseApp";
-import { doc, getDoc, updateDoc, query, orderBy } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  updateDoc,
+  query,
+  orderBy,
+  setDoc,
+} from "firebase/firestore";
+
+// Redux
+import useExpenses from "../redux/hook/useExpenses";
+
 // import { Icon } from "@rneui/base";
 // Vector Icons
 import Icon from "react-native-vector-icons/FontAwesome";
+import { Button } from "react-native";
 
 const ExpensesDetailScreen = ({ route, navigation }) => {
   const { category, userEmail } = route.params;
 
   const [expensesData, setExpensesData] = useState([]);
 
+  // redux state
+  const { fetchExpenses } = useExpenses();
+
   useEffect(() => {
     getExpensesFromFirestore();
-    console.log(`Length of Array: ${expensesData.length}`);
-    // console.log(`testing`,expensesData);
   }, []);
 
   const getExpensesFromFirestore = async () => {
@@ -44,15 +66,68 @@ const ExpensesDetailScreen = ({ route, navigation }) => {
     }
   };
 
+  // FlatList render function and other related functions
   const renderFlatListItem = ({ item }) => {
+    const { date, total } = item;
+    const expense = parseFloat(total);
+
     return (
-      <Pressable style={styles.flatListCell}>
-        <Text style={styles.flatListDate}>Date: {item["date"]}</Text>
-        <Text style={styles.flatListExpenses}>
-          $ {parseFloat(item["total"])}
-        </Text>
-      </Pressable>
+      <View style={styles.flatListCell}>
+        <Pressable style={styles.flatListLeftPart} onPress={() => {}}>
+          <Text style={styles.flatListDate}>Date: {date}</Text>
+          <Text style={styles.flatListExpenses}>$ {expense}</Text>
+        </Pressable>
+
+        <Button
+          title="Delete"
+          type="clear"
+          onPress={() => deleteExpense(date, expense)}
+        />
+      </View>
     );
+  };
+
+  const deleteExpense = async (date, expense) => {
+    const docRef = doc(db, "users", userEmail, "expenses", userEmail);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      const { summary } = docSnap.data();
+
+      const currDate = new Date();
+
+      const tempMonthExpenses =
+        summary[currDate.getFullYear()][currDate.getMonth() + 1];
+
+      const expensesInSelectedDate =
+        tempMonthExpenses[`${parseInt(date.slice(9))}`];
+
+      expensesInSelectedDate.forEach((ele) => {
+        if (ele.total === expense && ele.category === category) {
+          const index = expensesInSelectedDate.indexOf(ele);
+          expensesInSelectedDate.splice(index, 1);
+          console.log("DELETING");
+          return;
+        }
+      });
+
+      console.log("date", `${parseInt(date.slice(9))}`);
+      console.log(tempMonthExpenses);
+
+      summary[currDate.getFullYear()][currDate.getMonth() + 1] =
+        tempMonthExpenses;
+
+      await updateDoc(docRef, {
+        summary: summary,
+      });
+
+      getExpensesFromFirestore();
+
+      fetchExpenses(userEmail);
+    } else {
+      // doc.data() will be undefined in this case
+      console.log("No such document!");
+    }
   };
 
   return (
@@ -105,12 +180,18 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   flatListCell: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 10,
+    paddingBottom: 10,
     borderWidth: 1,
     borderColor: "#fff",
     borderBottomColor: "gray",
   },
+  flatListLeftPart: {},
   flatListDate: {
-    fontSize: 16,
+    fontSize: 20,
     margin: 4,
     color: "#8B999C",
     fontFamily: "Montserrat_600SemiBold",
@@ -123,7 +204,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     margin: 2,
     fontFamily: "Montserrat_700Bold",
-    marginBottom: 20,
     color: "#62D2B3",
   },
 });

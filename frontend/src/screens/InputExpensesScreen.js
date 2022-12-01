@@ -19,12 +19,6 @@ import useExpenses from "../redux/hook/useExpenses";
 import { db } from "../../FirebaseApp";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 
-// Importing fonts
-import {
-  IBMPlexMono_400Regular,
-  IBMPlexMono_500Medium,
-} from "@expo-google-fonts/ibm-plex-mono";
-
 const InputExpensesScreen = ({ route }) => {
   // url parameters
   const { userEmail } = route.params;
@@ -595,7 +589,7 @@ const styles = StyleSheet.create({
   screenHeading: {
     fontSize: 30,
     fontWeight: "200",
-    fontFamily: "IBMPlexMono_400Regular",
+    fontFamily: "Montserrat_600SemiBold",
   },
   checkIconView: {
     alignSelf: "flex-end",
@@ -612,7 +606,7 @@ const styles = StyleSheet.create({
   },
   amountText: {
     fontSize: 45,
-    fontFamily: "IBMPlexMono_500Medium",
+    fontFamily: "Montserrat_600SemiBold",
     color: "#B17BFF",
   },
   contentContainer: {
@@ -629,7 +623,7 @@ const styles = StyleSheet.create({
   },
   contentText: {
     fontSize: 20,
-    fontFamily: "IBMPlexMono_500Medium",
+    fontFamily: "Montserrat_600SemiBold",
     letterSpacing: -1,
     color: "black",
   },
@@ -653,7 +647,7 @@ const styles = StyleSheet.create({
   calculatorText: {
     alignSelf: "center",
     fontSize: 48,
-    fontFamily: "IBMPlexMono_500Medium",
+    fontFamily: "Montserrat_600SemiBold",
     color: "#1A191C75",
   },
   clearTextView: {
