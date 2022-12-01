@@ -39,13 +39,13 @@ import {
         <View
           style={{
             flexDirection: "row",
-            marginVertical: 8,
+            marginVertical: 10,
             position: 'relative'
           }}
         >
         <Text style={styles.bsTitle}>Create a Comment</Text>
         <Pressable style={styles.postButton} onPress={addComment}>
-          <Text style={{ color: "black", fontSize: 19, fontWeight: 'bold' }}>Add</Text>
+          <Text style={{ color: "black", fontSize: 16, fontWeight: 'bold', fontFamily:"Montserrat_700Bold" }}>Add</Text>
         </Pressable>
       </View>
       <View style={styles.descriptionInputBoxContainer}>
@@ -78,7 +78,8 @@ import {
       flex: 1,
       // paddingLeft: 15,
       backgroundColor: "#FFFFFF",
-      fontSize: 16
+      fontSize: 16,
+      fontFamily:"Montserrat_400Regular"
       // width: '
       // marginRight: 10
       
@@ -98,7 +99,9 @@ import {
     },
     bsTitle: {
       // backgroundColor: 'green',
-      fontSize: 30,
+      color:"#fff",
+      fontFamily:"Montserrat_700Bold",
+      fontSize: 24,
       padding: 2,
       marginLeft: 18,
       fontWeight: "bold",

@@ -63,7 +63,7 @@ const Post = (props) => {
       >
       <Text style={styles.bsTitle}>Create a Post</Text>
       <Pressable style={styles.postButton} onPress={addPost}>
-        <Text style={{ color: "black", fontSize: 19, fontWeight: 'bold' }}>Post</Text>
+        <Text style={{ color: "black", fontSize: 16, fontFamily: "Montserrat_700Bold" }}>Post</Text>
       </Pressable>
     </View>
     <View style={{ display: "flex", flexDirection: "row", marginTop: 10 }}>
@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     borderRadius: 15,
     fontSize: 16,
-
+    fontFamily: "Montserrat_600SemiBold"
     // shadowOffset:{width:0, height:5},  
     // shadowColor:'#171717',  
     // shadowOpacity:0.2,  
@@ -128,6 +128,7 @@ const styles = StyleSheet.create({
     flex: 1,
     // paddingLeft: 15,
     backgroundColor: "#FFFFFF",
+    fontFamily: "Montserrat_600SemiBold",
     fontSize: 16
     // width: '
     // marginRight: 10
@@ -140,15 +141,16 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     position: 'absolute',
     right: 15,
-
+    alignSelf:"center",
     shadowOffset:{width:0, height:2},  
     shadowColor:'#171717',  
     shadowOpacity:0.2,  
     shadowRadius:2, 
   },
   bsTitle: {
-    // backgroundColor: 'green',
-    fontSize: 30,
+    fontFamily: "Montserrat_700Bold",
+    color: '#fff',
+    fontSize: 24,
     padding: 2,
     marginLeft: 18,
     fontWeight: "bold",

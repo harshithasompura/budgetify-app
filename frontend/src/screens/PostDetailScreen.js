@@ -108,39 +108,40 @@ const PostDetailScreen = ({navigation, route}) => {
     };
 
     return (
-        <SafeAreaView style={{flex: 1, backgroundColor: '#62D3B4'}}>
-            <View style={{ flexDirection: "row", position: "relative"}}>
+        <SafeAreaView style={{flex: 1, backgroundColor: '#F6F6F6'}}>
+            <View style={{ flexDirection: "row", position: "relative", alignItems:"center", marginTop:10}}>
                 <Pressable
                     style={styles.backArrow}
                     onPress={() => {
                         navigation.goBack();
                     }}
                 >
-                    <Ionicons name="arrow-back-sharp" size={40} color="black" />
+                    <Ionicons name="arrow-back-sharp" size={28} color="black" />
                 </Pressable>
-                <Text style={styles.title}>Post Detail</Text>
+                <Text style={styles.title}>Back to Feed</Text>
             </View>
-        <ScrollView style={{ borderRadius: 25, margin: 10, marginTop: 0}} showsVerticalScrollIndicator={false}>
+        <ScrollView style={{marginVertical: 10, }} showsVerticalScrollIndicator={false}>
             <View style={[styles.postContainer]}>
                 <View style={styles.postHeader}>
                 {/* Post header */}
                 <Image style={styles.userAvatar} source={{ url: postInfo.userAvatar }} />
                 <View>
-                    <Text style={[{marginLeft: 8, color: 'black', fontSize: 20, fontWeight: 'bold' }]}>
+                    <Text style={[{marginLeft: 8, color: 'black', fontSize: 18, fontFamily:"Montserrat_600SemiBold" }]}>
                     {postInfo.username}
                     </Text>
-                    <Text style={[{marginLeft: 8, color: '#BCBCBC', fontSize: 16}]}>{postInfo.createdAt}</Text>
+                    <Text style={[{marginLeft: 8, color: '#BCBCBC', fontSize: 16,  fontFamily:"Montserrat_600SemiBold",}]}>{postInfo.createdAt}</Text>
                 </View>
                 </View>
                 <Text
                 style={[
                     {
                     color: "black",
-                    fontSize: 20,
+                    fontSize: 18,
                     marginHorizontal: 13,
                     paddingBottom: 20,
                     height: 35,
                     lineHeight: 35,
+                    fontFamily:"Montserrat_700Bold",
                     fontWeight: 'bold'
                     },
                 ]}
@@ -158,7 +159,8 @@ const PostDetailScreen = ({navigation, route}) => {
                         style={[
                         {
                             color: "black",
-                            fontSize: 20,
+                            fontSize: 16,
+                            fontFamily:"Montserrat_400Regular",
                             marginHorizontal: 8,
                             lineHeight: 22,
                         },
@@ -181,7 +183,7 @@ const PostDetailScreen = ({navigation, route}) => {
                                   }
                                 }}
                             >
-                                <AntDesign name={likeButton} size={25} color="#BCBCBC" />
+                                <AntDesign name={likeButton} size={22} color="#B17BFF" />
                             </Pressable>
                             <Text style={styles.likeCommentNum}>{likesNum}</Text>
                         </View>
@@ -190,27 +192,27 @@ const PostDetailScreen = ({navigation, route}) => {
                                 activeOpacity={0.7}
                                 onPress={fetchComments}
                             >
-                                <AntDesign name="message1" size={25} color="#BCBCBC" />
+                                <AntDesign name="message1" size={22} color="#B17BFF" />
                             </TouchableOpacity>
                             <Text style={styles.likeCommentNum}>{commentsNum}</Text>
                         </View>
                     </View>
                     <TouchableOpacity onPress={handleOpenPress}>
                         <Text 
-                            style={[styles.likeCommentNum, {fontSize: 15, position: 'absolute', right: 15, bottom: 10, color: '#B17BFF', fontWeight: '600' }]}
+                            style={[styles.likeCommentNum, {fontSize: 15, position: 'absolute', right: 15, bottom:-10, color: '#B17BFF', fontWeight: '600', fontFamily:"Montserrat_600SemiBold" }]}
                             >Add a comment</Text>
                     </TouchableOpacity>
             </View>
             <View style={[styles.commentsContainer]}>
-                <Text style={{color: 'black', margin: 15, fontSize: 20}}>Comments</Text>
+                <Text style={{color: 'black', margin: 15, fontSize: 18, fontFamily:"Montserrat_400Regular"}}>Comments</Text>
                 {
                     comments && comments.map((item, index) => (
                         <View style={{flexDirection: 'row', marginHorizontal: 10 }} key={index}>
                             <Image style={styles.userAvatar} source={{ url: item.userAvatar }} />
                             <View style={styles.textsContainer}>
-                                <Text style={{color: 'black', fontWeight: 'bold'}}>{item.username}</Text>
-                                <Text style={{color: '#BCBCBC'}}>{item.createdAt}</Text>
-                                <Text style={{color: "black", marginTop: 10}}>{item.comment}</Text>
+                                <Text style={{color: 'black', fontWeight: 'bold', fontFamily:"Montserrat_700Bold"}}>{item.username}</Text>
+                                <Text style={{color: '#BCBCBC', fontFamily:"Montserrat_600SemiBold"}}>{item.createdAt}</Text>
+                                <Text style={{color: "black", marginTop: 10, fontFamily:"Montserrat_400Regular", paddingBottom:20}}>{item.comment}</Text>
                                 {
                                     (index !== comments.length - 1) &&
                                     <View
@@ -259,30 +261,21 @@ const styles = StyleSheet.create({
     icon: {
       padding: 3,
     },
-    plusIcon: {
-      backgroundColor: "#001c00",
-      width: 50,
-      height: 50,
-      // marginHorizontal: 20,
-      borderRadius: 50,
-      alignItems: "center",
-      justifyContent: "center",
-      // marginVertical: 20,
-      alignSelf: "flex-end",
-    },
     postFeed: {
       flex: 2,
       height: "100%",
+      alignSelf:"stretch",
+      width:"100%",
     },
     postContainer: {
-      borderRadius: 25,
-      backgroundColor: '#FFFFFF', 
-      marginBottom: 5,
-  
-      // shadowOffset:{width:0, height:5},  
+      backgroundColor: '#FFFFFF',
+      height: 230,
+      padding:10,
+      marginBottom:10,
+      // shadowOffset:{width:0, height:1},  
       // shadowColor:'#171717',  
-      // shadowOpacity:0.2,  
-      // shadowRadius:2,  
+      // shadowOpacity:0.1,  
+      // shadowRadius:1,  
     },
     postHeader: {
       flexDirection: "row",
@@ -291,18 +284,21 @@ const styles = StyleSheet.create({
       position: 'relative',
     },
     userAvatar: {
-      height: 45,
-      width: 45,
+      height: 50,
+      width: 50,
       borderRadius: 40,
       marginLeft: 8,
       marginTop: 8
     },
+  
+  
     likeCommentContainer: {
+      paddingHorizontal:10,
       flexDirection: 'row',
       // backgroundColor: 'green',
       position: 'absolute',
       bottom: 10,
-      left: 15,
+      left: 15
     },
     likeContainer: {
       flexDirection: 'row',
@@ -316,26 +312,31 @@ const styles = StyleSheet.create({
       position: 'absolute',
       left: 70
     },
+    likeComment: {
+  
+    },
     likeCommentNum: {
-      fontSize: 20,
+      fontSize: 18,
       lineHeight: 28,
-      color: '#BCBCBC',
+      color: '#8E7CF7',
       marginLeft: 5
     },
     backArrow: {
         // backgroundColor: 'green',
         width: 40,
-        margin: 10,
+        alignItems:"center",
+        marginHorizontal:10,
     },
     title: {
         // backgroundColor: 'green',
-        fontSize: 32,
+        fontFamily:"Montserrat_600SemiBold",
+        fontSize: 22,
         margin: 10,
         marginLeft: 0,
         fontWeight: "bold",
+        color:"black",
     },
     commentsContainer: {
-        borderRadius: 25,
         backgroundColor: '#FFFFFF', 
         // margin: 10,
         marginTop: 5,

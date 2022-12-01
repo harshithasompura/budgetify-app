@@ -107,20 +107,21 @@ const CommunityScreen = ({ navigation, route }) => {
           {/* Post header */}
           <Image style={styles.userAvatar} source={{ url: item.userAvatar }} />
           <View>
-            <Text style={[{marginLeft: 8, color: 'black', fontSize: 20 }]}>
+            <Text style={[{marginLeft: 8, color: 'black', fontSize: 16, fontFamily: "Montserrat_600SemiBold" }]}>
               {item.username}
             </Text>
-            <Text style={[{marginLeft: 8, color: '#BCBCBC', fontSize: 16}]}>{item.createdAt}</Text>
+            <Text style={[{marginLeft: 8, color: '#BCBCBC', fontSize: 16, fontFamily: "Montserrat_600SemiBold",}]}>{item.createdAt}</Text>
           </View>
         </View>
         <Text
           style={[
             {
               color: "black",
-              fontSize: 20,
+              fontSize: 16,
               marginHorizontal: 13,
-              paddingBottom: 10,
-              fontWeight: 'bold'
+              paddingBottom: 8,
+              fontWeight: 'bold',
+              fontFamily: "Montserrat_700Bold",
             },
           ]}
           numberOfLines={2}
@@ -138,10 +139,9 @@ const CommunityScreen = ({ navigation, route }) => {
             style={[
               {
                 color: "black",
-                fontSize: 20,
+                fontSize: 16,
                 marginHorizontal: 8,
-                height: 82,
-                lineHeight: 22,
+                fontFamily: "Montserrat_400Regular",
               },
             ]}
             numberOfLines={3}
@@ -154,12 +154,12 @@ const CommunityScreen = ({ navigation, route }) => {
             <AntDesign 
               style={styles.likeComment} 
               name={item.didCurrUserLike ? 'like1' : 'like2'}
-              size={25} 
-              color="#BCBCBC" />
+              size={24} 
+              color="#B17BFF" />
             <Text style={styles.likeCommentNum}>{item.likesNum}</Text>
           </View>
           <View style={styles.commentContainer}>
-            <AntDesign style={styles.likeComment} name="message1" size={25} color="#BCBCBC" />
+            <AntDesign style={styles.likeComment} name="message1" size={24} color="#B17BFF" />
             <Text style={styles.likeCommentNum}>{item.commentsNum}</Text>
           </View>
         </View>
@@ -180,7 +180,7 @@ const CommunityScreen = ({ navigation, route }) => {
 
   const actions = [
     {
-      icon: <Icon name="plus" color={"black"} size={30} style={{height: 28}} />,
+      icon: <Icon name="plus" color={"#001c00"} size={20} style={{height: 20}} />,
       name: "Post"
     }
   ];
@@ -204,12 +204,12 @@ const CommunityScreen = ({ navigation, route }) => {
       >
         {/* Header: Title + Chat button/icon */}
         <Text
-          style={[styles.screenHeading, {fontWeight: 'bold'}]}
+          style={[styles.screenHeading, {fontWeight: 'bold', fontFamily: "Montserrat_600SemiBold"}]}
         >
-          Post Feeds
+          Community Feed
         </Text>
       </View>
-      <View style={[styles.postFeed, {backgroundColor: '#62D3B4'}]}>
+      <View style={[styles.postFeed, {backgroundColor: '#F6F6F6'}]}>
         {/* Post feed should go here */}
         <FlatList data={postsList} 
                   renderItem={renderItem} 
@@ -217,7 +217,7 @@ const CommunityScreen = ({ navigation, route }) => {
                   onScrollBeginDrag={() => setPostBtnVisible(false)}
                   showsVerticalScrollIndicator={false}
                   ItemSeparatorComponent={() => <View style={{height: 10}} />}
-                  style={{ borderRadius: 25, margin: 10, marginTop: 0}}
+                  style={{ marginTop: 0}}
                   refreshControl={
                     <RefreshControl
                       refreshing={refreshing}
@@ -263,35 +263,25 @@ const CommunityScreen = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#62D3B4",
+    backgroundColor: "#fff",
   },
   screenHeading: {
-    fontSize: 30,
-    fontWeight: "400",
+    marginVertical: 10,
+    fontSize: 20,
   },
   icon: {
     padding: 3,
   },
-  plusIcon: {
-    backgroundColor: "#001c00",
-    width: 50,
-    height: 50,
-    // marginHorizontal: 20,
-    borderRadius: 50,
-    alignItems: "center",
-    justifyContent: "center",
-    // marginVertical: 20,
-    alignSelf: "flex-end",
-  },
   postFeed: {
     flex: 2,
     height: "100%",
+    alignSelf:"stretch",
+    width:"100%",
   },
   postContainer: {
-    borderRadius: 25,
     backgroundColor: '#FFFFFF',
-    height: 235,
-
+    height: 200,
+    paddingHorizontal:10,
     // shadowOffset:{width:0, height:1},  
     // shadowColor:'#171717',  
     // shadowOpacity:0.1,  
@@ -313,6 +303,7 @@ const styles = StyleSheet.create({
 
 
   likeCommentContainer: {
+    paddingHorizontal:10,
     flexDirection: 'row',
     // backgroundColor: 'green',
     position: 'absolute',
@@ -335,9 +326,9 @@ const styles = StyleSheet.create({
 
   },
   likeCommentNum: {
-    fontSize: 20,
+    fontSize: 18,
     lineHeight: 28,
-    color: '#BCBCBC',
+    color: '#8E7CF7',
     marginLeft: 5
   }
 });
