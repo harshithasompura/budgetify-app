@@ -1,4 +1,4 @@
-import { StyleSheet, Text, SafeAreaView, TextInput, View, TouchableOpacity, Image,} from "react-native";
+import { StyleSheet, Text, SafeAreaView, TextInput, View, TouchableOpacity, Image, Alert} from "react-native";
 import React, { useState } from "react";
 import { useEffect } from "react";
 import { AntDesign } from "@expo/vector-icons";
@@ -84,7 +84,7 @@ const EditProfileScreen = ({ navigation }) => {
         icon: avatarUrl,
       });
 
-      alert("Updated Avatar");
+      Alert.alert("Updated Avatar");
     } catch (err) {
       console.log(err);
     }
@@ -93,7 +93,7 @@ const EditProfileScreen = ({ navigation }) => {
   const checkForCameraRollPermission = async () => {
     const { status } = await ImagePicker.getMediaLibraryPermissionsAsync();
     if (status !== "granted") {
-      alert(
+      Alert.alert(
         "Please grant camera roll permissions inside your system's settings"
       );
     } else {
@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     margin: 5,
     fontWeight: "bold",
-    fontFamily: "IBMPlexMono_500Medium",
+    fontFamily: "Montserrat_600SemiBold",
   },
   imgContainer: {
     elevation: 2,
@@ -219,9 +219,9 @@ const styles = StyleSheet.create({
   },
   inputtext: {
     alignContent: "flex-start",
-    marginHorizontal: 10,
+    marginHorizontal: 20,
     fontSize: 17,
-    fontFamily: "IBMPlexMono_500Medium",
+    fontFamily: "Montserrat_600SemiBold",
   },
   inputbox: {
     alignContent: "flex-start",
@@ -229,24 +229,27 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
     margin: 10,
+    marginHorizontal:20,
     padding: 10,
     height: 45,
     fontSize: 15,
-    fontFamily: "IBMPlexMono_500Medium",
+    fontFamily: "Montserrat_600SemiBold",
   },
   addInfoPress: {
-    textAlign: "center",
-    color: "red",
-    margin: 10,
-    padding: 10,
-    height: 45,
-    fontSize: 20,
-    borderWidth: 1,
-    color: "#C5F277",
-    backgroundColor: "black",
-    alignContent: "center",
-    fontWeight: "bold",
-    fontFamily: "IBMPlexMono_500Medium",
+    backgroundColor: "#C5F277",
+    alignSelf: "stretch",
+    padding: 16,
+    textAlign:"center",
+    alignItems: "center",
+    marginBottom: 30,
+    marginTop: 20,
+    marginHorizontal: 20,
+    borderRadius: 14,
+    shadowColor: "black",
+    shadowOffset: { width: -2, height: 3 },
+    shadowOpacity: 0.16,
+    shadowRadius: 4,
+    fontFamily: "Montserrat_700Bold",
   },
 });
 
