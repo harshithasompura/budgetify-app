@@ -7,7 +7,11 @@ import {
   Pressable,
 } from "react-native";
 import React, { useCallback, useRef, useState, useEffect } from "react";
-import BottomSheet, { BottomSheetView, BottomSheetTextInput, BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import BottomSheet, {
+  BottomSheetView,
+  BottomSheetTextInput,
+  BottomSheetScrollView,
+} from "@gorhom/bottom-sheet";
 import { db } from "../../FirebaseApp";
 import { collection, addDoc, Timestamp } from "firebase/firestore";
 import { auth } from "../../FirebaseApp";
@@ -41,7 +45,7 @@ const Post = (props) => {
         description: comment,
         createdAt: Timestamp.now(),
         comments: [],
-        likes: []
+        likes: [],
       });
       // Post is successful
       setComment("");
@@ -58,36 +62,44 @@ const Post = (props) => {
         style={{
           flexDirection: "row",
           marginVertical: 8,
-          position: 'relative',
+          position: "relative",
         }}
       >
-      <Text style={styles.bsTitle}>Create a Post</Text>
-      <Pressable style={styles.postButton} onPress={addPost}>
-        <Text style={{ color: "black", fontSize: 16, fontFamily: "Montserrat_700Bold" }}>Post</Text>
-      </Pressable>
-    </View>
-    <View style={{ display: "flex", flexDirection: "row", marginTop: 10 }}>
-      <BottomSheetTextInput
-        style={styles.titleInputBox}
-        placeholder="Enter a title"
-        value={title}
-        onChangeText={setTitle}
-        placeholderTextColor={'#BCBCBC'}
-        color={'black'}
-      />
-    </View>
-    <View style={styles.descriptionInputBoxContainer}>
-      <BottomSheetTextInput
-        style={styles.descriptionInputBox}
-        placeholder="Enter a descrition"
-        value={comment}
-        onChangeText={setComment}
-        onSubmitEditing
-        multiline={true}
-        placeholderTextColor={'#BCBCBC'}
-        color={'black'}
-      />
-    </View>
+        <Text style={styles.bsTitle}>Create a Post</Text>
+        <Pressable style={styles.postButton} onPress={addPost}>
+          <Text
+            style={{
+              color: "black",
+              fontSize: 16,
+              fontFamily: "Montserrat_700Bold",
+            }}
+          >
+            Post
+          </Text>
+        </Pressable>
+      </View>
+      <View style={{ display: "flex", flexDirection: "row", marginTop: 10 }}>
+        <BottomSheetTextInput
+          style={styles.titleInputBox}
+          placeholder="Enter a title"
+          value={title}
+          onChangeText={setTitle}
+          placeholderTextColor={"#BCBCBC"}
+          color={"black"}
+        />
+      </View>
+      <View style={styles.descriptionInputBoxContainer}>
+        <BottomSheetTextInput
+          style={styles.descriptionInputBox}
+          placeholder="Enter a descrition"
+          value={comment}
+          onChangeText={setComment}
+          onSubmitEditing
+          multiline={true}
+          placeholderTextColor={"#BCBCBC"}
+          color={"black"}
+        />
+      </View>
     </BottomSheetView>
   );
 };
@@ -101,11 +113,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     borderRadius: 15,
     fontSize: 16,
-    fontFamily: "Montserrat_600SemiBold"
-    // shadowOffset:{width:0, height:5},  
-    // shadowColor:'#171717',  
-    // shadowOpacity:0.2,  
-    // shadowRadius:2,  
+    fontFamily: "Montserrat_600SemiBold",
+    // shadowOffset:{width:0, height:5},
+    // shadowColor:'#171717',
+    // shadowOpacity:0.2,
+    // shadowRadius:2,
   },
   descriptionInputBoxContainer: {
     backgroundColor: "#FFFFFF",
@@ -114,11 +126,10 @@ const styles = StyleSheet.create({
     marginTop: 10,
     margin: 10,
 
-    // shadowOffset:{width:0, height:5},  
-    // shadowColor:'#171717',  
-    // shadowOpacity:0.2,  
-    // shadowRadius:2, 
-
+    // shadowOffset:{width:0, height:5},
+    // shadowColor:'#171717',
+    // shadowOpacity:0.2,
+    // shadowRadius:2,
   },
   descriptionInputBox: {
     borderColor: "#ddd",
@@ -129,27 +140,26 @@ const styles = StyleSheet.create({
     // paddingLeft: 15,
     backgroundColor: "#FFFFFF",
     fontFamily: "Montserrat_600SemiBold",
-    fontSize: 16
+    fontSize: 16,
     // width: '
     // marginRight: 10
-    
   },
   postButton: {
     backgroundColor: "#C5F277",
     paddingVertical: 8,
     paddingHorizontal: 25,
     borderRadius: 20,
-    position: 'absolute',
+    position: "absolute",
     right: 15,
-    alignSelf:"center",
-    shadowOffset:{width:0, height:2},  
-    shadowColor:'#171717',  
-    shadowOpacity:0.2,  
-    shadowRadius:2, 
+    alignSelf: "center",
+    shadowOffset: { width: 0, height: 2 },
+    shadowColor: "#171717",
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
   },
   bsTitle: {
     fontFamily: "Montserrat_700Bold",
-    color: '#fff',
+    color: "#fff",
     fontSize: 24,
     padding: 2,
     marginLeft: 18,
