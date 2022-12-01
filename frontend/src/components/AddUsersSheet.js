@@ -85,7 +85,12 @@ const AddUsersSheet = (props) => {
           )}
           <Text style={styles.text}>{item.name}</Text>
         </View>
-        <FontAwesome name="angle-right" size={30} color="#B17BFF" style={{marginRight: 10}}/>
+        <FontAwesome
+          name="angle-right"
+          size={30}
+          color="white"
+          style={{ marginRight: 10 }}
+        />
       </View>
     </TouchableOpacity>
   );
@@ -105,11 +110,17 @@ const AddUsersSheet = (props) => {
           <Ionicons name="search" size={25} color="black" />
         </Pressable>
       </View>
-      <FlatList data={searchResults} 
-                renderItem={renderItem}
-                showsVerticalScrollIndicator={false}
-                ItemSeparatorComponent={() => <View style={{height: 10}} />}
-                style={{borderRadius: 20, margin: 10, height: 360, backgroundColor: '#62D3B4'}}
+      <FlatList
+        data={searchResults}
+        renderItem={renderItem}
+        showsVerticalScrollIndicator={false}
+        ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
+        style={{
+          borderRadius: 20,
+          margin: 10,
+          height: 360,
+          backgroundColor: "#62D3B4",
+        }}
       />
     </BottomSheetView>
   );
@@ -118,7 +129,8 @@ const AddUsersSheet = (props) => {
 const styles = StyleSheet.create({
   bsTitle: {
     // backgroundColor: 'green',
-    fontSize: 30,
+    color: "white",
+    fontSize: 24,
     padding: 2,
     marginLeft: 18,
     fontWeight: "bold",
@@ -126,6 +138,7 @@ const styles = StyleSheet.create({
   bsSearchBar: {
     flex: 0.87,
     paddingLeft: 15,
+    paddingVertical: 8,
     backgroundColor: "white",
     // width: '
     // marginRight: 10
@@ -135,7 +148,7 @@ const styles = StyleSheet.create({
     // padding: 10,
     // paddingLeft: 0,
     // flex: 0.1,
-    backgroundColor: "#C5F277",
+    backgroundColor: "white",
     position: "absolute",
     right: 0,
     height: 30,
@@ -144,6 +157,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     margin: 5,
+    marginRight: 20,
   },
   bsSearchBarContainer: {
     flexDirection: "row",
@@ -162,19 +176,20 @@ const styles = StyleSheet.create({
     borderBottomColor: "#D6D6D6",
     // borderBottomWidth: 1,
     height: 75,
-    backgroundColor: '#C5F277',
+    // backgroundColor: '#C5F277',
     borderRadius: 20,
     // marginHorizontal: 5
   },
   text: {
     // fontFamily: 'IBM Plex Mono',
     fontSize: 25,
+    color: "white",
     // padding: 15,
     // backgroundColor: 'cyan',
     // lineHeight: 30,
     paddingVertical: 5,
     paddingLeft: 5,
-    marginLeft: 10
+    marginLeft: 10,
   },
   avatar: {
     height: 40,

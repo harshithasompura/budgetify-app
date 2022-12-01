@@ -28,13 +28,14 @@ import {
   doc,
   getDoc,
   collectionGroup,
-  getDocs
+  getDocs,
 } from "firebase/firestore";
 import { TextInput } from "react-native-gesture-handler";
 import { FloatingAction } from "react-native-floating-action";
 import Icon from "react-native-vector-icons/FontAwesome";
 
-const blankAvatarUrl = "https://as2.ftcdn.net/v2/jpg/02/15/84/43/1000_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg";
+const blankAvatarUrl =
+  "https://as2.ftcdn.net/v2/jpg/02/15/84/43/1000_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg";
 
 const ChatsListScreen = ({ navigation }) => {
   const snapPoints = ["75%"];
@@ -79,16 +80,15 @@ const ChatsListScreen = ({ navigation }) => {
             const docSnap = await getDoc(docRef);
             // console.log(document.id);
 
-            const msgDate = document.data()
-                                    .latestMsg
-                                    .createdAt
-                                    .toDate();
-            const hours =  msgDate.getHours().length === 1 ?
-                           "0" + msgDate.getHours() :
-                           msgDate.getHours()
-            const minutes =  msgDate.getMinutes().length === 1 ?
-                             "0" + msgDate.getMinutes() :
-                             msgDate.getMinutes()
+            const msgDate = document.data().latestMsg.createdAt.toDate();
+            const hours =
+              msgDate.getHours().length === 1
+                ? "0" + msgDate.getHours()
+                : msgDate.getHours();
+            const minutes =
+              msgDate.getMinutes().length === 1
+                ? "0" + msgDate.getMinutes()
+                : msgDate.getMinutes();
             const createdAt = hours + ":" + minutes;
 
             return {
@@ -97,8 +97,8 @@ const ChatsListScreen = ({ navigation }) => {
               icon: docSnap.data().icon,
               latestMsg: {
                 text: document.data().latestMsg.text,
-                createdAt: createdAt
-              }
+                createdAt: createdAt,
+              },
             };
           }
         }
@@ -111,7 +111,7 @@ const ChatsListScreen = ({ navigation }) => {
 
     return () => {
       unsubscribeChats();
-    } 
+    };
   }, [uid]);
 
   const renderBackdrop = useCallback(
@@ -128,15 +128,17 @@ const ChatsListScreen = ({ navigation }) => {
 
   const actions = [
     {
-      icon: <Icon name="plus" color={"black"} size={30} style={{height: 28}} />,
-      name: "Post"
-    }
+      icon: (
+        <Icon name="plus" color={"black"} size={30} style={{ height: 28 }} />
+      ),
+      name: "Post",
+    },
   ];
 
   const renderItem = ({ item, index, separator }) => (
     <TouchableOpacity
       activeOpacity={0.8}
-      style={{borderRadius: 20,}}
+      style={{ borderRadius: 20 }}
       onPress={() => {
         let collectionId = item.id;
         let collectionName = "private-chats";
@@ -150,34 +152,46 @@ const ChatsListScreen = ({ navigation }) => {
     >
       <View style={styles.listItem}>
         <View style={{ flexDirection: "row" }}>
-          <Image style={styles.avatar} 
-                 source={{ 
-                  url: item.icon === "" ? 
-                  blankAvatarUrl : 
-                  item.icon}
-                 } 
+          <Image
+            style={styles.avatar}
+            source={{
+              url: item.icon === "" ? blankAvatarUrl : item.icon,
+            }}
           />
-          <View style={{justifyContent: 'center', flex: 1 }}>
-            <Text style={[styles.text, { marginTop: 10, color: 'black'}]}>{item.name}</Text>
+          <View style={{ justifyContent: "center", flex: 1 }}>
+            <Text style={[styles.text, { marginTop: 10, color: "black" }]}>
+              {item.name}
+            </Text>
             <Text
               numberOfLines={1}
-              style={[styles.text, {fontSize: 15,  marginBottom: 0, width: 220}]}
-            >{item.latestMsg.text}
+              style={[
+                styles.text,
+                { fontSize: 15, marginBottom: 0, width: 220 },
+              ]}
+            >
+              {item.latestMsg.text}
             </Text>
           </View>
-          <Text style={{ color: 'grey', alignSelf: 'center', textAlign: 'right', marginRight: 20}}>
-          {item.latestMsg.createdAt}
+          <Text
+            style={{
+              color: "grey",
+              alignSelf: "center",
+              textAlign: "right",
+              marginRight: 20,
+            }}
+          >
+            {item.latestMsg.createdAt}
           </Text>
         </View>
-
       </View>
     </TouchableOpacity>
   );
 
   return (
     <View style={styles.container}>
-
-      <View style={{ flexDirection: "row", position: "relative", marginTop: 22 }}>
+      <View
+        style={{ flexDirection: "row", position: "relative", marginTop: 22 }}
+      >
         <Text style={styles.title}>Messages</Text>
 
         <Pressable style={styles.addUserBtn} onPress={() => setOpen(true)}>
@@ -185,7 +199,8 @@ const ChatsListScreen = ({ navigation }) => {
         </Pressable>
       </View>
 
-      <View style={styles.bsSearchBarContainer}>
+      {/* // THIS DOESN'T WORK!! */}
+      {/* <View style={styles.bsSearchBarContainer}>
         <TextInput
           style={styles.bsSearchBar}
           placeholder="Type a name"
@@ -195,14 +210,24 @@ const ChatsListScreen = ({ navigation }) => {
         <Pressable style={styles.bsSearchBtn}>
           <Ionicons name="search" size={25} color="black" />
         </Pressable>
-      </View>
+      </View> */}
 
-        <FlatList 
-          data={chatsList} 
-          renderItem={renderItem}
-          style={styles.chatsList}
-          ItemSeparatorComponent={() => <View style={{height: 1, backgroundColor: 'grey', marginLeft: 70, marginRight: 20, opacity: 0.3}} />}
-        />
+      <FlatList
+        data={chatsList}
+        renderItem={renderItem}
+        style={styles.chatsList}
+        ItemSeparatorComponent={() => (
+          <View
+            style={{
+              height: 1,
+              backgroundColor: "grey",
+              marginLeft: 70,
+              marginRight: 20,
+              opacity: 0.3,
+            }}
+          />
+        )}
+      />
 
       {isOpen ? (
         <BottomSheet
@@ -211,12 +236,11 @@ const ChatsListScreen = ({ navigation }) => {
           enablePanDownToClose={true}
           onClose={() => setOpen(false)}
           backdropComponent={renderBackdrop}
-          backgroundStyle={{backgroundColor: '#62D3B4'}}
+          backgroundStyle={{ backgroundColor: "#62D3B4" }}
         >
           <AddUsersSheet navigation={navigation} uid={uid} />
         </BottomSheet>
       ) : null}
-
     </View>
   );
 };
@@ -224,7 +248,7 @@ const ChatsListScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#62D3B4",
+    backgroundColor: "#f6f6f6",
   },
   listItem: {
     flexDirection: "row",
@@ -238,15 +262,13 @@ const styles = StyleSheet.create({
     fontSize: 20,
     // backgroundColor: 'yellow',
     lineHeight: 20,
-    color: 'grey'
-
+    color: "grey",
   },
   avatar: {
     height: 45,
     width: 45,
     borderRadius: 40,
     margin: 12,
-
   },
   backArrow: {
     // backgroundColor: 'green',
@@ -256,10 +278,12 @@ const styles = StyleSheet.create({
   },
   title: {
     // backgroundColor: 'green',
-    fontSize: 32,
+    fontSize: 24,
+    paddingVertical: 10,
     // padding: 15,
     marginLeft: 18,
     fontWeight: "bold",
+    fontFamily: "Montserrat_600SemiBold",
   },
   tabView: {
     margin: 10,
@@ -269,11 +293,10 @@ const styles = StyleSheet.create({
     right: 15,
     // padding: 10,
     alignSelf: "center",
-    backgroundColor: '#C5F277',
     height: 38,
     width: 38,
     paddingLeft: 2.5,
-    borderRadius: 40
+    borderRadius: 40,
   },
   bsSearchBar: {
     flex: 1,
@@ -305,14 +328,13 @@ const styles = StyleSheet.create({
     height: 50,
     position: "relative",
     borderRadius: 50,
-
   },
   chatsList: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 25,
     marginHorizontal: 16,
-    marginBottom: 12
-  }
+    marginBottom: 12,
+  },
 });
 
 export default ChatsListScreen;
