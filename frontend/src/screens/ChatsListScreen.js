@@ -27,25 +27,25 @@ import {
   where,
   doc,
   getDoc,
+  collectionGroup,
+  getDocs
 } from "firebase/firestore";
+import { TextInput } from "react-native-gesture-handler";
+import { FloatingAction } from "react-native-floating-action";
+import Icon from "react-native-vector-icons/FontAwesome";
 
-const blankAvatarUrl = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+const blankAvatarUrl = "https://as2.ftcdn.net/v2/jpg/02/15/84/43/1000_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg";
 
 const ChatsListScreen = ({ navigation }) => {
   const snapPoints = ["75%"];
   const sheetRef = useRef(null);
   const [isOpen, setOpen] = useState(false);
   const [chatsList, setChatsList] = useState([]);
-  const [groupsList, setGroupsList] = useState([]);
+  const [searchTxt, setSearchTxt] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
   const [uid, setUid] = useState();
-  const [index, setIndex] = useState(0);
-  const [routes] = useState([
-    { key: "individual", title: "Individual" },
-    { key: "group", title: "Group" },
-  ]);
 
   const didMount = useRef(false);
-
   useEffect(() => {
     const unsubscribeOnAuth = onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -55,21 +55,7 @@ const ChatsListScreen = ({ navigation }) => {
       }
     });
 
-    const groupQuery = query(collection(db, "group-chats"), orderBy("name"));
-    const unsubscribeGroups = onSnapshot(groupQuery, (querySnapshot) => {
-      const groupsFromFB = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        icon: doc.data().icon,
-        name: doc.data().name,
-        isGroup: doc.data().isGroup,
-      }));
-      setGroupsList(groupsFromFB);
-    });
-
-    return () => {
-      unsubscribeGroups();
-      unsubscribeOnAuth();
-    };
+    return unsubscribeOnAuth;
   }, []);
 
   // called when uid's stage changed
@@ -92,10 +78,27 @@ const ChatsListScreen = ({ navigation }) => {
             const docRef = doc(db, "users", member);
             const docSnap = await getDoc(docRef);
             // console.log(document.id);
+
+            const msgDate = document.data()
+                                    .latestMsg
+                                    .createdAt
+                                    .toDate();
+            const hours =  msgDate.getHours().length === 1 ?
+                           "0" + msgDate.getHours() :
+                           msgDate.getHours()
+            const minutes =  msgDate.getMinutes().length === 1 ?
+                             "0" + msgDate.getMinutes() :
+                             msgDate.getMinutes()
+            const createdAt = hours + ":" + minutes;
+
             return {
               id: document.id,
               name: docSnap.data().name,
               icon: docSnap.data().icon,
+              latestMsg: {
+                text: document.data().latestMsg.text,
+                createdAt: createdAt
+              }
             };
           }
         }
@@ -106,23 +109,10 @@ const ChatsListScreen = ({ navigation }) => {
       setChatsList(chatsFromFB);
     });
 
-    return unsubscribeChats;
+    return () => {
+      unsubscribeChats();
+    } 
   }, [uid]);
-
-  const layout = useWindowDimensions();
-
-  const IndividualRoute = () => (
-    <FlatList data={chatsList} renderItem={renderItem} />
-  );
-
-  const GroupRoute = () => (
-    <FlatList data={groupsList} renderItem={renderItem} />
-  );
-
-  const renderScene = SceneMap({
-    individual: IndividualRoute,
-    group: GroupRoute,
-  });
 
   const renderBackdrop = useCallback(
     (props) => (
@@ -136,12 +126,20 @@ const ChatsListScreen = ({ navigation }) => {
     []
   );
 
-  const renderItem = ({ item }) => (
+  const actions = [
+    {
+      icon: <Icon name="plus" color={"black"} size={30} style={{height: 28}} />,
+      name: "Post"
+    }
+  ];
+
+  const renderItem = ({ item, index, separator }) => (
     <TouchableOpacity
       activeOpacity={0.8}
+      style={{borderRadius: 20,}}
       onPress={() => {
         let collectionId = item.id;
-        let collectionName = item.isGroup ? "group-chats" : "private-chats";
+        let collectionName = "private-chats";
         navigation.navigate("Chat Room", {
           collectionId: collectionId,
           collectionName: collectionName,
@@ -152,62 +150,59 @@ const ChatsListScreen = ({ navigation }) => {
     >
       <View style={styles.listItem}>
         <View style={{ flexDirection: "row" }}>
-          {item.icon !== "" && (
-            <Image style={styles.avatar} source={{ url: item.icon }} />
-          )}
-          {item.icon === "" && (
-            <Image style={styles.avatar} source={{ url: blankAvatarUrl }} />
-          )}
-          <Text style={styles.text}> {item.name} </Text>
+          <Image style={styles.avatar} 
+                 source={{ 
+                  url: item.icon === "" ? 
+                  blankAvatarUrl : 
+                  item.icon}
+                 } 
+          />
+          <View style={{justifyContent: 'center', flex: 1 }}>
+            <Text style={[styles.text, { marginTop: 10, color: 'black'}]}>{item.name}</Text>
+            <Text
+              numberOfLines={1}
+              style={[styles.text, {fontSize: 15,  marginBottom: 0, width: 220}]}
+            >{item.latestMsg.text}
+            </Text>
+          </View>
+          <Text style={{ color: 'grey', alignSelf: 'center', textAlign: 'right', marginRight: 20}}>
+          {item.latestMsg.createdAt}
+          </Text>
         </View>
-        <FontAwesome name="angle-right" size={30} color="black" />
+
       </View>
     </TouchableOpacity>
   );
 
-  const renderTabBar = (props) => (
-    <TabBar
-      {...props}
-      indicatorStyle={{
-        backgroundColor: "#C5F277",
-        height: 5,
-        borderRadius: 5,
-      }}
-      indicatorContainerStyle={{ backgroundColor: "#blue" }}
-      style={{ backgroundColor: "black", borderRadius: 10 }}
-      renderLabel={({ route }) => (
-        <Text style={{ color: "#C5F277", fontSize: 20 }}>{route.title}</Text>
-      )}
-    />
-  );
-
   return (
     <View style={styles.container}>
-      <Pressable
-        style={styles.backArrow}
-        onPress={() => {
-          navigation.popToTop();
-        }}
-      >
-        <Ionicons name="arrow-back-sharp" size={40} color="black" />
-      </Pressable>
-      <View style={{ flexDirection: "row", position: "relative" }}>
+
+      <View style={{ flexDirection: "row", position: "relative", marginTop: 22 }}>
         <Text style={styles.title}>Messages</Text>
 
         <Pressable style={styles.addUserBtn} onPress={() => setOpen(true)}>
-          <Ionicons name="add-circle" size={40} color="black" />
+          <Ionicons name="add" size={35} color="black" />
         </Pressable>
       </View>
 
-      <TabView
-        navigationState={{ index, routes }}
-        renderScene={renderScene}
-        onIndexChange={setIndex}
-        initialLayout={{ width: layout.width }}
-        renderTabBar={renderTabBar}
-        style={styles.tabView}
-        swipeEnabled={false}
-      />
+      <View style={styles.bsSearchBarContainer}>
+        <TextInput
+          style={styles.bsSearchBar}
+          placeholder="Type a name"
+          onChangeText={setSearchTxt}
+          color="black"
+        />
+        <Pressable style={styles.bsSearchBtn}>
+          <Ionicons name="search" size={25} color="black" />
+        </Pressable>
+      </View>
+
+        <FlatList 
+          data={chatsList} 
+          renderItem={renderItem}
+          style={styles.chatsList}
+          ItemSeparatorComponent={() => <View style={{height: 1, backgroundColor: 'grey', marginLeft: 70, marginRight: 20, opacity: 0.3}} />}
+        />
 
       {isOpen ? (
         <BottomSheet
@@ -216,10 +211,12 @@ const ChatsListScreen = ({ navigation }) => {
           enablePanDownToClose={true}
           onClose={() => setOpen(false)}
           backdropComponent={renderBackdrop}
+          backgroundStyle={{backgroundColor: '#62D3B4'}}
         >
           <AddUsersSheet navigation={navigation} uid={uid} />
         </BottomSheet>
       ) : null}
+
     </View>
   );
 };
@@ -227,27 +224,29 @@ const ChatsListScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor: "#62D3B4",
   },
   listItem: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    // justifyContent: "space-between",
     alignItems: "center",
-    padding: 10,
-    borderBottomColor: "#D6D6D6",
-    borderBottomWidth: 1,
-    height: 75,
+    // padding: 10,
+    // borderBottomColor: "#D6D6D6",
+    // height: 75,
   },
   text: {
-    // fontFamily: 'IBM Plex Mono',
-    fontSize: 25,
-    padding: 15,
-    paddingLeft: 5,
+    fontSize: 20,
+    // backgroundColor: 'yellow',
+    lineHeight: 20,
+    color: 'grey'
+
   },
   avatar: {
-    height: 60,
-    width: 60,
+    height: 45,
+    width: 45,
     borderRadius: 40,
+    margin: 12,
+
   },
   backArrow: {
     // backgroundColor: 'green',
@@ -267,10 +266,53 @@ const styles = StyleSheet.create({
   },
   addUserBtn: {
     position: "absolute",
-    right: 0,
-    padding: 10,
+    right: 15,
+    // padding: 10,
     alignSelf: "center",
+    backgroundColor: '#C5F277',
+    height: 38,
+    width: 38,
+    paddingLeft: 2.5,
+    borderRadius: 40
   },
+  bsSearchBar: {
+    flex: 1,
+    paddingLeft: 15,
+    backgroundColor: "white",
+    // width: '
+    marginLeft: 35,
+    borderRadius: 50,
+  },
+  bsSearchBtn: {
+    // padding: 10,
+    // paddingLeft: 0,
+    // flex: 0.1,
+    backgroundColor: "#C5F277",
+    position: "absolute",
+    left: 0,
+    height: 40,
+    width: 40,
+    borderRadius: 50,
+    justifyContent: "center",
+    alignItems: "center",
+    margin: 5,
+  },
+  bsSearchBarContainer: {
+    flexDirection: "row",
+    backgroundColor: "white",
+    marginVertical: 10,
+    marginHorizontal: 15,
+    height: 50,
+    position: "relative",
+    borderRadius: 50,
+
+  },
+  chatsList: {
+    backgroundColor: 'white',
+    borderRadius: 25,
+    marginHorizontal: 16,
+    marginBottom: 12
+  }
 });
 
 export default ChatsListScreen;

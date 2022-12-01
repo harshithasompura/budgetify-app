@@ -59,7 +59,7 @@ const ChatScreen = ({ navigation, route }) => {
         _id: doc.data()._id,
         createdAt: doc.data().createdAt.toDate(),
         text: doc.data().text,
-        user: doc.data().user,
+        user: doc.data().user
       }));
       setMessages(messages);
     });
@@ -71,25 +71,24 @@ const ChatScreen = ({ navigation, route }) => {
   }, []);
 
   const onSend = useCallback(async (messages = []) => {
-    let isNew;
     setMessages((previousMessages) => {
-      isNew = previousMessages.length === 0 ? true : false;
       return GiftedChat.append(previousMessages, messages);
     });
     const { _id, createdAt, text, user } = messages[0];
     try {
+
       await addDoc(collection(db, collectionName, collectionId, "messages"), {
         _id,
         createdAt,
         text,
-        user,
+        user
       });
 
-      if (isNew && route.params.collectionName === "private-chats") {
-        await setDoc(doc(db, collectionName, collectionId), {
-          members: collectionId.split("&"),
-        });
-      }
+      await setDoc(doc(db, collectionName, collectionId), {
+        members: collectionId.split("&"),
+        latestMsg: { createdAt, text, user }
+      });
+
     } catch (err) {
       console.log(err);
     }
