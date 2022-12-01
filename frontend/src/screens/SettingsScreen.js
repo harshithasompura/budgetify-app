@@ -1,36 +1,20 @@
-import React, { useCallback } from "react";
-import {
-  FlatList,
-  StyleSheet,
-  TouchableOpacity,
-  Text,
-  View,
-  Pressable,
-  Image,
-  Platform,
-  Alert,
-  Linking,
-} from "react-native";
+import { FlatList, StyleSheet, TouchableOpacity, Text, View, Pressable, Image, Alert, Linking,} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { AntDesign } from "@expo/vector-icons";
-import * as ImagePicker from "expo-image-picker";
 import { useEffect, useState } from "react";
 import { auth } from "../../FirebaseApp";
 import { db } from "../../FirebaseApp";
 import { CommonActions } from "@react-navigation/native";
 import { signOut, onAuthStateChanged } from "firebase/auth";
-import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
-import { doc, updateDoc, getDoc, deleteDoc } from "firebase/firestore";
-import { async } from "@firebase/util";
+import { doc, getDoc, deleteDoc } from "firebase/firestore";
 
 const SettingsScreen = ({ navigation, route }) => {
   const [loggedInUser, setLoggedInUser] = useState("");
+  const [userName, setUserName] = useState();
   const [image, setImage] = useState(null);
   const termsURL = "https://budgetify-landing.vercel.app/terms-and-conditions";
   const privacyURL = "https://budgetify-landing.vercel.app/privacy-policy";
 
   useEffect(() => {
-    checkForCameraRollPermission();
     const listener = onAuthStateChanged(auth, async (userFromFirebaseAuth) => {
       if (userFromFirebaseAuth) {
         // console.log(userFromFirebaseAuth.email);
@@ -38,7 +22,8 @@ const SettingsScreen = ({ navigation, route }) => {
         const docRef = doc(db, "users", userFromFirebaseAuth.email);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
-          setImage(docSnap.data().icon);
+          setImage(docSnap.data().icon); 
+          setUserName(docSnap.data().username);
         }
       } else {
         setLoggedInUser(null);
@@ -102,8 +87,7 @@ const SettingsScreen = ({ navigation, route }) => {
                     Alert.alert(
                       "Delete Account",
                       "Deletion Successful. Signing Out!",
-                      [
-                        {
+                      [{
                           text: "Ok",
                           onPress: async () => {
                             console.log("Ok Pressed");
@@ -114,70 +98,13 @@ const SettingsScreen = ({ navigation, route }) => {
                               CommonActions.reset({
                                 index: 0,
                                 routes: [{ name: "Login" }],
-                              })
-                            );
-                          },
-                        },
-                      ]
-                    );
-                  } else {
+                              }));},},]);} else {
                     console.log("User Not Found");
-                  }
-                })
+                  }})
                 .catch((error) => console.log(error));
-            }
-          });
+            }});
           return listener;
-        },
-      },
-    ]);
-  };
-
-  const uploadImageToCloud = async (imageUri, userId) => {
-    const response = await fetch(imageUri);
-    const file = await response.blob();
-    const storage = getStorage();
-    const filename = userId;
-    const imgRef = ref(storage, `userAvatars/${filename}`);
-
-    try {
-      await uploadBytes(imgRef, file);
-      const avatarUrl = await getDownloadURL(imgRef);
-
-      const userRef = doc(db, "users", userId);
-      await updateDoc(userRef, {
-        icon: avatarUrl,
-      });
-
-      alert("Updated Avatar");
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  const addImage = async () => {
-    let _image = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      quality: 0,
-    });
-    console.log(JSON.stringify(_image));
-    if (!_image.cancelled) {
-      setImage(_image.uri);
-      uploadImageToCloud(_image.uri, loggedInUser);
-    }
-  };
-
-  const checkForCameraRollPermission = async () => {
-    const { status } = await ImagePicker.getMediaLibraryPermissionsAsync();
-    if (status !== "granted") {
-      alert(
-        "Please grant camera roll permissions inside your system's settings"
-      );
-    } else {
-      console.log("Media Permissions are granted");
-    }
-  };
+        },},]);};  
 
   const OpenURLButton = async (url) => {
     // console.log(`Opening ${url}`)
@@ -221,16 +148,10 @@ const SettingsScreen = ({ navigation, route }) => {
               source={{ uri: image }}
               style={{ width: 200, height: 200 }}
             />
-          )}
-          <View style={styles.uploadBtnContainer}>
-            <TouchableOpacity onPress={addImage} style={styles.uploadBtn}>
-              <Text>{image ? "Edit" : "Upload"} Image</Text>
-              <AntDesign name="camera" size={20} color="black" />
-            </TouchableOpacity>
-          </View>
+          )} 
         </View>
         <View style={{ flexDirection: "column" }}>
-          {/* <Text style={styles.userEmail}>{loggedInUser}</Text> */}
+          <Text style={styles.userEmail}>{userName}</Text>
           <Pressable style={styles.editPressable} onPress={editProfile}>
             <Ionicons style={styles.editIcon} name="create-outline" size={25} />
             <Text style={styles.editText}>Edit Profile</Text>
@@ -302,14 +223,16 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
   },
   uploadBtnContainer: {
-    opacity: 0.7,
+    opacity: 0.8,
     position: "absolute",
     alignSelf: "center",
-    right: 0,
-    bottom: 0,
+    justifyContent:"center",
+    right: 130,
+    bottom: 70,
     backgroundColor: "lightgrey",
-    width: "100%",
-    height: "40%",
+    width: "13%",
+    height: "30%",
+    borderRadius: 40,
   },
   uploadBtn: {
     display: "flex",
