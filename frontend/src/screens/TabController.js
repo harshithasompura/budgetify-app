@@ -22,6 +22,8 @@ import EditProfileScreen from "./EditProfileScreen";
 import ChatScreen from "./ChatScreen";
 import ChatsListScreen from "./ChatsListScreen";
 import EditExpensesScreen from "./EditExpensesScreen";
+import PostDetailScreen from "./PostDetailScreen";
+
 // Vector Icons
 import Icon from "react-native-vector-icons/FontAwesome";
 
@@ -38,6 +40,7 @@ const SettingsStack = createNativeStackNavigator();
 const HomeStack = createNativeStackNavigator();
 const ExpensesStack = createNativeStackNavigator();
 const CommunityStack = createNativeStackNavigator();
+const MessagesStack = createNativeStackNavigator();
 
 // define screens included in the stack for Settings Tab
 const SettingsStackScreen = () => {
@@ -120,13 +123,13 @@ const ExpensesStackScreen = () => {
       {/* add those screens that should be navigated inside Expenses Tab in here */}
       <ExpensesStack.Group screenOptions={{ presentation: "modal" }}>
         <ExpensesStack.Screen
-          options={{
-            headerTitle: "",
-            headerStyle: { backgroundColor: "rgba(219, 219, 219,0.9)" },
-          }}
-          name="Add Expense"
-          component={InputExpensesScreen}
-        />
+            options={{
+              headerTitle: "",
+              headerStyle: { backgroundColor: "rgba(219, 219, 219,0.9)" },
+            }}
+            name="Add Expense"
+            component={InputExpensesScreen}
+          />
       </ExpensesStack.Group>
       <ExpensesStack.Screen
         options={{
@@ -186,31 +189,46 @@ const CommunityStackScreen = () => {
         options={{
           headerShown: false,
         }}
-        name="Chats List"
-        component={ChatsListScreen}
+        name="Post Detail"
+        component={PostDetailScreen}
       ></CommunityStack.Screen>
 
-      <CommunityStack.Screen
+    </CommunityStack.Navigator>
+  );
+};
+
+const MessagesStackScreen = () => {
+  return (
+    <MessagesStack.Navigator>
+      <MessagesStack.Screen
+        options={{
+          headerShown: false,
+        }}
+        name="Chats List"
+        component={ChatsListScreen}
+      ></MessagesStack.Screen>
+
+      <MessagesStack.Screen
         options={{
           headerShown: false,
         }}
         name="Chat Room"
         component={ChatScreen}
-      ></CommunityStack.Screen>
-    </CommunityStack.Navigator>
+      ></MessagesStack.Screen>
+    </MessagesStack.Navigator>
   );
-};
+}
 
 const TabController = () => {
   const Tab = createBottomTabNavigator();
 
   const getTabBarVisibility = (route) => {
     const routeName = getFocusedRouteNameFromRoute(route) ?? "";
-    return routeName === "Chats List" ||
-      routeName === "Chat Room" ||
-      routeName === "Camera" ||
-      routeName === "Edit Expenses" ||
-      routeName === "Add Expense"
+    return routeName === "Chat Room" ||
+           routeName === "Camera" ||
+           routeName === "Edit Expenses" ||
+           routeName === "Add Expense"
+          //  routeName === "Post Detail"
       ? "none"
       : "flex";
   };
@@ -251,6 +269,17 @@ const TabController = () => {
           tabBarStyle: { display: getTabBarVisibility(route) },
           tabBarIcon: ({ color, size }) => (
             <Icon name="star" color={color} size={size} />
+          ),
+          headerShown: false,
+        })}
+      />
+      <Tab.Screen
+        name="Messages"
+        component={MessagesStackScreen}
+        options={({ route }) => ({
+          tabBarStyle: { display: getTabBarVisibility(route) },
+          tabBarIcon: ({ color, size }) => (
+            <Icon name="commenting-o" color={color} size={size} />
           ),
           headerShown: false,
         })}

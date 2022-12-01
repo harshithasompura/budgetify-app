@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import * as FileSystem from "expo-file-system";
+import * as FileSystem from 'expo-file-system';
 // Vector Icons
 import Icon from "react-native-vector-icons/FontAwesome";
 import {
@@ -16,9 +16,10 @@ import {
 import { Camera } from "expo-camera";
 import * as MediaLibrary from "expo-media-library";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
-import { manipulateAsync, FlipType, SaveFormat } from "expo-image-manipulator";
+import { manipulateAsync, FlipType, SaveFormat } from 'expo-image-manipulator';
 
 const CameraScreen = ({ navigation, route }) => {
+
   // - State Variables
   //1. Camera Permissions
   const [isCameraVisible, setCameraVisible] = useState(false);
@@ -32,8 +33,8 @@ const CameraScreen = ({ navigation, route }) => {
 
   const [loading, setLoading] = useState(false);
 
-  const localBase = "http://localhost:3000/binary-upload/";
-  const remoteBase = "https://node-scan.onrender.com/binary-upload/";
+  const localBase = 'http://localhost:3000/binary-upload/';
+  const remoteBase = 'https://node-scan.onrender.com/binary-upload/';
 
   // - Event Listeners
   const onCameraButtonPressed = () => {
@@ -66,12 +67,13 @@ const CameraScreen = ({ navigation, route }) => {
     if (cameraRef) {
       try {
         const data = await cameraRef.current.takePictureAsync({
-          quality: 0,
+          quality: 0
         });
 
-        const manipResult = await manipulateAsync(data.uri, [], {
-          compress: 0,
-        });
+        const manipResult = await manipulateAsync(
+          data.uri, [],
+          { compress: 0 }
+        );
 
         console.log(manipResult);
         setImage(manipResult.uri);
@@ -87,7 +89,7 @@ const CameraScreen = ({ navigation, route }) => {
     setTimeout(() => {
       setLoading(false);
       navigation.navigate("Edit Expenses", {
-        imageUri: image,
+        imageUri: image
       });
     }, 3000);
   };
@@ -97,25 +99,25 @@ const CameraScreen = ({ navigation, route }) => {
     setLoading(true);
     for (let i = 1; i <= 4; i++) {
       let jsonObject = await scanReceipt(image, i);
-      if (jsonObject["success"]) {
+      if (jsonObject['success']) { 
         //data parsed from image
         console.log(jsonObject);
 
-        const receipt = jsonObject["receipts"][0];
+        const receipt = jsonObject['receipts'][0]
         setLoading(false);
         navigation.navigate("Edit Expenses", {
           imageUri: image,
-          merchant: receipt["merchant_name"],
-          total: receipt["total"],
-          receiptDate: receipt["date"],
+          merchant: receipt['merchant_name'],
+          total: receipt['total'],
+          receiptDate: receipt['date']
         });
         return;
       }
-      console.log("endpoint " + i + "failed...");
+      console.log('endpoint ' + i + 'failed...');
     }
-    console.log("All endpoints failed!");
+    console.log('All endpoints failed!');
     setLoading(false);
-  };
+  }
 
   // - Lifecycle Hooks
   useEffect(() => {
@@ -135,39 +137,30 @@ const CameraScreen = ({ navigation, route }) => {
   return (
     <SafeAreaView style={styles.container}>
       {image !== null ? (
-        <View style={{ backgroundColor: "green", flex: 1 }}>
-          <Image source={{ uri: image }} style={{ flex: 1 }}></Image>
-          {loading && (
-            <View style={styles.indicator}>
-              <ActivityIndicator
-                size="large"
-                color="#000000"
-                animating={loading}
-                style={{ alignSelf: "center", marginLeft: 3, marginTop: 2 }}
-              />
-            </View>
-          )}
-          {!loading && (
-            <Pressable
-              style={styles.cancelButton}
-              onPress={() => {
-                setImage(null);
-              }}
-            >
-              {/* <Text style={{color:"#C5F277"}}>Save</Text> */}
-              <Icon name="times-circle" color={"#C5F277"} size={30} />
-            </Pressable>
-          )}
+        <View style={{ backgroundColor: 'green', flex: 1}}>
+          <Image source={{ uri: image }} style={{ flex: 1 }} ></Image>
+          { loading && <View style={styles.indicator}>
+            <ActivityIndicator  size="large" 
+                                color="#000000" 
+                                animating={loading}
+                                style={{alignSelf: 'center', marginLeft: 3, marginTop: 2}}
+            />
+          </View> }
+          { !loading && <Pressable style={styles.cancelButton} onPress={() => {
+              setImage(null);
+          }}> 
+            {/* <Text style={{color:"#C5F277"}}>Save</Text> */}
+            <Icon name="times-circle" color={"#C5F277"} size={30} />
+          </Pressable> }
 
-          {!loading && (
-            <Pressable style={styles.confirmButton} onPress={startLoading}>
-              {/* <Text style={{color:"#C5F277"}}>Save</Text> */}
-              <Icon name="check" color={"#C5F277"} size={30} />
-            </Pressable>
-          )}
+          { !loading && <Pressable style={styles.confirmButton} onPress={startLoading}>
+            {/* <Text style={{color:"#C5F277"}}>Save</Text> */}
+            <Icon name="check" color={"#C5F277"} size={30} />
+          </Pressable> }
         </View>
+        
       ) : (
-        <Camera style={styles.actualCamera} type={type} ref={cameraRef}>
+        <Camera style={styles.actualCamera} type={type} ref={cameraRef} >
           {/* <Text>[CAPTURE]</Text> */}
           <Pressable style={styles.saveButton} onPress={takePicture}>
             {/* <Text style={{color:"#C5F277"}}>Save</Text> */}
