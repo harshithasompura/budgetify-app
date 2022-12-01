@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect } from "@react-navigation/native";
 import {
   StyleSheet,
   TouchableOpacity,
@@ -8,12 +8,15 @@ import {
   FlatList,
   Image,
   Pressable,
-  RefreshControl
+  RefreshControl,
 } from "react-native";
-import { EvilIcons, AntDesign, Ionicons } from '@expo/vector-icons';
+import { EvilIcons, AntDesign, Ionicons } from "@expo/vector-icons";
 import Icon from "react-native-vector-icons/FontAwesome";
 import Post from "../components/Post.js";
-import BottomSheet, { BottomSheetView, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
+import BottomSheet, {
+  BottomSheetView,
+  BottomSheetBackdrop,
+} from "@gorhom/bottom-sheet";
 import { db } from "../../FirebaseApp";
 import { auth } from "../../FirebaseApp";
 import {
@@ -23,7 +26,7 @@ import {
   getDocs,
   doc,
   getDoc,
-  Timestamp
+  Timestamp,
 } from "firebase/firestore";
 import { FloatingAction } from "react-native-floating-action";
 import { calculateDateDiff } from "../../funcHelper.js";
@@ -59,13 +62,15 @@ const CommunityScreen = ({ navigation, route }) => {
   };
 
   const fetchPosts = async () => {
-    const postQuery = query(collection(db, "post"), orderBy("createdAt", "desc"));
+    const postQuery = query(
+      collection(db, "post"),
+      orderBy("createdAt", "desc")
+    );
     const querySnapshot = await getDocs(postQuery);
     const postsPromises = querySnapshot.docs.map(async (post) => {
       const userRef = doc(db, "users", post.data().userEmail);
       const user = await getDoc(userRef);
       if (user.exists()) {
-
         let createdAt;
         if (post.data().createdAt) {
           createdAt = calculateDateDiff(
@@ -73,7 +78,7 @@ const CommunityScreen = ({ navigation, route }) => {
             Timestamp.now().toDate()
           );
         }
-        
+
         return {
           userAvatar: user.data().icon,
           username: user.data().name,
@@ -83,83 +88,109 @@ const CommunityScreen = ({ navigation, route }) => {
           postID: post.id,
           commentsNum: post.data().comments.length,
           likesNum: post.data().likes.length,
-          didCurrUserLike: 
-            post.data().likes.includes(auth.currentUser.email)
-        }
+          didCurrUserLike: post.data().likes.includes(auth.currentUser.email),
+        };
       } else {
         console.log("No such document!");
       }
     });
     const postsFromFirebase = await Promise.all(postsPromises);
     setPostsList(postsFromFirebase);
-  }
+  };
 
   const renderItem = ({ item }) => {
-
     return (
       <Pressable
         style={[styles.postContainer]}
         onPress={() => {
-          navigation.navigate("Post Detail", {item: item});
+          navigation.navigate("Post Detail", { item: item });
         }}
       >
         <View style={styles.postHeader}>
           {/* Post header */}
           <Image style={styles.userAvatar} source={{ url: item.userAvatar }} />
           <View>
-            <Text style={[{marginLeft: 8, color: 'black', fontSize: 20 }]}>
+            <Text
+              style={[
+                {
+                  marginLeft: 8,
+                  color: "black",
+                  fontSize: 16,
+                  fontFamily: "Montserrat_600SemiBold",
+                },
+              ]}
+            >
               {item.username}
             </Text>
-            <Text style={[{marginLeft: 8, color: '#BCBCBC', fontSize: 16}]}>{item.createdAt}</Text>
+            <Text
+              style={[
+                {
+                  marginLeft: 8,
+                  color: "#BCBCBC",
+                  fontSize: 16,
+                  fontFamily: "Montserrat_600SemiBold",
+                },
+              ]}
+            >
+              {item.createdAt}
+            </Text>
           </View>
         </View>
         <Text
           style={[
             {
               color: "black",
-              fontSize: 20,
+              fontSize: 16,
               marginHorizontal: 13,
-              paddingBottom: 10,
-              fontWeight: 'bold'
+              paddingBottom: 8,
+              fontWeight: "bold",
+              fontFamily: "Montserrat_700Bold",
             },
           ]}
           numberOfLines={2}
         >
           {item.title}
         </Text>
-        <View style={
-              { backgroundColor: '#FFFFFF',
-                marginHorizontal: 5,
-                height: 82,
-                borderRadius: 10,
-                opacity: 0.9
-              }}>
+        <View
+          style={{
+            backgroundColor: "#FFFFFF",
+            marginHorizontal: 5,
+            height: 82,
+            borderRadius: 10,
+            opacity: 0.9,
+          }}
+        >
           <Text
             style={[
               {
                 color: "black",
-                fontSize: 20,
+                fontSize: 16,
                 marginHorizontal: 8,
-                height: 82,
-                lineHeight: 22,
+                fontFamily: "Montserrat_400Regular",
               },
             ]}
             numberOfLines={3}
-          > 
+          >
             {item.description}
           </Text>
         </View>
         <View style={styles.likeCommentContainer}>
           <View style={styles.likeContainer}>
-            <AntDesign 
-              style={styles.likeComment} 
-              name={item.didCurrUserLike ? 'like1' : 'like2'}
-              size={25} 
-              color="#BCBCBC" />
+            <AntDesign
+              style={styles.likeComment}
+              name={item.didCurrUserLike ? "like1" : "like2"}
+              size={24}
+              color="#B17BFF"
+            />
             <Text style={styles.likeCommentNum}>{item.likesNum}</Text>
           </View>
           <View style={styles.commentContainer}>
-            <AntDesign style={styles.likeComment} name="message1" size={25} color="#BCBCBC" />
+            <AntDesign
+              style={styles.likeComment}
+              name="message1"
+              size={24}
+              color="#B17BFF"
+            />
             <Text style={styles.likeCommentNum}>{item.commentsNum}</Text>
           </View>
         </View>
@@ -175,22 +206,20 @@ const CommunityScreen = ({ navigation, route }) => {
       } catch (err) {
         console.log(err);
       }
-    }, []) 
+    }, [])
   );
 
   const actions = [
     {
-      icon: <Icon name="plus" color={"black"} size={30} style={{height: 28}} />,
-      name: "Post"
-    }
+      icon: (
+        <Icon name="plus" color={"#001c00"} size={20} style={{ height: 20 }} />
+      ),
+      name: "Post",
+    },
   ];
 
   return (
-    <View
-      style={[
-        styles.container
-      ]}
-    >
+    <View style={[styles.container]}>
       <View
         style={{
           flexDirection: "row",
@@ -204,33 +233,34 @@ const CommunityScreen = ({ navigation, route }) => {
       >
         {/* Header: Title + Chat button/icon */}
         <Text
-          style={[styles.screenHeading, {fontWeight: 'bold'}]}
+          style={[
+            styles.screenHeading,
+            { fontWeight: "bold", fontFamily: "Montserrat_600SemiBold" },
+          ]}
         >
-          Post Feeds
+          Community Feed
         </Text>
       </View>
-      <View style={[styles.postFeed, {backgroundColor: '#62D3B4'}]}>
+      <View style={[styles.postFeed, { backgroundColor: "#F6F6F6" }]}>
         {/* Post feed should go here */}
-        <FlatList data={postsList} 
-                  renderItem={renderItem} 
-                  onScrollEndDrag={() => setPostBtnVisible(true)}
-                  onScrollBeginDrag={() => setPostBtnVisible(false)}
-                  showsVerticalScrollIndicator={false}
-                  ItemSeparatorComponent={() => <View style={{height: 10}} />}
-                  style={{ borderRadius: 25, margin: 10, marginTop: 0}}
-                  refreshControl={
-                    <RefreshControl
-                      refreshing={refreshing}
-                      onRefresh={fetchPosts}
-                    />
-                  }
-                  />
-        <View style={{position: 'absolute', right: -10, bottom: -10}}>
+        <FlatList
+          data={postsList}
+          renderItem={renderItem}
+          onScrollEndDrag={() => setPostBtnVisible(true)}
+          onScrollBeginDrag={() => setPostBtnVisible(false)}
+          showsVerticalScrollIndicator={false}
+          ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
+          style={{ marginTop: 0 }}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={fetchPosts} />
+          }
+        />
+        <View style={{ position: "absolute", right: -10, bottom: -10 }}>
           <FloatingAction
             visible={postBtnVisible}
             actions={actions}
             overrideWithAction={true}
-            color={'#C5F277'}
+            color={"#C5F277"}
             onPressItem={handleOpenPress}
           />
         </View>
@@ -242,7 +272,7 @@ const CommunityScreen = ({ navigation, route }) => {
         snapPoints={snapPoints}
         enablePanDownToClose={true}
         backdropComponent={renderBackdrop}
-        backgroundStyle={{backgroundColor: '#62D3B4'}}
+        backgroundStyle={{ backgroundColor: "#62D3B4" }}
       >
         <BottomSheetView>
           <Post
@@ -255,7 +285,6 @@ const CommunityScreen = ({ navigation, route }) => {
           />
         </BottomSheetView>
       </BottomSheet>
-
     </View>
   );
 };
@@ -263,83 +292,70 @@ const CommunityScreen = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#62D3B4",
+    backgroundColor: "#fff",
   },
   screenHeading: {
-    fontSize: 30,
-    fontWeight: "400",
+    marginVertical: 10,
+    fontSize: 20,
   },
   icon: {
     padding: 3,
   },
-  plusIcon: {
-    backgroundColor: "#001c00",
-    width: 50,
-    height: 50,
-    // marginHorizontal: 20,
-    borderRadius: 50,
-    alignItems: "center",
-    justifyContent: "center",
-    // marginVertical: 20,
-    alignSelf: "flex-end",
-  },
   postFeed: {
     flex: 2,
     height: "100%",
+    alignSelf: "stretch",
+    width: "100%",
   },
   postContainer: {
-    borderRadius: 25,
-    backgroundColor: '#FFFFFF',
-    height: 235,
-
-    // shadowOffset:{width:0, height:1},  
-    // shadowColor:'#171717',  
-    // shadowOpacity:0.1,  
-    // shadowRadius:1,  
+    backgroundColor: "#FFFFFF",
+    height: 200,
+    paddingHorizontal: 10,
+    // shadowOffset:{width:0, height:1},
+    // shadowColor:'#171717',
+    // shadowOpacity:0.1,
+    // shadowRadius:1,
   },
   postHeader: {
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 10,
-    position: 'relative',
+    position: "relative",
   },
   userAvatar: {
     height: 45,
     width: 45,
     borderRadius: 40,
     marginLeft: 8,
-    marginTop: 8
+    marginTop: 8,
   },
-
 
   likeCommentContainer: {
-    flexDirection: 'row',
+    paddingHorizontal: 10,
+    flexDirection: "row",
     // backgroundColor: 'green',
-    position: 'absolute',
+    position: "absolute",
     bottom: 10,
-    left: 15
+    left: 15,
   },
   likeContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     // backgroundColor: 'yellow',
     marginRight: 10,
-    
   },
   commentContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     // backgroundColor: 'blue',
-    position: 'absolute',
-    left: 70
+    position: "absolute",
+    left: 70,
   },
-  likeComment: {
-
-  },
+  likeComment: {},
   likeCommentNum: {
-    fontSize: 20,
+    fontSize: 18,
     lineHeight: 28,
-    color: '#BCBCBC',
-    marginLeft: 5
-  }
+    color: "#8E7CF7",
+    marginLeft: 5,
+  },
 });
 
 export default CommunityScreen;

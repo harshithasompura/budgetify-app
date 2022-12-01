@@ -123,13 +123,13 @@ const ExpensesStackScreen = () => {
       {/* add those screens that should be navigated inside Expenses Tab in here */}
       <ExpensesStack.Group screenOptions={{ presentation: "modal" }}>
         <ExpensesStack.Screen
-            options={{
-              headerTitle: "",
-              headerStyle: { backgroundColor: "rgba(219, 219, 219,0.9)" },
-            }}
-            name="Add Expense"
-            component={InputExpensesScreen}
-          />
+          options={{
+            headerTitle: "",
+            headerStyle: { backgroundColor: "rgba(219, 219, 219,0.9)" },
+          }}
+          name="Add Expense"
+          component={InputExpensesScreen}
+        />
       </ExpensesStack.Group>
       <ExpensesStack.Screen
         options={{
@@ -192,7 +192,6 @@ const CommunityStackScreen = () => {
         name="Post Detail"
         component={PostDetailScreen}
       ></CommunityStack.Screen>
-
     </CommunityStack.Navigator>
   );
 };
@@ -217,7 +216,7 @@ const MessagesStackScreen = () => {
       ></MessagesStack.Screen>
     </MessagesStack.Navigator>
   );
-}
+};
 
 const TabController = () => {
   const Tab = createBottomTabNavigator();
@@ -225,11 +224,11 @@ const TabController = () => {
   const getTabBarVisibility = (route) => {
     const routeName = getFocusedRouteNameFromRoute(route) ?? "";
     return routeName === "Chat Room" ||
-           routeName === "Camera" ||
-           routeName === "Edit Expenses" ||
-           routeName === "Add Expense"
-          //  routeName === "Post Detail"
-      ? "none"
+      routeName === "Camera" ||
+      routeName === "Edit Expenses" ||
+      routeName === "Add Expense"
+      ? //  routeName === "Post Detail"
+        "none"
       : "flex";
   };
 
