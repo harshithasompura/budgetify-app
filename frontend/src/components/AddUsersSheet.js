@@ -62,12 +62,10 @@ const AddUsersSheet = (props) => {
       activeOpacity={0.8}
       onPress={() => {
         let collectionId = item.id;
-        let collectionName = item.isGroup ? "group-chats" : "private-chats";
-        if (!item.isGroup) {
-          const uid1 = uid;
-          const uid2 = item.id;
-          collectionId = uid1 < uid2 ? uid1 + "&" + uid2 : uid2 + "&" + uid1;
-        }
+        let collectionName = "private-chats";
+        const uid1 = uid;
+        const uid2 = item.id;
+        collectionId = uid1 < uid2 ? uid1 + "&" + uid2 : uid2 + "&" + uid1;
         props.navigation.navigate("Chat Room", {
           collectionId: collectionId,
           collectionName: collectionName,
@@ -85,9 +83,14 @@ const AddUsersSheet = (props) => {
           {item.icon === "" && (
             <Image style={[styles.avatar]} source={{ url: blankAvatarUrl }} />
           )}
-          <Text style={styles.text}> {item.name} </Text>
+          <Text style={styles.text}>{item.name}</Text>
         </View>
-        <FontAwesome name="angle-right" size={30} color="black" />
+        <FontAwesome
+          name="angle-right"
+          size={30}
+          color="white"
+          style={{ marginRight: 10 }}
+        />
       </View>
     </TouchableOpacity>
   );
@@ -99,15 +102,26 @@ const AddUsersSheet = (props) => {
         <BottomSheetTextInput
           style={styles.bsSearchBar}
           placeholder="Type a name"
-          placeholderTextColor="#C5F277"
+          placeholderTextColor="grey"
           onChangeText={setSearchTxt}
-          color="#C5F277"
+          color="black"
         />
         <Pressable style={styles.bsSearchBtn}>
           <Ionicons name="search" size={25} color="black" />
         </Pressable>
       </View>
-      <FlatList data={searchResults} renderItem={renderItem} />
+      <FlatList
+        data={searchResults}
+        renderItem={renderItem}
+        showsVerticalScrollIndicator={false}
+        ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
+        style={{
+          borderRadius: 20,
+          margin: 10,
+          height: 360,
+          backgroundColor: "#62D3B4",
+        }}
+      />
     </BottomSheetView>
   );
 };
@@ -115,7 +129,8 @@ const AddUsersSheet = (props) => {
 const styles = StyleSheet.create({
   bsTitle: {
     // backgroundColor: 'green',
-    fontSize: 30,
+    color: "white",
+    fontSize: 24,
     padding: 2,
     marginLeft: 18,
     fontWeight: "bold",
@@ -123,7 +138,8 @@ const styles = StyleSheet.create({
   bsSearchBar: {
     flex: 0.87,
     paddingLeft: 15,
-    backgroundColor: "black",
+    paddingVertical: 8,
+    backgroundColor: "white",
     // width: '
     // marginRight: 10
     borderRadius: 50,
@@ -132,7 +148,7 @@ const styles = StyleSheet.create({
     // padding: 10,
     // paddingLeft: 0,
     // flex: 0.1,
-    backgroundColor: "#C5F277",
+    backgroundColor: "white",
     position: "absolute",
     right: 0,
     height: 30,
@@ -141,11 +157,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     margin: 5,
+    marginRight: 20,
   },
   bsSearchBarContainer: {
     flexDirection: "row",
-    backgroundColor: "black",
+    backgroundColor: "white",
     margin: 10,
+    marginBottom: 0,
     height: 40,
     position: "relative",
     borderRadius: 50,
@@ -156,18 +174,26 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 10,
     borderBottomColor: "#D6D6D6",
-    borderBottomWidth: 1,
+    // borderBottomWidth: 1,
     height: 75,
+    // backgroundColor: '#C5F277',
+    borderRadius: 20,
+    // marginHorizontal: 5
   },
   text: {
     // fontFamily: 'IBM Plex Mono',
     fontSize: 25,
-    padding: 15,
+    color: "white",
+    // padding: 15,
+    // backgroundColor: 'cyan',
+    // lineHeight: 30,
+    paddingVertical: 5,
     paddingLeft: 5,
+    marginLeft: 10,
   },
   avatar: {
-    height: 60,
-    width: 60,
+    height: 40,
+    width: 40,
     borderRadius: 40,
   },
   backArrow: {

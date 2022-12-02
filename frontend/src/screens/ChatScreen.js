@@ -71,9 +71,7 @@ const ChatScreen = ({ navigation, route }) => {
   }, []);
 
   const onSend = useCallback(async (messages = []) => {
-    let isNew;
     setMessages((previousMessages) => {
-      isNew = previousMessages.length === 0 ? true : false;
       return GiftedChat.append(previousMessages, messages);
     });
     const { _id, createdAt, text, user } = messages[0];
@@ -85,11 +83,10 @@ const ChatScreen = ({ navigation, route }) => {
         user,
       });
 
-      if (isNew && route.params.collectionName === "private-chats") {
-        await setDoc(doc(db, collectionName, collectionId), {
-          members: collectionId.split("&"),
-        });
-      }
+      await setDoc(doc(db, collectionName, collectionId), {
+        members: collectionId.split("&"),
+        latestMsg: { createdAt, text, user },
+      });
     } catch (err) {
       console.log(err);
     }
@@ -110,7 +107,7 @@ const ChatScreen = ({ navigation, route }) => {
             navigation.goBack();
           }}
         >
-          <Ionicons name="arrow-back-sharp" size={40} color="#C5F277" />
+          <Ionicons name="arrow-back-sharp" size={40} color="white" />
         </Pressable>
         <Image style={styles.avatar} source={{ url: objectIcon }} />
         <Text style={styles.title}>{objectName}</Text>
@@ -132,12 +129,12 @@ const ChatScreen = ({ navigation, route }) => {
               {...props}
               textStyle={{
                 right: {
-                  color: "#C5F277",
+                  color: "white",
                 },
               }}
               wrapperStyle={{
                 right: {
-                  backgroundColor: "black",
+                  backgroundColor: "#62D2B3",
                 },
                 left: {
                   backgroundColor: "#C5F277",
@@ -168,7 +165,7 @@ const styles = StyleSheet.create({
   },
   text: {
     // fontFamily: 'IBM Plex Mono',
-    fontSize: 25,
+    fontSize: 20,
     padding: 15,
     paddingLeft: 5,
   },
@@ -194,7 +191,7 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
     paddingLeft: 5,
     fontWeight: "bold",
-    color: "#C5F277",
+    color: "white",
   },
   tabView: {
     margin: 10,
@@ -203,7 +200,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignContent: "center",
     padding: 5,
-    backgroundColor: "black",
+    backgroundColor: "#62D2B3",
     // borderRadius: 60
   },
 });

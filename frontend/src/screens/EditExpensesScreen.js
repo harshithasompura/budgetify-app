@@ -154,15 +154,16 @@ const EditExpensesScreen = ({ navigation, route }) => {
             display={"spinner"}
             themeVariant="dark"
             style={{ height: 90 }}
-            textColor="#C5F277"
+            textColor="white"
           />
           <Text style={[styles.inputText, { marginTop: 0 }]}>Receipt Type</Text>
           <PickerIOS
             style={{ height: 90 }}
             itemStyle={{
               height: 110,
-              color: "#C5F277",
-              shadowOpacity: 0.5,
+              color: "white",
+              fontFamily: "Montserrat_700Bold",
+              shadowOpacity: 0.2,
               shadowColor: "white",
             }}
             selectedValue={selectedType}
@@ -236,11 +237,12 @@ const styles = StyleSheet.create({
   },
   title: {
     // backgroundColor: 'green',
-    fontSize: 32,
+    fontSize: 22,
     marginBottom: 0,
-    margin: 15,
+    margin: 20,
     marginLeft: 0,
     fontWeight: "bold",
+    fontFamily: "Montserrat_700Bold",
   },
   tabView: {
     margin: 10,
@@ -253,7 +255,7 @@ const styles = StyleSheet.create({
   },
   receiptSheet: {
     marginTop: 10,
-    width: 350,
+    width: 380,
     height: 90,
     alignSelf: "center",
     borderRadius: 20,
@@ -262,7 +264,7 @@ const styles = StyleSheet.create({
     backgroundColor: "black",
     borderRadius: 20,
     height: 530,
-    width: 350,
+    width: 380,
     alignSelf: "center",
     marginTop: 15,
   },
@@ -278,8 +280,9 @@ const styles = StyleSheet.create({
   inputText: {
     margin: 15,
     marginBottom: 0,
-    color: "#C5F277",
-    fontSize: 20,
+    color: "white",
+    fontSize: 16,
+    fontFamily: "Montserrat_600SemiBold",
     padding: 5,
   },
   receiptDate: {
@@ -288,12 +291,17 @@ const styles = StyleSheet.create({
   confirmBtn: {
     backgroundColor: "#C5F277",
     height: 40,
-    width: 100,
     justifyContent: "center",
     alignItems: "center",
     alignSelf: "center",
     borderRadius: 10,
     margin: 12,
+    marginTop: 20,
+    shadowColor: "black",
+    shadowOffset: { width: -2, height: 3 },
+    shadowOpacity: 0.16,
+    shadowRadius: 4,
+    paddingHorizontal: 30,
   },
   confirmTxt: {
     fontSize: 20,
