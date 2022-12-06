@@ -1,5 +1,12 @@
 // Home Screen of our app - Tabs Go here!
-import {StyleSheet, Text, SafeAreaView, TextInput, View, Pressable} from "react-native";
+import {
+  StyleSheet,
+  Text,
+  SafeAreaView,
+  TextInput,
+  View,
+  Pressable,
+} from "react-native";
 // Navigation imports
 import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -42,20 +49,19 @@ const SettingsStackScreen = () => {
       <SettingsStack.Screen
         options={{
           headerShown: false,
-          
         }}
         name="Your Settings"
         component={SettingsScreen}
       ></SettingsStack.Screen>
       <SettingsStack.Screen
-      options={{
-        headerTintColor: "#B17BFF",
-        headerTitle: "",
-        headerShadowVisible: false, // applied here
-        headerStyle: {
-          backgroundColor: "#fff",
-        },
-      }}
+        options={{
+          headerTintColor: "#B17BFF",
+          headerTitle: "",
+          headerShadowVisible: false, // applied here
+          headerStyle: {
+            backgroundColor: "#fff",
+          },
+        }}
         name="Edit Your Profile"
         component={EditProfileScreen}
       ></SettingsStack.Screen>
