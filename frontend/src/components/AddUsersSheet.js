@@ -38,7 +38,7 @@ const AddUsersSheet = (props) => {
       const usersFromFB = querySnapshot.docs.map((doc) => ({
         id: doc.id,
         icon: doc.data().icon,
-        name: doc.data().name,
+        name: doc.data().studentname,
       }));
       setUserList(usersFromFB);
     });

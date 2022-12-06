@@ -93,7 +93,7 @@ const ChatsListScreen = ({ navigation }) => {
 
             return {
               id: document.id,
-              name: docSnap.data().name,
+              name: docSnap.data().studentname,
               icon: docSnap.data().icon,
               latestMsg: {
                 text: document.data().latestMsg.text,
