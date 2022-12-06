@@ -66,48 +66,55 @@ const ChatsListScreen = ({ navigation }) => {
       return;
     }
 
-    const chatsQuery = query(
+    // const chatsQuery = query(
+    //   collection(db, "private-chats"),
+    //   where("members", "array-contains", uid)
+    // );
+
+    const chatsQueryLatestMsg = query(
       collection(db, "private-chats"),
-      where("members", "array-contains", uid)
+      orderBy("latestMsg", "desc")
     );
-
     //get related chatrooms and create listener for the chat list
-    const unsubscribeChats = onSnapshot(chatsQuery, async (querySnapshot) => {
-      const chatsPromises = querySnapshot.docs.map(async (document) => {
-        for (const member of document.data().members) {
-          if (uid !== member) {
-            const docRef = doc(db, "users", member);
-            const docSnap = await getDoc(docRef);
-            // console.log(document.id);
+    const unsubscribeChats = onSnapshot(
+      chatsQueryLatestMsg,
+      async (querySnapshot) => {
+        const chatsPromises = querySnapshot.docs.map(async (document) => {
+          for (const member of document.data().members) {
+            if (uid !== member) {
+              const docRef = doc(db, "users", member);
+              const docSnap = await getDoc(docRef);
+              // console.log(document.id);
 
-            const msgDate = document.data().latestMsg.createdAt.toDate();
-            const hours =
-              msgDate.getHours().length === 1
-                ? "0" + msgDate.getHours()
-                : msgDate.getHours();
-            const minutes =
-              msgDate.getMinutes().length === 1
-                ? "0" + msgDate.getMinutes()
-                : msgDate.getMinutes();
-            const createdAt = hours + ":" + minutes;
+              const msgDate = document.data().latestMsg.createdAt.toDate();
+              const hours =
+                msgDate.getHours().length === 1
+                  ? "0" + msgDate.getHours()
+                  : msgDate.getHours();
+              const minutes =
+                msgDate.getMinutes().length === 1
+                  ? "0" + msgDate.getMinutes()
+                  : msgDate.getMinutes();
+              const createdAt = hours + ":" + minutes;
 
-            return {
-              id: document.id,
-              name: docSnap.data().studentname,
-              icon: docSnap.data().icon,
-              latestMsg: {
-                text: document.data().latestMsg.text,
-                createdAt: createdAt,
-              },
-            };
+              return {
+                id: document.id,
+                name: docSnap.data().studentname,
+                icon: docSnap.data().icon,
+                latestMsg: {
+                  text: document.data().latestMsg.text,
+                  createdAt: createdAt,
+                },
+              };
+            }
           }
-        }
-      });
+        });
 
-      //wait until all promises resolved
-      const chatsFromFB = await Promise.all(chatsPromises);
-      setChatsList(chatsFromFB);
-    });
+        //wait until all promises resolved
+        const chatsFromFB = await Promise.all(chatsPromises);
+        setChatsList(chatsFromFB);
+      }
+    );
 
     return () => {
       unsubscribeChats();
