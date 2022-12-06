@@ -1,4 +1,13 @@
-import { StyleSheet, Text, SafeAreaView, TextInput, View, TouchableOpacity, Image, Alert} from "react-native";
+import {
+  StyleSheet,
+  Text,
+  SafeAreaView,
+  TextInput,
+  View,
+  TouchableOpacity,
+  Image,
+  Alert,
+} from "react-native";
 import React, { useState } from "react";
 import { useEffect } from "react";
 import { AntDesign } from "@expo/vector-icons";
@@ -18,27 +27,27 @@ const EditProfileScreen = ({ navigation }) => {
 
   useEffect(() => {
     checkForCameraRollPermission();
-    const listener = onAuthStateChanged(auth, async(userFromFirebaseAuth) => {
+    const listener = onAuthStateChanged(auth, async (userFromFirebaseAuth) => {
       if (userFromFirebaseAuth) {
         console.log(userFromFirebaseAuth.email);
         setLoggedInUser(userFromFirebaseAuth.email);
-        const userDoc = doc(db,"users", userFromFirebaseAuth.email) ;
+        const userDoc = doc(db, "users", userFromFirebaseAuth.email);
         console.log(userDoc);
         var docSnap = await getDoc(userDoc);
-        console.log("doc",docSnap.data());
+        console.log("doc", docSnap.data());
         //console.log("doc",docSnap.data().name);
         //console.log("doc",docSnap.data().studentid);
         setStudentName(docSnap.data().studentname);
-        setUserName(docSnap.data().username)
+        setUserName(docSnap.data().username);
         setStudentId(docSnap.data().studentid);
-        setImage(docSnap.data().icon);        
+        setImage(docSnap.data().icon);
       } else {
         console.log("No user signed in");
       }
     });
     return listener;
   }, []);
-  
+
   const updateUserInfo = async (newStudentName, newUserName, newStudentID) => {
     if (!loggedInUser) {
       console.log("no user logged in");
@@ -105,19 +114,18 @@ const EditProfileScreen = ({ navigation }) => {
     <SafeAreaView style={styles.container}>
       <Text style={styles.screenHeading}> Edit Profile </Text>
       <View style={{ flexDirection: "column" }}>
-      <View style={styles.imgContainer}>
+        <View style={styles.imgContainer}>
           {image && (
             <Image
               source={{ uri: image }}
               style={{ width: 100, height: 100 }}
             />
           )}
-          
         </View>
         <View style={styles.uploadBtnContainer}>
-            <TouchableOpacity onPress={addImage} style={styles.uploadBtn}>
-              <AntDesign name="camera" size={30} color="black" />
-            </TouchableOpacity>
+          <TouchableOpacity onPress={addImage} style={styles.uploadBtn}>
+            <AntDesign name="camera" size={30} color="black" />
+          </TouchableOpacity>
         </View>
       </View>
 
@@ -204,7 +212,7 @@ const styles = StyleSheet.create({
     opacity: 0.8,
     position: "absolute",
     alignSelf: "center",
-    justifyContent:"center",
+    justifyContent: "center",
     right: 130,
     bottom: 0,
     backgroundColor: "lightgrey",
@@ -229,7 +237,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
     margin: 10,
-    marginHorizontal:20,
+    marginHorizontal: 20,
     padding: 10,
     height: 45,
     fontSize: 15,
@@ -239,7 +247,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#C5F277",
     alignSelf: "stretch",
     padding: 16,
-    textAlign:"center",
+    textAlign: "center",
     alignItems: "center",
     marginBottom: 30,
     marginTop: 20,
