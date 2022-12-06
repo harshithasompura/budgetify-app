@@ -242,6 +242,7 @@ const TabController = () => {
 
   return (
     <Tab.Navigator
+      initialRouteName="Expenses"
       screenOptions={{
         tabBarActiveTintColor: "#62D2B3",
         tabBarInactiveTintColor: "gray",
