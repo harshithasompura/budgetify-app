@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Pressable } from "react-native";
+import { View, Text, StyleSheet, Pressable, Alert } from "react-native";
 import React, { useCallback, useRef, useState, useEffect } from "react";
 import BottomSheet, {
   BottomSheetView,
@@ -23,8 +23,13 @@ const Comment = (props) => {
   const [username, setUsername] = useState();
 
   const addComment = async () => {
+    if (comment === "" || comment.trim().length === 0) {
+      Alert.alert("Comment cannot be empty!");
+      return;
+    }
+
     const commentToBeAdded = {
-      comment: comment,
+      comment: comment.trim(),
       createdAt: Timestamp.now(),
       userEmail: auth.currentUser.email,
     };

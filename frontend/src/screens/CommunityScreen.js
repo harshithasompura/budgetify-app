@@ -309,7 +309,7 @@ const styles = StyleSheet.create({
   },
   postContainer: {
     backgroundColor: "#FFFFFF",
-    height: 200,
+    height: 220,
     paddingHorizontal: 10,
     // shadowOffset:{width:0, height:1},
     // shadowColor:'#171717',

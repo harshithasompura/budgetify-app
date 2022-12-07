@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Image,
   useWindowDimensions,
+  Alert,
 } from "react-native";
 import AddUsersSheet from "../components/AddUsersSheet";
 import { useState, useEffect, useRef, useCallback } from "react";
@@ -27,6 +28,7 @@ import {
   where,
   doc,
   getDoc,
+  deleteDoc,
   collectionGroup,
   getDocs,
 } from "firebase/firestore";
@@ -99,10 +101,10 @@ const ChatsListScreen = ({ navigation }) => {
                   : msgDate.getMinutes();
               const createdAt = hours + ":" + minutes;
 
-              const latestMsg = 
+              const latestMsg =
                 document.data().latestMsg.user._id === uid
-                ? "You: " + document.data().latestMsg.text
-                : document.data().latestMsg.text;
+                  ? "You: " + document.data().latestMsg.text
+                  : document.data().latestMsg.text;
 
               return {
                 id: document.id,
@@ -162,6 +164,18 @@ const ChatsListScreen = ({ navigation }) => {
           objectIcon: item.icon,
           objectName: item.name,
         });
+      }}
+      onLongPress={() => {
+        Alert.alert("Delete Chat", "Are you sure to delete this chat?", [
+          { text: "Cancel", style: "cancel" },
+          {
+            text: "Delete",
+            style: "destructive",
+            onPress: async () => {
+              await deleteDoc(doc(db, "private-chats", item.id));
+            },
+          },
+        ]);
       }}
     >
       <View style={styles.listItem}>
