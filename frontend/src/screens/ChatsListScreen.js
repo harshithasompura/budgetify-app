@@ -73,6 +73,7 @@ const ChatsListScreen = ({ navigation }) => {
 
     const chatsQueryLatestMsg = query(
       collection(db, "private-chats"),
+      where("members", "array-contains", uid),
       orderBy("latestMsg", "desc")
     );
     //get related chatrooms and create listener for the chat list
@@ -87,22 +88,28 @@ const ChatsListScreen = ({ navigation }) => {
               // console.log(document.id);
 
               const msgDate = document.data().latestMsg.createdAt.toDate();
+
               const hours =
-                msgDate.getHours().length === 1
+                msgDate.getHours() <= 10
                   ? "0" + msgDate.getHours()
                   : msgDate.getHours();
               const minutes =
-                msgDate.getMinutes().length === 1
+                msgDate.getMinutes() <= 10
                   ? "0" + msgDate.getMinutes()
                   : msgDate.getMinutes();
               const createdAt = hours + ":" + minutes;
+
+              const latestMsg = 
+                document.data().latestMsg.user._id === uid
+                ? "You: " + document.data().latestMsg.text
+                : document.data().latestMsg.text;
 
               return {
                 id: document.id,
                 name: docSnap.data().studentname,
                 icon: docSnap.data().icon,
                 latestMsg: {
-                  text: document.data().latestMsg.text,
+                  text: latestMsg,
                   createdAt: createdAt,
                 },
               };
