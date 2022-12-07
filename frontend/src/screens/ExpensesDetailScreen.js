@@ -100,7 +100,8 @@ const ExpensesDetailScreen = ({ route, navigation }) => {
           style: "cancel",
         },
         {
-          text: "OK",
+          text: "Delete",
+          style: "destructive",
           onPress: () => {
             console.log("OK Pressed");
             deleteExpense(date, expense);
