@@ -238,10 +238,11 @@ const PostDetailScreen = ({ navigation, route }) => {
                   fontSize: 15,
                   position: "absolute",
                   right: 15,
-                  bottom: -10,
+                  bottom: 1,
                   color: "#B17BFF",
                   fontWeight: "600",
                   fontFamily: "Montserrat_600SemiBold",
+                  // backgroundColor: 'green'
                 },
               ]}
             >
@@ -351,7 +352,7 @@ const styles = StyleSheet.create({
   },
   postContainer: {
     backgroundColor: "#FFFFFF",
-    height: 230,
+    // height: 260,
     padding: 10,
     marginBottom: 10,
     // shadowOffset:{width:0, height:1},
