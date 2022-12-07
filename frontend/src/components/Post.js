@@ -5,6 +5,7 @@ import {
   Image,
   TextInput,
   Pressable,
+  Alert
 } from "react-native";
 import React, { useCallback, useRef, useState, useEffect } from "react";
 import BottomSheet, {
@@ -38,11 +39,19 @@ const Post = (props) => {
 
   //Handlers
   const addPost = async () => {
+    if (comment === "" 
+        || title === "" 
+        || comment.trim().length === 0 
+        || title.trim().length === 0) {
+      Alert.alert("Title/Description cannot be empty!");
+      return;
+    }
+
     try {
       await addDoc(collection(db, "post"), {
         userEmail: userEmail,
-        title: title,
-        description: comment,
+        title: title.trim(),
+        description: comment.trim(),
         createdAt: Timestamp.now(),
         comments: [],
         likes: [],
@@ -91,7 +100,7 @@ const Post = (props) => {
       <View style={styles.descriptionInputBoxContainer}>
         <BottomSheetTextInput
           style={styles.descriptionInputBox}
-          placeholder="Enter a descrition"
+          placeholder="Enter a description"
           value={comment}
           onChangeText={setComment}
           onSubmitEditing
