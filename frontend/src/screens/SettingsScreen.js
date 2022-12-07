@@ -1,4 +1,14 @@
-import { FlatList, StyleSheet, TouchableOpacity, Text, View, Pressable, Image, Alert, Linking,} from "react-native";
+import {
+  FlatList,
+  StyleSheet,
+  TouchableOpacity,
+  Text,
+  View,
+  Pressable,
+  Image,
+  Alert,
+  Linking,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
 import { auth } from "../../FirebaseApp";
@@ -22,7 +32,7 @@ const SettingsScreen = ({ navigation, route }) => {
         const docRef = doc(db, "users", userFromFirebaseAuth.email);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
-          setImage(docSnap.data().icon); 
+          setImage(docSnap.data().icon);
           setUserName(docSnap.data().username);
         }
       } else {
@@ -42,10 +52,10 @@ const SettingsScreen = ({ navigation, route }) => {
   ];
 
   const preferencesList = [
-    {
-      text: "Manage Categories",
-      screen: "ManageCategories",
-    },
+    // {
+    //   text: "Manage Categories",
+    //   screen: "ManageCategories",
+    // },
     {
       text: "Terms & Conditions",
       url: termsURL,
@@ -71,7 +81,8 @@ const SettingsScreen = ({ navigation, route }) => {
         style: "cancel",
       },
       {
-        text: "OK",
+        text: "Delete",
+        style: "destructive",
         onPress: () => {
           console.log("OK Pressed");
           const listener = onAuthStateChanged(auth, async (user) => {
@@ -87,7 +98,8 @@ const SettingsScreen = ({ navigation, route }) => {
                     Alert.alert(
                       "Delete Account",
                       "Deletion Successful. Signing Out!",
-                      [{
+                      [
+                        {
                           text: "Ok",
                           onPress: async () => {
                             console.log("Ok Pressed");
@@ -98,13 +110,24 @@ const SettingsScreen = ({ navigation, route }) => {
                               CommonActions.reset({
                                 index: 0,
                                 routes: [{ name: "Login" }],
-                              }));},},]);} else {
+                              })
+                            );
+                          },
+                        },
+                      ]
+                    );
+                  } else {
                     console.log("User Not Found");
-                  }})
+                  }
+                })
                 .catch((error) => console.log(error));
-            }});
+            }
+          });
           return listener;
-        },},]);};  
+        },
+      },
+    ]);
+  };
 
   const OpenURLButton = async (url) => {
     // console.log(`Opening ${url}`)
@@ -148,7 +171,7 @@ const SettingsScreen = ({ navigation, route }) => {
               source={{ uri: image }}
               style={{ width: 100, height: 100 }}
             />
-          )} 
+          )}
         </View>
         <View style={{ flexDirection: "column" }}>
           <Text style={styles.userEmail}>{userName}</Text>
@@ -226,7 +249,7 @@ const styles = StyleSheet.create({
     opacity: 0.8,
     position: "absolute",
     alignSelf: "center",
-    justifyContent:"center",
+    justifyContent: "center",
     right: 130,
     bottom: 70,
     backgroundColor: "lightgrey",

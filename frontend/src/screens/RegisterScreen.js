@@ -38,23 +38,26 @@ const RegisterScreen = ({ navigation }) => {
    */
   const formValidation = async () => {
     setLoading(true);
+    setEmailErrorMsg("");
+    setPasswordErrorMsg("");
+    setErrors("");
     let errorFlag = false;
 
     // input validation
     if (email.length == 0) {
       errorFlag = true;
-      setEmailErrorMsg("Email is required feild");
+      setEmailErrorMsg("Email is required field");
     }
 
     if (password.length == 0) {
       errorFlag = true;
-      setPasswordErrorMsg("Password is required feild");
+      setPasswordErrorMsg("Password is required field");
     } else if (password.length < 8 || password.length > 20) {
       errorFlag = true;
       setPasswordErrorMsg("Password should be min 8 char and max 20 char");
     } else if (password !== confirmPassword) {
       errorFlag = true;
-      setPasswordErrorMsg("Passwoad and confirm password should be same.");
+      setPasswordErrorMsg("Password and Confirm Password should be same.");
     }
 
     if (confirmPassword.length == 0) {

@@ -13,6 +13,7 @@ const ForgotPasswordScreen = ({ navigation }) => {
 
   const doUserPasswordReset = async () => {
     console.log(`Reset Button Pressed!`);
+    setEmail("");
     try {
       const userCredential = await sendPasswordResetEmail(auth, email);
 
@@ -43,7 +44,7 @@ const ForgotPasswordScreen = ({ navigation }) => {
         {/* Errors go here */}
         {errors ? (
           <View style={styles.errors}>
-            <Text style={styles.errorText}>{errors}</Text>
+            <Text style={styles.textDanger}>{errors}</Text>
           </View>
         ) : null}
         <Pressable onPress={() => doUserPasswordReset()}>
@@ -123,13 +124,9 @@ const styles = StyleSheet.create({
   },
   errors: {
     alignSelf: "stretch",
-    padding: 10,
-    marginVertical: 20,
-    backgroundColor: "#C63461",
-    marginBottom: 20,
-  },
-  errorText: {
-    color: "white",
+    padding: 8,
+    marginVertical: 8,
+    marginBottom: 8,
   },
   forgotPassword: {
     fontSize: 12,

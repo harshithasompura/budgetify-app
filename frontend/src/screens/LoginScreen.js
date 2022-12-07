@@ -30,18 +30,21 @@ const LoginScreen = ({ navigation }) => {
 
   //Form Validation
   const formValidation = async () => {
+    setEmailErrorMsg("");
+    setPasswordErrorMsg("");
+    setErrors("");
     setLoading(true);
     let errorFlag = false;
 
     // input validation
     if (email.length == 0) {
       errorFlag = true;
-      setEmailErrorMsg("Email is required feild");
+      setEmailErrorMsg("Email is required field");
     }
 
     if (password.length == 0) {
       errorFlag = true;
-      setPasswordErrorMsg("Password is required feild");
+      setPasswordErrorMsg("Password is required field");
     } else if (password.length < 8 || password.length > 20) {
       errorFlag = true;
       setPasswordErrorMsg("Password should be min 8 char and max 20 char");
@@ -60,6 +63,8 @@ const LoginScreen = ({ navigation }) => {
   // ---------  Event listeners ------------
   const loginPressed = async () => {
     console.log(`Login Button Pressed!`);
+    setEmail("");
+    setPassword("");
     try {
       const userCredential = await signInWithEmailAndPassword(
         auth,
@@ -165,8 +170,8 @@ const LoginScreen = ({ navigation }) => {
         </View>
         {/* Errors go here */}
         {errors ? (
-          <View style={styles.errors}>
-            <Text style={styles.errorText}>{errors}</Text>
+          <View>
+            <Text style={styles.textDanger}>{errors}</Text>
           </View>
         ) : null}
         <Pressable style={styles.loginButton} onPress={formValidation}>
@@ -181,7 +186,9 @@ const LoginScreen = ({ navigation }) => {
             style={[styles.signUpText, { fontFamily: "Montserrat_700Bold" }]}
           >
             Don't have an account?{" "}
-            <Text style={{ textDecorationLine: "underline" }}>Register.</Text>
+            <Text style={{ textDecorationLine: "underline", color: "#B17BFF" }}>
+              Register.
+            </Text>
           </Text>
         </Pressable>
       </View>

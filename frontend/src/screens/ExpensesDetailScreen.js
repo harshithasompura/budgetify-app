@@ -1,4 +1,5 @@
 import {
+  Alert,
   FlatList,
   Pressable,
   StyleSheet,
@@ -79,11 +80,34 @@ const ExpensesDetailScreen = ({ route, navigation }) => {
         </Pressable>
 
         <Button
-          title="Delete"
+          color="#dc3545"
+          title=" Delete"
           type="clear"
-          onPress={() => deleteExpense(date, expense)}
+          onPress={() => validateDelete(date, expense)}
         />
       </View>
+    );
+  };
+
+  const validateDelete = (date, expense) => {
+    Alert.alert(
+      "Delete Expense",
+      "Are you sure you want to delete this expense?",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel",
+        },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: () => {
+            console.log("OK Pressed");
+            deleteExpense(date, expense);
+          },
+        },
+      ]
     );
   };
 

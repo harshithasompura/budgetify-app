@@ -122,7 +122,7 @@ const ChatScreen = ({ navigation, route }) => {
           avatar: senderIcon,
         }}
         wrapInSafeArea={false}
-        renderUsernameOnMessage={true}
+        // renderUsernameOnMessage={true}
         renderBubble={(props) => {
           return (
             <Bubble
