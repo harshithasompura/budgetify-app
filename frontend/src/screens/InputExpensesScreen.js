@@ -19,7 +19,7 @@ import useExpenses from "../redux/hook/useExpenses";
 import { db } from "../../FirebaseApp";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 
-const InputExpensesScreen = ({ route }) => {
+const InputExpensesScreen = ({navigation, route }) => {
   // url parameters
   const { userEmail } = route.params;
 
@@ -210,7 +210,12 @@ const InputExpensesScreen = ({ route }) => {
     // fetchExpenses(userEmail)
 
     Alert.alert("Expense Saved", "", [
-      { text: "OK", onPress: () => fetchExpenses(userEmail) },
+      {
+        text: "OK", onPress: () => {
+          fetchExpenses(userEmail);
+          navigation.popToTop();
+        }
+      },
     ]);
   };
 
@@ -248,8 +253,6 @@ const InputExpensesScreen = ({ route }) => {
     await updateDoc(doc(db, "users", userEmail, "expenses", userEmail), {
       summary: tempAllExpenses,
     });
-
-    setExpenses(tempAllExpenses);
   };
 
   // For Category Bottom Sheet

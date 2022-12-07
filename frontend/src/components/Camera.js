@@ -32,6 +32,9 @@ const CameraScreen = ({ navigation, route }) => {
 
   const [loading, setLoading] = useState(false);
 
+  // url parameters
+  const { userEmail } = route.params;
+
   const localBase = "http://localhost:3000/binary-upload/";
   const remoteBase = "https://node-scan.onrender.com/binary-upload/";
 
@@ -88,6 +91,7 @@ const CameraScreen = ({ navigation, route }) => {
       setLoading(false);
       navigation.navigate("Edit Expenses", {
         imageUri: image,
+        userEmail: userEmail,
       });
     }, 3000);
   };

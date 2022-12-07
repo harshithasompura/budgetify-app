@@ -17,14 +17,9 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import moment from "moment";
 import {
   doc,
-  setDoc,
   updateDoc,
-  arrayUnion,
   getDoc,
-  addDoc,
 } from "firebase/firestore";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../../FirebaseApp";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { db } from "../../FirebaseApp";
 import { Picker, PickerIOS } from "@react-native-picker/picker";
@@ -37,22 +32,16 @@ const EditExpensesScreen = ({ navigation, route }) => {
   const [visible, setIsVisible] = useState(false);
   const [merchant, setMerchant] = useState();
   const [total, setTotal] = useState();
-  const [uid, setUid] = useState();
-  const [selectedType, setSelectedType] = useState();
+  const [selectedType, setSelectedType] = useState("Groceries");
   // redux state
   const { fetchExpenses } = useExpenses();
   // useState for Expenses
   const [expenses, setExpenses] = useState({});
 
-  useEffect(() => {
-    const unsubscribeOnAuth = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setUid(user.email);
-      } else {
-        console.log("no signed-in user");
-      }
-    });
+  // url parameters
+  const { userEmail } = route.params;
 
+  useEffect(() => {
     if (route.params.receiptDate) {
       const dateArr = route.params.receiptDate.split("-");
       const year = parseInt(dateArr[0]);
@@ -66,8 +55,6 @@ const EditExpensesScreen = ({ navigation, route }) => {
     if (route.params.total) {
       setTotal(route.params.total.toString());
     }
-
-    return unsubscribeOnAuth;
   }, []);
 
   // Fetch all the expenses from firestore
@@ -81,7 +68,7 @@ const EditExpensesScreen = ({ navigation, route }) => {
   };
 
   const getAllExpensesFromFirestore = async () => {
-    const docRef = doc(db, "users", uid, "expenses", uid);
+    const docRef = doc(db, "users", userEmail, "expenses", userEmail);
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
@@ -113,28 +100,35 @@ const EditExpensesScreen = ({ navigation, route }) => {
     }
   };
 
+  const comfirmPressed = (merchant, total, date, receiptUrl) => {
+    if (merchant === undefined) {
+      Alert.alert("Please enter the merchant's name")
+      return;
+    }
+    
+    if (Number.isNaN(parseFloat(total)) ) {
+      Alert.alert("Please enter the total amount of the expense")
+      return;
+    }
+
+    storeReceipt(merchant, total, date, receiptUrl);
+    Alert.alert("Receipt Saved", "", [
+      {
+        text: "OK", onPress: () => {
+          fetchExpenses(userEmail);
+          navigation.popToTop();
+        }
+      },
+    ]);
+
+    // alert("Receipt stored");
+    console.log("receipt stored");
+  }
+
   const storeReceipt = async (merchant, total, date, receiptUrl) => {
-    // const receiptToBeStored = {
-    //   merchant: merchant,
-    //   total: total,
-    //   date: date,
-    //   receiptUrl: receiptUrl,
-    //   category: selectedType,
-    // };
-
-    // const docRef = doc(db, "expenses", uid);
-    // const docSnap = await getDoc(docRef);
-    // if (docSnap.exists()) {
-    //   await updateDoc(doc(db, "expenses", uid), {
-    //     receipts: arrayUnion(receiptToBeStored),
-    //   });
-    // } else {
-    //   await setDoc(docRef, {
-    //     receipts: [receiptToBeStored],
-    //   });
-    // }
-
     let tempAllExpenses = expenses;
+
+    console.log("tempAllExpenses", tempAllExpenses);
 
     const tempObjectToBeStored = {
       merchant: merchant,
@@ -144,7 +138,12 @@ const EditExpensesScreen = ({ navigation, route }) => {
       category: selectedType,
     };
 
+    console.log(tempObjectToBeStored["merchant"]);
+    console.log(tempObjectToBeStored["total"]);
+    console.log("type of total:", typeof(tempObjectToBeStored["total"]));
     console.log(tempObjectToBeStored["date"]);
+    console.log(tempObjectToBeStored["receiptUrl"]);
+    console.log(tempObjectToBeStored["category"]);
 
     if (!tempAllExpenses[`${date.getFullYear()}`]) {
       tempAllExpenses[`${date.getFullYear()}`] = {};
@@ -165,22 +164,11 @@ const EditExpensesScreen = ({ navigation, route }) => {
       `${date.getDate()}`
     ].push(tempObjectToBeStored);
 
-    const docRef = doc(db, "users", uid);
-    const docSnap = await getDoc(docRef);
-    if (docSnap.exists()) {
-      await updateDoc(doc(db, "users", uid, "expenses", uid), {
-        summary: [tempAllExpenses],
-      });
-    }
+    console.log("tempAllExpenses AGAIN", tempAllExpenses);
 
-    setExpenses(tempAllExpenses);
-
-    Alert.alert("Receipt Saved", "", [
-      { text: "OK", onPress: () => fetchExpenses(uid) },
-    ]);
-
-    // alert("Receipt stored");
-    console.log("receipt stored");
+    await updateDoc(doc(db, "users", userEmail, "expenses", userEmail), {
+      summary: tempAllExpenses,
+    });
   };
 
   return (
@@ -267,8 +255,7 @@ const EditExpensesScreen = ({ navigation, route }) => {
               const receiptURL = await uploadImageToCloud(
                 route.params.imageUri
               );
-              await storeReceipt(merchant, total, date, receiptURL);
-              navigation.popToTop();
+              comfirmPressed(merchant, total, date, receiptURL);
             }}
           >
             <Text style={styles.confirmTxt}>Confirm</Text>
