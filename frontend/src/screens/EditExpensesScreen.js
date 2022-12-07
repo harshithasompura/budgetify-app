@@ -7,18 +7,28 @@ import {
   Image,
   SafeAreaView,
   TextInput,
+  Alert,
   ScrollView,
 } from "react-native";
 import { useState, useEffect } from "react";
 import ImageView from "react-native-image-viewing";
 import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { doc, setDoc, updateDoc, arrayUnion, getDoc } from "firebase/firestore";
+import moment from "moment";
+import {
+  doc,
+  setDoc,
+  updateDoc,
+  arrayUnion,
+  getDoc,
+  addDoc,
+} from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../FirebaseApp";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { db } from "../../FirebaseApp";
 import { Picker, PickerIOS } from "@react-native-picker/picker";
+import useExpenses from "../redux/hook/useExpenses";
 
 const EditExpensesScreen = ({ navigation, route }) => {
   const [date, setDate] = useState(new Date());
@@ -29,6 +39,10 @@ const EditExpensesScreen = ({ navigation, route }) => {
   const [total, setTotal] = useState();
   const [uid, setUid] = useState();
   const [selectedType, setSelectedType] = useState();
+  // redux state
+  const { fetchExpenses } = useExpenses();
+  // useState for Expenses
+  const [expenses, setExpenses] = useState({});
 
   useEffect(() => {
     const unsubscribeOnAuth = onAuthStateChanged(auth, (user) => {
@@ -56,9 +70,32 @@ const EditExpensesScreen = ({ navigation, route }) => {
     return unsubscribeOnAuth;
   }, []);
 
+  // Fetch all the expenses from firestore
+  useEffect(() => {
+    getAllExpensesFromFirestore();
+  }, []);
+
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate;
     setDate(currentDate);
+  };
+
+  const getAllExpensesFromFirestore = async () => {
+    const docRef = doc(db, "users", uid, "expenses", uid);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      const { summary } = docSnap.data();
+
+      if (summary) {
+        setExpenses(summary);
+      } else {
+        console.log("No data in summary");
+      }
+    } else {
+      // doc.data() will be undefined in this case
+      console.log("No such document!");
+    }
   };
 
   const uploadImageToCloud = async (imageUri) => {
@@ -77,27 +114,72 @@ const EditExpensesScreen = ({ navigation, route }) => {
   };
 
   const storeReceipt = async (merchant, total, date, receiptUrl) => {
-    const receiptToBeStored = {
+    // const receiptToBeStored = {
+    //   merchant: merchant,
+    //   total: total,
+    //   date: date,
+    //   receiptUrl: receiptUrl,
+    //   category: selectedType,
+    // };
+
+    // const docRef = doc(db, "expenses", uid);
+    // const docSnap = await getDoc(docRef);
+    // if (docSnap.exists()) {
+    //   await updateDoc(doc(db, "expenses", uid), {
+    //     receipts: arrayUnion(receiptToBeStored),
+    //   });
+    // } else {
+    //   await setDoc(docRef, {
+    //     receipts: [receiptToBeStored],
+    //   });
+    // }
+
+    let tempAllExpenses = expenses;
+
+    const tempObjectToBeStored = {
       merchant: merchant,
-      total: total,
-      date: date,
+      total: parseFloat(total),
+      date: moment(date).format("YYYY MMM DD"),
       receiptUrl: receiptUrl,
       category: selectedType,
     };
 
-    const docRef = doc(db, "expenses", uid);
+    console.log(tempObjectToBeStored["date"]);
+
+    if (!tempAllExpenses[`${date.getFullYear()}`]) {
+      tempAllExpenses[`${date.getFullYear()}`] = {};
+    }
+    if (!tempAllExpenses[`${date.getFullYear()}`][`${date.getMonth() + 1}`]) {
+      tempAllExpenses[`${date.getFullYear()}`][`${date.getMonth() + 1}`] = {};
+    }
+    if (
+      !tempAllExpenses[`${date.getFullYear()}`][`${date.getMonth() + 1}`][
+        `${date.getDate()}`
+      ]
+    ) {
+      tempAllExpenses[`${date.getFullYear()}`][`${date.getMonth() + 1}`][
+        `${date.getDate()}`
+      ] = [];
+    }
+    tempAllExpenses[`${date.getFullYear()}`][`${date.getMonth() + 1}`][
+      `${date.getDate()}`
+    ].push(tempObjectToBeStored);
+
+    const docRef = doc(db, "users", uid);
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
-      await updateDoc(doc(db, "expenses", uid), {
-        receipts: arrayUnion(receiptToBeStored),
-      });
-    } else {
-      await setDoc(docRef, {
-        receipts: [receiptToBeStored],
+      await updateDoc(doc(db, "users", uid, "expenses", uid), {
+        summary: [tempAllExpenses],
       });
     }
 
-    alert("Receipt stored");
+    setExpenses(tempAllExpenses);
+
+    Alert.alert("Receipt Saved", "", [
+      { text: "OK", onPress: () => fetchExpenses(uid) },
+    ]);
+
+    // alert("Receipt stored");
     console.log("receipt stored");
   };
 
@@ -169,15 +251,15 @@ const EditExpensesScreen = ({ navigation, route }) => {
             selectedValue={selectedType}
             onValueChange={(itemValue, itemIndex) => setSelectedType(itemValue)}
           >
-            <Picker.Item label="GROCERIES" value="GROCERIES" />
-            <Picker.Item label="FOOD" value="FOOD" />
-            <Picker.Item label="FUEL" value="FUEL" />
-            <Picker.Item label="TRANSPORTATION" value="TRANSPORTATION" />
-            <Picker.Item label="ENTERTAINMENT" value="ENTERTAINMENT" />
-            <Picker.Item label="HOUSING" value="HOUSING" />
-            <Picker.Item label="CLOTHING" value="CLOTHING" />
-            <Picker.Item label="HEALTH" value="HEALTH" />
-            <Picker.Item label="OTHERS" value="OTHERS" />
+            <Picker.Item label="GROCERIES" value="Groceries" />
+            <Picker.Item label="FOOD" value="Food" />
+            <Picker.Item label="FUEL" value="Fuel" />
+            <Picker.Item label="TRANSPORTATION" value="Transportation" />
+            <Picker.Item label="ENTERTAINMENT" value="Entertainment" />
+            <Picker.Item label="HOUSING" value="Housing" />
+            <Picker.Item label="CLOTHING" value="Clothing" />
+            <Picker.Item label="HEALTH" value="Health" />
+            <Picker.Item label="OTHERS" value="Others" />
           </PickerIOS>
           <Pressable
             style={styles.confirmBtn}
