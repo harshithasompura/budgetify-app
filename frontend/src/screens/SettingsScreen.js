@@ -52,10 +52,10 @@ const SettingsScreen = ({ navigation, route }) => {
   ];
 
   const preferencesList = [
-    {
-      text: "Manage Categories",
-      screen: "ManageCategories",
-    },
+    // {
+    //   text: "Manage Categories",
+    //   screen: "ManageCategories",
+    // },
     {
       text: "Terms & Conditions",
       url: termsURL,
@@ -81,7 +81,8 @@ const SettingsScreen = ({ navigation, route }) => {
         style: "cancel",
       },
       {
-        text: "OK",
+        text: "Delete",
+        style: "destructive",
         onPress: () => {
           console.log("OK Pressed");
           const listener = onAuthStateChanged(auth, async (user) => {
