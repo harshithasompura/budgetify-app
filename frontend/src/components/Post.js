@@ -5,7 +5,7 @@ import {
   Image,
   TextInput,
   Pressable,
-  Alert
+  Alert,
 } from "react-native";
 import React, { useCallback, useRef, useState, useEffect } from "react";
 import BottomSheet, {
@@ -39,10 +39,12 @@ const Post = (props) => {
 
   //Handlers
   const addPost = async () => {
-    if (comment === "" 
-        || title === "" 
-        || comment.trim().length === 0 
-        || title.trim().length === 0) {
+    if (
+      comment === "" ||
+      title === "" ||
+      comment.trim().length === 0 ||
+      title.trim().length === 0
+    ) {
       Alert.alert("Title/Description cannot be empty!");
       return;
     }

@@ -23,8 +23,7 @@ const Comment = (props) => {
   const [username, setUsername] = useState();
 
   const addComment = async () => {
-    if (comment === "" 
-        || comment.trim().length === 0) {
+    if (comment === "" || comment.trim().length === 0) {
       Alert.alert("Comment cannot be empty!");
       return;
     }
