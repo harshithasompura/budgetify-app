@@ -13,7 +13,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
 import { auth } from "../../FirebaseApp";
 import { db } from "../../FirebaseApp";
-import { CommonActions } from "@react-navigation/native";
+import { CommonActions, useIsFocused } from "@react-navigation/native";
 import { signOut, onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc, deleteDoc } from "firebase/firestore";
 
@@ -21,6 +21,7 @@ const SettingsScreen = ({ navigation, route }) => {
   const [loggedInUser, setLoggedInUser] = useState("");
   const [userName, setUserName] = useState();
   const [image, setImage] = useState(null);
+  const isFocused = useIsFocused();
   const termsURL = "https://budgetify-landing.vercel.app/terms-and-conditions";
   const privacyURL = "https://budgetify-landing.vercel.app/privacy-policy";
 
@@ -40,9 +41,8 @@ const SettingsScreen = ({ navigation, route }) => {
         console.log("No user signed in");
       }
     });
-
     return listener;
-  }, []);
+  }, [isFocused]);
 
   const accountList = [
     {
@@ -52,10 +52,10 @@ const SettingsScreen = ({ navigation, route }) => {
   ];
 
   const preferencesList = [
-    // {
-    //   text: "Manage Categories",
-    //   screen: "ManageCategories",
-    // },
+    {
+      text: "Manage Categories",
+      screen: "ManageCategories",
+    },
     {
       text: "Terms & Conditions",
       url: termsURL,
@@ -82,7 +82,7 @@ const SettingsScreen = ({ navigation, route }) => {
       },
       {
         text: "Delete",
-        style: "destructive",
+        style:"destructive",
         onPress: () => {
           console.log("OK Pressed");
           const listener = onAuthStateChanged(auth, async (user) => {
@@ -93,6 +93,9 @@ const SettingsScreen = ({ navigation, route }) => {
                   var docRef = doc(db, "users", loggedInUser);
                   var docSnap = await getDoc(docRef);
                   if (docSnap.exists()) {
+                    await deleteDoc(
+                      doc(db, "users", loggedInUser, "expenses", loggedInUser)
+                    );
                     await deleteDoc(doc(db, "users", loggedInUser));
                     console.log("Document deleted", loggedInUser);
                     Alert.alert(
