@@ -67,6 +67,12 @@ const ChangePasswordScreen = () => {
       setNewPassword("");
       setConfirmNewPassword("");
       return;
+    } else if (newPassword.length < 8 || newPassword.length > 20) {
+      setErrors("Password should be min 8 char and max 20 char");
+      return;
+    } else if (newPassword !== confirmNewpassword) {
+      setErrors("Password and confirm password should be same.");
+      return;
     }
 
     // Check if current password matches the signed-in user
@@ -163,11 +169,11 @@ const styles = StyleSheet.create({
     alignSelf: "stretch",
     padding: 14,
     marginHorizontal: 20,
-    backgroundColor: "#C63461",
+    // backgroundColor: "#C63461",
     marginBottom: 20,
     borderRadius: 12,
   },
   errorText: {
-    color: "white",
+    color: "#dc3545",
   },
 });

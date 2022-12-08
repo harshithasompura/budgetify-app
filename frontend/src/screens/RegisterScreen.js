@@ -62,7 +62,7 @@ const RegisterScreen = ({ navigation }) => {
 
     if (confirmPassword.length == 0) {
       errorFlag = true;
-      setConfirmPasswordErrorMsg("Confirm Password is required feild");
+      setConfirmPasswordErrorMsg("Confirm Password is required field");
     } else if (confirmPassword.length < 8 || confirmPassword.length > 20) {
       errorFlag = true;
       setConfirmPasswordErrorMsg(
@@ -71,7 +71,7 @@ const RegisterScreen = ({ navigation }) => {
     } else if (password !== confirmPassword) {
       errorFlag = true;
       setConfirmPasswordErrorMsg(
-        "Passwoad and confirm password should be same."
+        "Password and confirm password should be same."
       );
     }
 

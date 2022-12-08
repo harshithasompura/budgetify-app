@@ -11,7 +11,7 @@ const AlternateHomeScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Icon name="search" size={200} />
+      <Icon name="search" color={"#B17BFF"} size={100} />
       <Text style={styles.screenHeading}>No Expenses Found</Text>
       <Pressable style={styles.expensesButton} onPress={goToExpenses}>
         <Text style={[styles.buttonText, { fontFamily: "Montserrat_700Bold" }]}>
@@ -31,12 +31,14 @@ const styles = StyleSheet.create({
   },
   screenHeading: {
     fontSize: 22,
+    fontFamily: "Montserrat_400Regular",
     marginVertical: 20,
   },
   expensesButton: {
     backgroundColor: "#C5F277",
     //alignSelf: "stretch",
-    padding: 16,
+    paddingVertical: 16,
+    paddingHorizontal: 30,
     alignItems: "center",
     marginBottom: 30,
     marginTop: 20,
@@ -48,7 +50,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: "#001c00",
-    fontSize: 18,
+    fontSize: 16,
   },
 });
 
