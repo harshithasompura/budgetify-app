@@ -29,7 +29,6 @@ import Icon from "react-native-vector-icons/FontAwesome";
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import CameraScreen from "../components/Camera";
-import ManageCategoriesScreen from "./ManageCategoriesScreen";
 import ChangePasswordScreen from "./ChangePasswordScreen";
 import TermsAndConditionsScreen from "./TermsAndConditionsScreen";
 import PrivacyPolicyScreen from "./PrivacyPolicyScreen";
@@ -76,18 +75,6 @@ const SettingsStackScreen = () => {
         }}
         name="ChangePassword"
         component={ChangePasswordScreen}
-      ></SettingsStack.Screen>
-      <SettingsStack.Screen
-        options={{
-          headerTintColor: "#B17BFF",
-          headerTitle: "",
-          headerShadowVisible: false, // applied here
-          headerStyle: {
-            backgroundColor: "#F2F3F4",
-          },
-        }}
-        name="ManageCategories"
-        component={ManageCategoriesScreen}
       ></SettingsStack.Screen>
       <SettingsStack.Screen
         options={{
