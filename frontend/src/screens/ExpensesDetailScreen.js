@@ -5,7 +5,10 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
+  Image,
+  Linking,
   View,
+  SafeAreaView,
 } from "react-native";
 import { useEffect, useState } from "react";
 
@@ -29,6 +32,8 @@ import useExpenses from "../redux/hook/useExpenses";
 // Vector Icons
 import Icon from "react-native-vector-icons/FontAwesome";
 import { Button } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
+import { async } from "@firebase/util";
 
 const ExpensesDetailScreen = ({ route, navigation }) => {
   const { category, userEmail } = route.params;
@@ -69,17 +74,54 @@ const ExpensesDetailScreen = ({ route, navigation }) => {
 
   // FlatList render function and other related functions
   const renderFlatListItem = ({ item }) => {
-    const { date, total } = item;
+    const { date, total, receiptUrl, merchant } = item;
     const expense = parseFloat(total);
 
     return (
-      <View style={styles.flatListCell}>
-        <Pressable style={styles.flatListLeftPart} onPress={() => {}}>
-          <Text style={styles.flatListDate}>Date: {date}</Text>
-          <Text style={styles.flatListExpenses}>$ {expense}</Text>
-        </Pressable>
-
+      <View style={[styles.flatListCell, { flex: 1 }]}>
+        <View style={[styles.flatListLeftPart, { padding: 8 }]}>
+          {receiptUrl && (
+            <Pressable
+              style={{ flex: 1, height: "90%" }}
+              onPress={async () => {
+                // Open Receipt URL on press
+                const supported = await Linking.canOpenURL(receiptUrl);
+                if (supported) {
+                  // Opening the link with some app, if the URL scheme is "http" the web link should be opened
+                  // by some browser in the mobile
+                  await Linking.openURL(receiptUrl);
+                } else {
+                  Alert.alert(`Don't know how to open this URL: ${receiptUrl}`);
+                }
+              }}
+            >
+              <Image
+                style={{ width: "60%", height: "100%" }}
+                resizeMode="contain"
+                source={{ uri: receiptUrl }}
+              />
+            </Pressable>
+          )}
+          <View
+            style={
+              receiptUrl
+                ? { width: "100%", flex: 2, padding: 0 }
+                : { flex: 1, width: "100%", padding: 8 }
+            }
+          >
+            <View style={{ paddingTop: 10 }}>
+              {merchant && (
+                <Text style={[styles.flatListDate, { color: "black" }]}>
+                  {merchant}
+                </Text>
+              )}
+              <Text style={styles.flatListDate}>Date: {date}</Text>
+              <Text style={styles.flatListExpenses}>$ {expense}</Text>
+            </View>
+          </View>
+        </View>
         <Button
+          style={{ flex: 1 }}
           color="#dc3545"
           title=" Delete"
           type="clear"
@@ -155,7 +197,7 @@ const ExpensesDetailScreen = ({ route, navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View
         style={{ flexDirection: "row", alignItems: "center", marginTop: 8 }}
       >
@@ -169,7 +211,6 @@ const ExpensesDetailScreen = ({ route, navigation }) => {
         </Pressable>
         <Text style={styles.header}> {category} Expenses</Text>
       </View>
-
       <FlatList
         data={expensesData}
         keyExtractor={(item) => {
@@ -178,7 +219,7 @@ const ExpensesDetailScreen = ({ route, navigation }) => {
         renderItem={renderFlatListItem}
         style={styles.flatList}
       />
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -198,7 +239,7 @@ const styles = StyleSheet.create({
     color: "#38434A",
   },
   flatList: {
-    marginTop: 30,
+    // marginTop: 30,
     alignSelf: "center",
     width: "90%",
     padding: 10,
@@ -206,17 +247,20 @@ const styles = StyleSheet.create({
   flatListCell: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: 10,
-    paddingBottom: 10,
+    // marginVertical:8,
+    paddingVertical: 10,
     borderWidth: 1,
     borderColor: "#fff",
     borderBottomColor: "gray",
   },
-  flatListLeftPart: {},
+  flatListLeftPart: {
+    flexDirection: "row",
+    alignItems: "center",
+    height: "80%",
+    flex: 1,
+  },
   flatListDate: {
-    fontSize: 20,
-    margin: 4,
+    fontSize: 18,
     color: "#8B999C",
     fontFamily: "Montserrat_600SemiBold",
   },

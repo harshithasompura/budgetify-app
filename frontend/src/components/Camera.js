@@ -37,7 +37,7 @@ const CameraScreen = ({ navigation, route }) => {
 
   const localBase = "http://localhost:3000/binary-upload/";
   const remoteBase = "https://node-scan.onrender.com/binary-upload/";
-  const vercelApi = 'https://budgetify-landing.vercel.app/binary-upload/'
+  const vercelApi = "https://budgetify-landing.vercel.app/binary-upload/";
 
   // - Event Listeners
   const onCameraButtonPressed = () => {

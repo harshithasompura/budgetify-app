@@ -15,11 +15,7 @@ import ImageView from "react-native-image-viewing";
 import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import moment from "moment";
-import {
-  doc,
-  updateDoc,
-  getDoc,
-} from "firebase/firestore";
+import { doc, updateDoc, getDoc } from "firebase/firestore";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { db } from "../../FirebaseApp";
 import { Picker, PickerIOS } from "@react-native-picker/picker";
@@ -102,28 +98,29 @@ const EditExpensesScreen = ({ navigation, route }) => {
 
   const comfirmPressed = (merchant, total, date, receiptUrl) => {
     if (merchant === undefined) {
-      Alert.alert("Please enter the merchant's name")
+      Alert.alert("Please enter the merchant's name");
       return;
     }
-    
-    if (Number.isNaN(parseFloat(total)) ) {
-      Alert.alert("Please enter the total amount of the expense")
+
+    if (Number.isNaN(parseFloat(total))) {
+      Alert.alert("Please enter the total amount of the expense");
       return;
     }
 
     storeReceipt(merchant, total, date, receiptUrl);
     Alert.alert("Receipt Saved", "", [
       {
-        text: "OK", onPress: () => {
+        text: "OK",
+        onPress: () => {
           fetchExpenses(userEmail);
           navigation.popToTop();
-        }
+        },
       },
     ]);
 
     // alert("Receipt stored");
     console.log("receipt stored");
-  }
+  };
 
   const storeReceipt = async (merchant, total, date, receiptUrl) => {
     let tempAllExpenses = expenses;
@@ -140,7 +137,7 @@ const EditExpensesScreen = ({ navigation, route }) => {
 
     console.log(tempObjectToBeStored["merchant"]);
     console.log(tempObjectToBeStored["total"]);
-    console.log("type of total:", typeof(tempObjectToBeStored["total"]));
+    console.log("type of total:", typeof tempObjectToBeStored["total"]);
     console.log(tempObjectToBeStored["date"]);
     console.log(tempObjectToBeStored["receiptUrl"]);
     console.log(tempObjectToBeStored["category"]);
