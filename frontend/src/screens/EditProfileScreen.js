@@ -130,7 +130,7 @@ const EditProfileScreen = ({ navigation }) => {
         textContentType="emailAddress"
         autoCapitalize="none"
         value={loggedInUser}
-        style={[styles.inputbox, { backgroundColor:"#ddd" }]}
+        style={[styles.inputbox, { backgroundColor: "#ddd" }]}
         editable={false}
       />
 

@@ -78,7 +78,7 @@ const SettingsScreen = ({ navigation, route }) => {
       },
       {
         text: "Delete",
-        style:"destructive",
+        style: "destructive",
         onPress: () => {
           console.log("OK Pressed");
           const listener = onAuthStateChanged(auth, async (user) => {

@@ -19,7 +19,7 @@ import useExpenses from "../redux/hook/useExpenses";
 import { db } from "../../FirebaseApp";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 
-const InputExpensesScreen = ({navigation, route }) => {
+const InputExpensesScreen = ({ navigation, route }) => {
   // url parameters
   const { userEmail } = route.params;
 
@@ -211,10 +211,11 @@ const InputExpensesScreen = ({navigation, route }) => {
 
     Alert.alert("Expense Saved", "", [
       {
-        text: "OK", onPress: () => {
+        text: "OK",
+        onPress: () => {
           fetchExpenses(userEmail);
           navigation.popToTop();
-        }
+        },
       },
     ]);
   };

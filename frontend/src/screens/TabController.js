@@ -73,7 +73,7 @@ const SettingsStackScreen = () => {
         }}
         name="ChangePassword"
         component={ChangePasswordScreen}
-        ></SettingsStack.Screen>
+      ></SettingsStack.Screen>
       {/* add those screens that should be navigated inside Setting Tab in here */}
     </SettingsStack.Navigator>
   );
