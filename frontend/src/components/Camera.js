@@ -37,6 +37,7 @@ const CameraScreen = ({ navigation, route }) => {
 
   const localBase = "http://localhost:3000/binary-upload/";
   const remoteBase = "https://node-scan.onrender.com/binary-upload/";
+  const vercelApi = 'https://budgetify-landing.vercel.app/binary-upload/'
 
   // - Event Listeners
   const onCameraButtonPressed = () => {
@@ -51,9 +52,9 @@ const CameraScreen = ({ navigation, route }) => {
   };
 
   const scanReceipt = async (imageUri, endpointNum) => {
-    console.log("Processing...");
+    console.log("Trying endpoint " + endpointNum);
     //send image to web api hosted on Render for text recognition
-    const endpointLink = remoteBase + endpointNum;
+    const endpointLink = vercelApi + endpointNum;
 
     const response = await FileSystem.uploadAsync(endpointLink, imageUri, {
       fieldName: "file",
@@ -99,11 +100,12 @@ const CameraScreen = ({ navigation, route }) => {
   //a real image scan function
   const confirmBtnPressed = async () => {
     setLoading(true);
-    for (let i = 1; i <= 4; i++) {
+    for (let i = 1; i <= 3; i++) {
       let jsonObject = await scanReceipt(image, i);
+      // console.log(i + " endpointed actual: " + jsonObject["success"]);
       if (jsonObject["success"]) {
         //data parsed from image
-        console.log(jsonObject);
+        // console.log(jsonObject);
 
         const receipt = jsonObject["receipts"][0];
         setLoading(false);
@@ -115,10 +117,13 @@ const CameraScreen = ({ navigation, route }) => {
         });
         return;
       }
-      console.log("endpoint " + i + "failed...");
+      console.log("endpoint " + i + " failed...");
     }
     console.log("All endpoints failed!");
     setLoading(false);
+    navigation.navigate("Edit Expenses", {
+      imageUri: image,
+    });
   };
 
   // - Lifecycle Hooks
