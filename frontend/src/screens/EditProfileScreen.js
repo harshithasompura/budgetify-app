@@ -35,8 +35,6 @@ const EditProfileScreen = ({ navigation }) => {
         console.log(userDoc);
         var docSnap = await getDoc(userDoc);
         console.log("doc", docSnap.data());
-        //console.log("doc",docSnap.data().name);
-        //console.log("doc",docSnap.data().studentid);
         setStudentName(docSnap.data().studentname);
         setUserName(docSnap.data().username);
         setStudentId(docSnap.data().studentid);
@@ -53,7 +51,6 @@ const EditProfileScreen = ({ navigation }) => {
       console.log("no user logged in");
       return;
     }
-
     const userRef = doc(db, "users", loggedInUser);
     await updateDoc(userRef, {
       studentname: newStudentName,
@@ -87,12 +84,10 @@ const EditProfileScreen = ({ navigation }) => {
     try {
       await uploadBytes(imgRef, file);
       const avatarUrl = await getDownloadURL(imgRef);
-
       const userRef = doc(db, "users", userId);
       await updateDoc(userRef, {
         icon: avatarUrl,
       });
-
       Alert.alert("Updated Avatar");
     } catch (err) {
       console.log(err);
@@ -129,6 +124,16 @@ const EditProfileScreen = ({ navigation }) => {
         </View>
       </View>
 
+      <Text style={styles.inputtext}>Email</Text>
+      <TextInput
+        placeholder="Enter Email"
+        textContentType="emailAddress"
+        autoCapitalize="none"
+        value={loggedInUser}
+        style={[styles.inputbox, { backgroundColor:"#ddd" }]}
+        editable={false}
+      />
+
       <Text style={styles.inputtext}>Full Name</Text>
       <TextInput
         placeholder="Enter FullName"
@@ -139,15 +144,6 @@ const EditProfileScreen = ({ navigation }) => {
         style={styles.inputbox}
       />
 
-      <Text style={styles.inputtext}>Email</Text>
-      <TextInput
-        placeholder="Enter Email"
-        textContentType="emailAddress"
-        autoCapitalize="none"
-        returnKeyType="next"
-        value={loggedInUser}
-        style={styles.inputbox}
-      />
       <Text style={styles.inputtext}>Username</Text>
       <TextInput
         placeholder="Enter Username"
