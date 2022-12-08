@@ -53,10 +53,6 @@ const SettingsScreen = ({ navigation, route }) => {
 
   const preferencesList = [
     {
-      text: "Manage Categories",
-      screen: "ManageCategories",
-    },
-    {
       text: "Terms & Conditions",
       url: termsURL,
     },
