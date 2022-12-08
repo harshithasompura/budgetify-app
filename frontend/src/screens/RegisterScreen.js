@@ -295,11 +295,10 @@ const styles = StyleSheet.create({
     alignSelf: "stretch",
     padding: 10,
     marginHorizontal: 20,
-    backgroundColor: "#C63461",
     marginBottom: 20,
   },
   errorText: {
-    color: "white",
+    color: "#dc3545",
   },
   textDanger: {
     color: "#dc3545",
