@@ -55,10 +55,12 @@ const SettingsScreen = ({ navigation, route }) => {
     {
       text: "Terms & Conditions",
       url: termsURL,
+      screen: "TermsAndConditions",
     },
     {
       text: "Privacy Policy",
       url: privacyURL,
+      screen: "PrivacyPolicy",
     },
   ];
 
@@ -145,10 +147,9 @@ const SettingsScreen = ({ navigation, route }) => {
     <TouchableOpacity
       onPress={() => {
         {
-          item.screen && navigation.navigate(item.screen);
-        }
-        {
-          item.url && OpenURLButton(item.url);
+          item.url
+            ? navigation.navigate(item.screen, item.url)
+            : navigation.navigate(item.screen);
         }
       }}
     >

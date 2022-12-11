@@ -30,6 +30,8 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import CameraScreen from "../components/Camera";
 import ChangePasswordScreen from "./ChangePasswordScreen";
+import TermsAndConditions from "./TermsAndConditions";
+import Privacy from "./Privacy";
 
 // create stack navigators for each tab
 // each tab has its own stack
@@ -73,6 +75,30 @@ const SettingsStackScreen = () => {
         }}
         name="ChangePassword"
         component={ChangePasswordScreen}
+      ></SettingsStack.Screen>
+      <SettingsStack.Screen
+        options={{
+          headerTintColor: "#B17BFF",
+          headerTitle: "",
+          headerShadowVisible: false, // applied here
+          headerStyle: {
+            backgroundColor: "#fff",
+          },
+        }}
+        name="TermsAndConditions"
+        component={TermsAndConditions}
+      ></SettingsStack.Screen>
+      <SettingsStack.Screen
+        options={{
+          headerTintColor: "#B17BFF",
+          headerTitle: "",
+          headerShadowVisible: false, // applied here
+          headerStyle: {
+            backgroundColor: "#fff",
+          },
+        }}
+        name="PrivacyPolicy"
+        component={Privacy}
       ></SettingsStack.Screen>
       {/* add those screens that should be navigated inside Setting Tab in here */}
     </SettingsStack.Navigator>
