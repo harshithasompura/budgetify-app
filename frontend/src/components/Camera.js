@@ -102,7 +102,7 @@ const CameraScreen = ({ navigation, route }) => {
           merchant: receipt["merchant_name"],
           total: receipt["total"],
           receiptDate: receipt["date"],
-          userEmail: userEmail
+          userEmail: userEmail,
         });
         return;
       }
