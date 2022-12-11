@@ -39,18 +39,6 @@ const CameraScreen = ({ navigation, route }) => {
   const remoteBase = "https://node-scan.onrender.com/binary-upload/";
   const vercelApi = "https://budgetify-landing.vercel.app/binary-upload/";
 
-  // - Event Listeners
-  const onCameraButtonPressed = () => {
-    console.log(`Camera Button Pressed!`);
-    setCameraVisible(true);
-    setCloseCamera(true);
-  };
-
-  const onCameraClosePressed = () => {
-    setCameraVisible(false);
-    setCloseCamera(false);
-  };
-
   const scanReceipt = async (imageUri, endpointNum) => {
     console.log("Trying endpoint " + endpointNum);
     //send image to web api hosted on Render for text recognition
@@ -114,6 +102,7 @@ const CameraScreen = ({ navigation, route }) => {
           merchant: receipt["merchant_name"],
           total: receipt["total"],
           receiptDate: receipt["date"],
+          userEmail: userEmail
         });
         return;
       }
