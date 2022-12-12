@@ -158,7 +158,7 @@ const CameraScreen = ({ navigation, route }) => {
           )}
 
           {!loading && (
-            <Pressable style={styles.confirmButton} onPress={startLoading}>
+            <Pressable style={styles.confirmButton} onPress={confirmBtnPressed}>
               {/* <Text style={{color:"#C5F277"}}>Save</Text> */}
               <Icon name="check" color={"white"} size={30} />
             </Pressable>
