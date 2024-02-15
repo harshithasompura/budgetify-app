@@ -1,3 +1,5 @@
+> :warning: PLEASE NOTE: This is a Capstone project presented for George Brown College, Canada in 2022 and is now no longer maintained by the owners & contributors. It is only used for reference/showcase purposes.
+
 # 💰 Budgetify App 
 [![runs with expo](https://img.shields.io/badge/Runs%20with%20Expo-000.svg?style=flat-square&logo=EXPO&labelColor=f3f3f3&logoColor=000)](https://expo.io/)
 
